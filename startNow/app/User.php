@@ -1,6 +1,6 @@
 <?php
 
-namespace StartNow;
+namespace startnow;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password','Apeido_P','Apeido_M','Direccion','CP','Numero_Ext','Pais','CD','Numero_Cel','Numero_Casa','Sex','Fecha','Perfil' 
     ];
 
     /**

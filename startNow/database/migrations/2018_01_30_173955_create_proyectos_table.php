@@ -14,10 +14,12 @@ class CreateProyectosTable extends Migration
     public function up()
     {
         Schema::create('proyectos', function (Blueprint $table) {
-             $table->increments('idProyecto');
+
+            $table->increments('idProyecto');
             $table->string('nombre',100);
             $table->string('descCorta',200);
             $table->binary('descLarga');
+            $table->string('imagenUrl',500);
             $table->string('videoUrl',100);
             $table->double('metaMin',8,2);
             $table->double('metaMax', 8, 2);
@@ -32,7 +34,8 @@ class CreateProyectosTable extends Migration
             $table->binary('propuestaValor');
             $table->boolean('inversion');
             $table->timestamps();
-        });
+
+            });
     }
 
     /**
@@ -42,6 +45,6 @@ class CreateProyectosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('proyectos');
+      Schema::dropIfExists('Proyectos');   //
     }
 }

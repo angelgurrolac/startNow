@@ -1,6 +1,6 @@
 <?php
 
-namespace StartNow\Providers;
+namespace startnow\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -14,7 +14,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    protected $namespace = 'StartNow\Http\Controllers';
+    protected $namespace = 'startnow\Http\Controllers';
 
     /**
      * Define your route model bindings, pattern filters, etc.

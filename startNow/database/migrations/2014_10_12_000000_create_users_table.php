@@ -13,25 +13,24 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('usuarios', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('nombres',100);
-            $table->string('apellidoM',50);
-            $table->string('apellidoP',50);
-            $table->string('calle',100);
-            $table->integer('numeroExterior');
-            $table->integer('codigoPostal');
-            $table->string('ciudad',50);
-            $table->string('numeroCelular',14);
-            $table->integer('numeroCasa');
-            $table->enum('sexo', ['masculino','femenino']);
-            $table->date('fechaNacimiento');
-            $table->string('password',200);
-            $table->string('cPassword',200);
-            $table->integer('idPerfil');
-            $table->string('correoElectronico',100)->unique();
-            $table->rememberToken();
-            $table->timestamps();
+        Schema::create('users', function (Blueprint $table) {
+        
+
+
+            $table->string('name');
+            $table->string('Apeido_P');
+            $table->string('Apeido_M');
+            $table->string('Direccion');
+            $table->string('CP');
+            $table->string('Numero_Ext');
+            $table->string('Pais');
+            $table->string('CD');
+            $table->string('Numero_Cel');
+            $table->string('Numero_Casa');
+            $table->string('Sex');
+            $table->string('Fecha');
+            $table->string('perfil');
+         
         });
     }
 

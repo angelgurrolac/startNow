@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAlianzaTable extends Migration
+class CreateEquipoTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,14 @@ class CreateAlianzaTable extends Migration
      */
     public function up()
     {
-        Schema::create('alianza', function (Blueprint $table) {
-            $table->increments('idAlianza');
-            $table->string('nombreAlianza',50);
-            $table->string('descripcionAlianza',500);
-            $table->string('urlAlianza',100);
-            $table->string('urlImagenAlianza',100);
+    Schema::create('miembrosEquipo', function (Blueprint $table) {
+            $table->increments('idMiembro');
+            $table->string('nombres',100);
+            $table->string('apellidoM',50);
+            $table->string('apellidoP',50);
+            $table->string('urlPerfil',100);
             $table->integer('idProyecto');
             $table->timestamps();
-
         });
     }
 
@@ -32,6 +31,6 @@ class CreateAlianzaTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('alianza');
+        //
     }
 }

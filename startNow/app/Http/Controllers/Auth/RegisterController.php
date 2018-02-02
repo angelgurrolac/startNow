@@ -1,9 +1,9 @@
 <?php
 
-namespace StartNow\Http\Controllers\Auth;
+namespace startnow\Http\Controllers\Auth;
 
-use StartNow\User;
-use StartNow\Http\Controllers\Controller;
+use startnow\User;
+use startnow\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
@@ -47,6 +47,8 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        
+       
         return Validator::make($data, [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -58,13 +60,25 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \StartNow\User
+     * @return \startnow\User
      */
     protected function create(array $data)
     {
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'Apeido_P' => $data['Apeido_P'],
+            'Apeido_M' => $data['Apeido_M'],
+            'Direccion' => $data['Direccion'],
+            'CP' => $data['CP'],
+            'Pais' => $data['Pais'],
+            'CD' => $data['CD'],
+            'Numero_Ext' => $data['Numero_Ext'],
+            'Numero_Cel' => $data['Numero_Cel'],
+            'Numero_Casa' => $data['Numero_Casa'],
+            'Sex' => $data['Sex'],
+            'Fecha' => $data['Fecha'],
+            'Perfil' => $data['Perfil'],
             'password' => bcrypt($data['password']),
         ]);
     }

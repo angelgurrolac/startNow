@@ -1,6 +1,6 @@
 <?php
 
-namespace StartNow\Providers;
+namespace startnow\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
