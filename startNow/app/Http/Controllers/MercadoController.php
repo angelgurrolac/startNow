@@ -1,11 +1,10 @@
 <?php
 
 namespace startnow\Http\Controllers;
-use startnow\equipo;
-use startnow\Youtube;
+use startnow\mercado;
 use Illuminate\Http\Request;
 
-class equipoController extends Controller
+class MercadoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,9 +13,10 @@ class equipoController extends Controller
      */
     public function index(Request $request) 
     {
-        $id = $request->input('idMiembro');
-        $miembrosequipo = miembrosequipo::select('nombres')->where('idMiembro',1)->get();
-        return view('informacion',['miembrosequipo'=>$miembrosequipo]);
+        $id = $request->input('idMercado');
+        $mercados = mercados::select('nombreMercado')->where('idMercado',1)->get();
+        //return view('informacion',['competencias'=>$competencias]);
+        dd($mercados);
     }
 
     /**

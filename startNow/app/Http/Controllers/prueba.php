@@ -3,7 +3,12 @@
 namespace startnow\Http\Controllers;
 use startnow\proyectos;
 use startnow\equipo;
+use startnow\competencias;
+use startnow\mercados;
 use startnow\Youtube;
+use startnow\productos;
+use startnow\etapas;
+use startnow\alianzas;
 use Illuminate\Http\Request;
 
 class prueba extends Controller
@@ -49,12 +54,36 @@ class prueba extends Controller
      */
     public function show($id)
     {
+
          
         $proyectos = proyectos::select()->where('idProyecto',$id)->get();
-        $miembrosEquipo = equipo::select()->where('idMiembro',$proyectos[0]->idMiembro)->get();
+
+        $miembrosequipo = equipo::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
+
+        $competencias=competencias::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
+        //dd($competencias);
+
+        $mercados=mercados::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
+        //dd($mercados);
+
+
+        $productos=productos::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
+        //dd($productos);
+        
+        $etapas=etapas::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
+
+        //dd($etapas);
+
+         $alianzas=alianzas::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
+
+        //dd($alianzas);
+
+
+
         $url="http://youtube.com/embed/".Youtube::parseVIdFromURL($proyectos[0]->videoUrl)."";
-        //dd($url);
-       return view('informacion',['proyectos'=>$proyectos,'URL'=>$url,'miembro'=>$miembrosEquipo ]);
+        //dd($miembrosequipo);
+       return view('informacion',['proyecto'=>$proyectos[0],'URL'=>$url,'miembrosequipo'=>$miembrosequipo,'competencias'=>$competencias,'mercados'=>$mercados,'productos'=>$productos,'etapas'=>$etapas,'alianzas'=>$alianzas]);
+
 
     }
 

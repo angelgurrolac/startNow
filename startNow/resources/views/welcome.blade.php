@@ -1,6 +1,3 @@
-
-   
-        
 </html>
 
 <html lang="en">
@@ -11,18 +8,27 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+  <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="css/estilos.css">
   <link rel="stylesheet" href="css/font-awesome.css">
 
   <script src="js/jquery-3.2.1.js"></script>
   <script src="js/main.js"></script>
 
+
+  
+
 </head>
 <body>
 
+  
 
-<div class="flex-center position-ref full-height">
+
+                        
+
+<div class="flex-center position-relative full-height">
 
             @if (Route::has('login'))
                 <div class="top-right links">
@@ -31,22 +37,23 @@
                     @else
                         <a href="{{ url('/login') }}">Login</a>
                         <a href="{{ url('/register') }}">Register</a>
+
                     @endif
                 </div>
             @endif
+
+<li><a href="{!!URL::to('/login')!!}"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
         </div>
-    </body>
-
-
-
-
+   
 
 <!--  Creacion  del Carousel manera responsiva -->
-<div class="container" align="bottom">
+<div class="container" align="bottom:100px">
 <div align="top-left"><img src="img/logo2.png" class="img-responsive "width="15%" height="15%"></div>
+</div>
 <br>
 <br>
 
+<div class="container" align="bottom:100pz;"> 
  <div id="myCarousel" class="carousel slide" data-ride="carousel" align="bottom">
     <!-- Indicators -->
     <ol class="carousel-indicators">
@@ -94,8 +101,12 @@
       <span class="sr-only">Next</span>
     </a>
 </div>
+
+</div>
+
+
 <br>
-<div class="">
+<div class="container 1">
   <center><h3>START NOW !</h3>
   <p><em>We love music!</em></p>
   <p>We have created a fictional band website. Lorem ipsum..</p>
@@ -105,9 +116,9 @@
 
 
  <!-- Div de proyectos con el arreglo construido para que lo hagarre por default-->
-
-<div id="proyectos">
-<div class="row">
+<div class="container" align="bottom:100pz;">
+  <div id="proyectos">
+    <div class="row">
 @foreach($proyectos as $proyecto ) <!-- Creacion del arreglo para que se itere el Div y ahorrar codigo-->
     <a href='{{ url('/info/' . $proyecto->idProyecto . ' ') }}'class='my-link'>
   <div class="col-md-4">   
@@ -117,13 +128,17 @@
     </a>
       <center> <p style="height:150px;">{!! $proyecto->descCorta !!}</p> <!-- Impresion de la variable desde la BD-->
   </div>
-</a>
+    </a>
 @endforeach
+  </div>
+  <br>
+  </div>
 </div>
-<br>
 
 
-    <div id="band" class="container text-center">
+
+
+    <div class="container" align="bottom:100pz;">
     <center><h3>THE BAND</h3> </center>
     <p align=left>We have created a fictional band website. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
     </div>
@@ -131,6 +146,7 @@
     <br>
 
 
+ <div id="band" class="container text-center">
     <h3 align=rigth>Preguntas Frecuentes </h3>
 
     <br>
@@ -218,9 +234,12 @@
   </div>
 </div>
 </div>
+</div>
+</div>
 
 
 <!-- Portafolio de proyectos -->
+<div class="container" align="bottom:100pz;">
 
 <div class="container-fluid text-center bg-grey">
   <h2>Campañas Nuevas.</h2>
@@ -250,8 +269,7 @@
       </div>
     </div>
 </div>
-
-
+</div>
 
   <div class="youtube" class="vid-responsive">
 
@@ -260,6 +278,32 @@
   </div>
 
 </div>
+</div>
+
+
+
+
+<br>
+<br>
+
+
+<!-- Footer -->
+<footer class="w3-container w3-padding-32 w3-theme-d1 w3-center">
+  <h4><strong>Siguenos.</strong></h4>
+ <div align=center><img src={{ asset('img/logo2.png') }} class="img-responsive "width="15%" height="15%"></div>
+  <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Facebook"><i class="fa fa-facebook"></i></a>
+  <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Twitter"><i class="fa fa-twitter"></i></a>
+  <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Google +"><i class="fa fa-google-plus"></i></a>
+  <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Google +"><i class="fa fa-instagram"></i></a>
+  <a class="w3-button w3-large w3-teal w3-hide-small" href="javascript:void(0)" title="Linkedin"><i class="fa fa-linkedin"></i></a>
+ 
+
+  <div style="position:relative;bottom:100px;z-index:1;" class="w3-tooltip w3-right">   
+    <a class="w3-button w3-theme" href="http://localhost:8080/startnow/public/home"><span class="w3-xlarge">
+    <i class="fa fa-chevron-circle-up"></i></span></a>
+  </div>
+  </footer>
+
 </body>
 </html>
 

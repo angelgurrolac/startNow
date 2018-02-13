@@ -1,12 +1,12 @@
 <?php
 
 namespace startnow\Http\Controllers;
-use startnow\equipo;
-use startnow\Youtube;
+use startnow\alianzas;
 use Illuminate\Http\Request;
 
-class equipoController extends Controller
+class alianzaController extends Controller
 {
+    {
     /**
      * Display a listing of the resource.
      *
@@ -14,9 +14,10 @@ class equipoController extends Controller
      */
     public function index(Request $request) 
     {
-        $id = $request->input('idMiembro');
-        $miembrosequipo = miembrosequipo::select('nombres')->where('idMiembro',1)->get();
-        return view('informacion',['miembrosequipo'=>$miembrosequipo]);
+        $id = $request->input('idAlianzas');
+        $alianzas = alianzas::select('nombreAlianza')->where('idAlianzas',1)->get();
+        //return view('informacion',['competencias'=>$competencias]);
+        dd($alianzas);
     }
 
     /**
@@ -89,5 +90,5 @@ class equipoController extends Controller
     {
         //
     }
-    
+
 }

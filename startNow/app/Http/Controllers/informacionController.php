@@ -27,7 +27,9 @@ class informacionController extends Controller
     public function index(Request $request){
         $id = $request->input('id');
         $proyectos = proyectos::select('nombre')->where('idProyecto',$id)->get();
-        return view('informacion',['proyectos'=>$proyectos]);
+        $miembrosequipo = miembrosequipo::select('nombres','apellidoP','apellidoM')->where('idMiembro',1)->get();
+        dd($miembrosequipo);
+        //return view('informacion',['proyectos'=>$proyectos,'miembrosequipo'=>   $miembrosequipo[0]]);
     }    
     
 }

@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class equipo extends Model
 {
-protected $table="miembrosEquipo";
+protected $table="miembrosequipo";
 
     public function scopeConsulta() {
 
-    	$miembrosEquipo = DB::table('miembrosEquipo')
+    	$miembrosequipo = DB::table('miembrosequipo')
     	->select('nombres')
     	->get();
 
-    	return $miembrosEquipo;
+    	return $miembrosequipo;
     }
 }

@@ -25,3 +25,5 @@ Route::resource('/info','prueba');
 
 
 Route::resource('/equipo','equipo');
+
+Route::resource('/competencia','competencia');
