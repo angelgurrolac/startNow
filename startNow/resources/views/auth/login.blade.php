@@ -13,8 +13,10 @@
                 <div class="panel-body">
 
 
-                    <form class="form-horizontal" method="POST" action="{{ route('login') }}">
-                        {{ csrf_field() }}
+
+
+                    <form class="form-horizontal" action="{{ 'route'=>'log.store,'method'=>'POST'}}">
+                        
 
                         
 

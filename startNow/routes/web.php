@@ -27,3 +27,9 @@ Route::resource('/info','prueba');
 Route::resource('/equipo','equipo');
 
 Route::resource('/competencia','competencia');
+
+Route::resource('usuario','UsuarioController');
+
+Route::resource('log','LogController');
+
+Route::get('logout','LogController@logout');

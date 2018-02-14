@@ -237,6 +237,7 @@
                             <label for="Perfil" class="col-md-4 control-label">Perfil</label>
                             <div class="col-md-6">
                                 <select class="form-control" name="Perfil">
+                                    <option>Seleccione uno</option>
                                     <option>Inversionista</option>
                                     <option>Emprendedor</option>
                                 </select>

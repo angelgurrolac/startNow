@@ -13,9 +13,13 @@
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="css/estilos.css">
   <link rel="stylesheet" href="css/font-awesome.css">
-
   <script src="js/jquery-3.2.1.js"></script>
   <script src="js/main.js"></script>
+  
+    {!!Html::style('css/bootstrap.min.css')!!}
+    {!!Html::style('css/metisMenu.min.css')!!}
+    {!!Html::style('css/sb-admin-2.css')!!}
+    {!!Html::style('css/font-awesome.min.css')!!}
 
 
   
