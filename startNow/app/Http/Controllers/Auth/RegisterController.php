@@ -3,9 +3,13 @@
 namespace startnow\Http\Controllers\Auth;
 
 use startnow\User;
+use Validator;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
 use startnow\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
+
 use Illuminate\Foundation\Auth\RegistersUsers;
+
+
 
 class RegisterController extends Controller
 {
@@ -19,7 +23,7 @@ class RegisterController extends Controller
     | provide this functionality without requiring any additional code.
     |
     */
-
+   
     use RegistersUsers;
 
     /**
@@ -34,9 +38,9 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct()
+     public function __construct()
     {
-        $this->middleware('guest');
+        $this->middleware('guest', ['except' => 'getLogout']);
     }
 
     /**

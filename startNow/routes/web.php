@@ -22,7 +22,7 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('/info','prueba');
-
+Route::post('/logon', 'LogController@store');
 
 Route::resource('/equipo','equipo');
 
@@ -30,6 +30,6 @@ Route::resource('/competencia','competencia');
 
 Route::resource('usuario','UsuarioController');
 
-Route::resource('log','LogController');
 
-Route::get('logout','LogController@logout');
+
+Route::get('/logout','LogController@logout');

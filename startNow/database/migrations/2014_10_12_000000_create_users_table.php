@@ -30,6 +30,8 @@ class CreateUsersTable extends Migration
             $table->string('Sex');
             $table->string('Fecha');
             $table->string('perfil');
+            $table->rememberToken();
+            $table->timestamps();
          
         });
     }

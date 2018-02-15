@@ -1,12 +1,14 @@
 <?php
 
 namespace startnow\Http\Controllers;
+use Illuminate\Http\Request;
 use Auth;
 use Session;
 use Redirect;
-use startnow\http\Requests\LoginRequest;
-use startnow\http\Controllers\Controller;
-use Illuminate\Http\Request;
+use startnow\Http\Requests;
+use startnow\Http\Requests\LoginRequest;
+use startnow\Http\Controllers\Controller;
+
 
 class LogController extends Controller
 {
@@ -31,16 +33,28 @@ class LogController extends Controller
      */
     public function store(LoginRequest $request)
     {
-        if(Auth::attempt(['email'=>$request['email'], 'password'=>$request['password']])){
-            return Redirect::to('admin');
-        }
-        Session::flash('message-error','Datos son incorrectos');
-        return Redirect::to('/');
+           $userdata = array(
+        'email'     => $request['email'],
+        'password'  => $request['password']
+    );
+           
+        if(Auth::attempt($userdata)){
+           return Redirect::to('home');}
+           else {        
+
+        // validation not successful, send back to form 
+        return Redirect::to('login');
+
+    }
+
+
+        //Session::flash('message-error','Datos son incorrectos');
+        //return Redirect::to('/');
     }
 
     public function logout(){
-        Auth::logout();
-        return Redirect::to('/');
+       session::flush();
+        return Redirect::to('/login');
     }
     /**
      * Display the specified resource.
