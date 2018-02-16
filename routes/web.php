@@ -33,3 +33,5 @@ Route::resource('usuario','UsuarioController');
 
 
 Route::get('/logout','LogController@logout');
+
+Route::resource('proyectos','ProyectoController');
