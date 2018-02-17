@@ -9,6 +9,7 @@ use startnow\Youtube;
 use startnow\productos;
 use startnow\etapas;
 use startnow\alianzas;
+use startnow\proyectos;
 use Illuminate\Http\Request;
 
 class prueba extends Controller
@@ -77,6 +78,12 @@ class prueba extends Controller
          $alianzas=alianzas::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
 
         //dd($alianzas);
+
+          $proyecto = proyectos::select()->where('idProyecto',$id)->get();
+          dd($proyecto);
+
+
+
 
 
 

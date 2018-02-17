@@ -1,7 +1,7 @@
 <?php
 
 namespace startnow\Http\Controllers;
-use strartnow\productos;
+
 use Illuminate\Http\Request;
 
 class productosController extends Controller

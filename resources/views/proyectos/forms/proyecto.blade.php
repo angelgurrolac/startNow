@@ -16,7 +16,7 @@
 </div>
 <div class="form-group">
 	{!!Form::label('videoUrl','Url del video:')!!}
-	{!!Form::text('metaMin',null,['class'=>'form-control', 'placeholder'=>'http://youtube/example'])!!}
+	{!!Form::text('videoUrl',null,['class'=>'form-control', 'placeholder'=>'http://youtube/example'])!!}
 </div>
 <div class="form-group">
 	{!!Form::label('MetaMin','Meta minima ($):')!!}
@@ -24,7 +24,7 @@
 </div>
 <div class="form-group">
 	{!!Form::label('MetaMax','Meta maxima ($):')!!}
-	{!!Form::text('descLarga',null,['class'=>'form-control', 'placeholder'=>'Ingresa una descripcion'])!!}
+	{!!Form::text('metaMax',null,['class'=>'form-control', 'placeholder'=>'Ingresa una descripcion'])!!}
 </div>
 <div class="form-group">
 	{!!Form::label('fechaInicio','Fecha de inicio:')!!}
@@ -55,8 +55,5 @@
 	{!!Form::text('propuestaValor',null,['class'=>'form-control', 'placeholder'=>'Propuesta de valor'])!!}
 </div>
 <div class="form-group">
-	{!!Form::hidden('idProducto' )!!}
-	{!!Form::hidden('idUsuario' )!!}
-	{!!Form::hidden('idMercado' )!!}
-	{!!Form::hidden('idMiembro' ) !!}
+	
 </div>

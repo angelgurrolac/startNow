@@ -3,6 +3,10 @@
 namespace startnow\Http\Controllers;
 
 use Illuminate\Http\Request;
+use startnow\Http\Requests;
+use Redirect;
+use Session;
+use startnow\proyectos;
 
 class ProyectoController extends Controller
 {
@@ -11,11 +15,15 @@ class ProyectoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $proyectos= \startnow\proyectos::paginate(2);
+        return view ('proyectos.create',compact('proyectos'));
     }
 
+
+
+ 
     /**
      * Show the form for creating a new resource.
      *
@@ -34,7 +42,29 @@ class ProyectoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        \startnow\proyectos::create([
+
+            'nombre' => $request['nombre'],
+            'descCorta' => $request['descCorta'],
+            'descLarga' => $request['descLarga'],
+            'imagenUrl' => $request['imagenUrl'],
+            'videoUrl' => $request['videoUrl'],
+            'metaMin' => $request['metaMin'],
+            'metaMax' => $request['metaMax'],
+            'fechaInicio' => $request['fechaInicio'],
+            'fechaFin' => $request['fechaFin'],
+            'idProducto' => '1',
+            'idUsuario' => '1',
+            'idMercado' => '1',
+            'numeroClientes' => $request['numeroClientes'],
+            'inversion' => $request['inversion'],
+            'valorMercado' => $request['valorMercado'],
+            'descComollegarClientes' => $request['descComollegarClientes'],
+            'propuestaValor' => $request['propuestaValor'],
+            'idMiembro' => '1',
+
+        ]);
+        return "Proyecto registrado";
     }
 
     /**
@@ -45,7 +75,7 @@ class ProyectoController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**
