@@ -7,6 +7,7 @@ use startnow\Http\Requests;
 use Redirect;
 use Session;
 use startnow\proyectos;
+use Illuminate\Routing\Route;
 
 class ProyectoController extends Controller
 {
@@ -15,10 +16,14 @@ class ProyectoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+
+    public function find(Route $route){
+        $this->proyecto = proyectos::find($route->getParameter('proyecto'));
+    }
+    public function index()
     {
-        $proyectos= \startnow\proyectos::paginate(2);
-        return view ('proyectos.create',compact('proyectos'));
+        $proyectos= \startnow\proyectos::paginate(5);
+        return view ('proyectos.index',compact('proyectos'));
     }
 
 
@@ -86,7 +91,8 @@ class ProyectoController extends Controller
      */
     public function edit($id)
     {
-        //
+       $proyecto = proyectos::find($id);
+        return view('proyectos.edit',['proyecto'=>$proyecto]);
     }
 
     /**
@@ -98,7 +104,11 @@ class ProyectoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $proyecto = proyectos::find($id);
+        $proyecto->fill($request->all());
+        $proyecto->save();
+        Session::flash('message','Proyecto Actualizado Correctamente');
+        return Redirect::to('/proyectos');
     }
 
     /**
@@ -109,6 +119,8 @@ class ProyectoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        proyectos::destroy($id);
+        Session::flash('message','Proyectos Eliminado Correctamente');
+        return Redirect::to('/proyectos');
     }
 }

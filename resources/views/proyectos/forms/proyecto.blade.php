@@ -3,16 +3,16 @@
 	{!!Form::text('nombre',null,['class'=>'form-control', 'placeholder'=>'Ingresa el Nombre de tu proyecto'])!!}
 </div>
 <div class="form-group">
-	{!!Form::label('Descripcion corta', 'Descripción corta (Max. 100)')!!}
-	{!!Form::text('descCorta',null,['class'=>'form-control', 'placeholder'=>'Ingresa una pequeña descripcion'])!!}
+	{!!Form::label('Descripcion corta', 'Descripción corta (Max. 500)')!!}
+	{!!Form::textarea('descCorta',null,['class'=>'form-control', 'placeholder'=>'Ingresa una pequeña descripcion', 'maxlength' => '500', 'size' =>'30x4'])!!}
 </div>
 <div class="form-group">
-	{!!Form::label('Descripcion Larga','Descripción larga (Max. 200):')!!}
-	{!!Form::text('descLarga',null,['class'=>'form-control', 'placeholder'=>'Ingresa una descripcion'])!!}
+	{!!Form::label('Descripcion Larga','Descripción larga (Max. 2000):')!!}
+	{!!Form::textarea('descLarga',null,['class'=>'form-control', 'placeholder'=>'Ingresa una descripcion', 'maxlength' => '2000',  'size' =>'30x6'])!!}
 </div>
 <div class="form-group">
 	{!!Form::label('Imagen','Imagen:')!!}
-	{!!Form::file('imagenUrl')!!}
+	{!!Form::file('imagenUrl', ['accept' => 'image/*'])!!}
 </div>
 <div class="form-group">
 	{!!Form::label('videoUrl','Url del video:')!!}
@@ -20,23 +20,23 @@
 </div>
 <div class="form-group">
 	{!!Form::label('MetaMin','Meta minima ($):')!!}
-	{!!Form::text('metaMin',null,['class'=>'form-control', 'placeholder'=>'Meta minima'])!!}
+	{!!Form::number('metaMin',null,['class'=>'form-control', 'placeholder'=>'Meta minima'])!!}
 </div>
 <div class="form-group">
 	{!!Form::label('MetaMax','Meta maxima ($):')!!}
-	{!!Form::text('metaMax',null,['class'=>'form-control', 'placeholder'=>'Ingresa una descripcion'])!!}
+	{!!Form::number('metaMax',null,['class'=>'form-control', 'placeholder'=>'Ingresa una descripcion'])!!}
 </div>
 <div class="form-group">
 	{!!Form::label('fechaInicio','Fecha de inicio:')!!}
-	{!!Form::text('fechaInicio',null,['class'=>'form-control', 'placeholder'=>'dd/mm/yyyy'])!!}
+	{!!Form::date('fechaInicio', \Carbon\Carbon::now(), ['class' => 'form-control'])!!}
 </div>
 <div class="form-group">
 	{!!Form::label('fechaFin','Fecha de termino:')!!}
-	{!!Form::text('fechaFin',null,['class'=>'form-control', 'placeholder'=>'dd/mm/yyyy'])!!}
+	{!!Form::date('fechaFin', \Carbon\Carbon::now(), ['class' => 'form-control'] )!!}
 </div>
 <div class="form-group">
 	{!!Form::label('numeroClientes','Numero de clientes:')!!}
-	{!!Form::text('numeroClientes',null,['class'=>'form-control', 'placeholder'=>'Cantidad de clientes'])!!}
+	{!!Form::number('numeroClientes',null,['class'=>'form-control', 'placeholder'=>'Cantidad de clientes'])!!}
 </div>
 <div class="form-group">
 	{!!Form::label('inversion','Inversion:')!!}

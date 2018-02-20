@@ -18,7 +18,7 @@ class UsuarioController extends Controller
     public function index()
     {
     
-    $users= \startnow\user::paginate(2);
+    $users= \startnow\user::paginate(10);
     return view ('usuario.index',compact('users'));
 
 

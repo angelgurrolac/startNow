@@ -17,6 +17,5 @@ class proyectos extends Model
    		$name = Carbon::now()->second.$imagenUrl->getClientOriginalName();
    		\Storage::disk('local')->put($name, \File::get($imagenUrl));
    }
-    
 }
 
