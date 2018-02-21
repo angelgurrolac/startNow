@@ -24,7 +24,7 @@ class TodosController extends Controller
         
        
 
-       # $proyectos = proyectos::select('nombre')->where('idProyecto',1)->get();
+       #         $proyectos = proyectos::select('nombre')->where('idProyecto',1)->get();
         return view('todos',['proyectos'=>$proyectos]);
     }
 

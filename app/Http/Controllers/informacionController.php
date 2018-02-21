@@ -13,16 +13,7 @@ class informacionController extends Controller
      * @return void
      */
 
- 
-    // public function index($id)
-    // {
-        
-    //      //$informacion = informacion::informacion();
-        
-    //     $proyectos = proyectos::limit(1)->get(); 
-    //     return view('informacion',['proyectos'=>$proyectos]);
 
-    // }
 
     public function index(Request $request){
         $id = $request->input('id');

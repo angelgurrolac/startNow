@@ -25,10 +25,6 @@ class HomeController extends Controller
     {
          $proyectos = proyectos::limit(6)->get(); 
 
-         // DB::table('proyectos')->select('nombre', 'imagenUrl')->get();
-         //dd($proyectos);
-        //$proyectos=proyectos::limit=>(3);
-
         return view('welcome',['proyectos'=>$proyectos]);
     }
 }

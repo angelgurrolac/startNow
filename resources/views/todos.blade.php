@@ -8,12 +8,9 @@
   <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">      
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link rel="stylesheet" href="css/estilos.css">
-  <link rel="stylesheet" href="css/font-awesome.css">
   <script src="js/jquery-3.2.1.js"></script>
   <script src="js/main.js"></script>
   {!!Html::style('css/bootstrap.min.css')!!}
-  {!!Html::style('css/metisMenu.min.css')!!}
   {!!Html::style('css/sb-admin-2.css')!!}
   {!!Html::style('css/font-awesome.min.css')!!}
   {!!Html::style('css/navStyle.css')!!}
@@ -42,11 +39,19 @@
       height: 345px;
       max-height: 345px;
     }
+    .card a, .card a:hover {
+      text-decoration: none;
+      color: black;
+    }
+    .nav ul {
+      width: 100%;
+    }
   </style>
 
 </head>
 <body>
 @include('layouts.nav')
+<br>
 <img src="img/Todosbanner.jpg" style='width:100%; height: 50%;'>
 
 
@@ -54,15 +59,17 @@
 <div class="miContainer text-center bg-grey">
   <h2>Todos Nuestros Proyectos.</h2>
   <br>
-    
     @foreach($proyectos as $proyecto )
+     <a href='{{ url('/info/' . $proyecto->idProyecto . ' ') }}'>
     <div class="card col-sm-4" style="margin:10px; width:60rem;">
       <img class="card-img-top" src="proyectosImg/{!!$proyecto->imagenUrl!!}" alt="Card image cap">
       <div class="card-body">
+        
         <h5 class="card-title">{!!$proyecto->nombre!!}</h5>
         <p class="card-text">{!!$proyecto->descCorta!!}</p>
       </div>
     </div>
+    </a>
     @endforeach
 
 </div>

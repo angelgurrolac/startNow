@@ -19,5 +19,17 @@ function main(){
 		}
  
 	});
- 
-};
+
+ 	$('.submenu').click(function(){
+		$(this).children('.children').slideToggle();
+	});
+	$(document).scroll(function() {
+		if (contador ==	 0) {
+			$('nav').animate({
+				left: '-100%'
+			});
+			contador = 1;
+		}
+	});
+}
+

@@ -12,6 +12,21 @@ class alianzaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    protected function validator(array $data)
+    {
+        
+       
+        return Validator::make($data, [
+            'nombreAlianza' => 'required|string|max:50',
+            'descripcionAlianza' => 'required|string|max:1000',
+            'urlAlianza' => 'required|string|max:200',
+            'urlImagenAlianza' => 'required|string|max:200',
+        ]);
+    }
+
+
+
     public function index(Request $request) 
     {
         $id = $request->input('idAlianzas');

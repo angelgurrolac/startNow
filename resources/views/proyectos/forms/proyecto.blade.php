@@ -40,7 +40,7 @@
 </div>
 <div class="form-group">
 	{!!Form::label('inversion','Inversion:')!!}
-	{!!Form::number('inversion',null,['class'=>'form-control', 'placeholder'=>'inversion'])!!}
+	{!!Form::number('inversion','null',['class'=>'form-control', 'placeholder'=>'inversion'])!!}
 
 </div>
 <div class="form-group">
@@ -56,5 +56,5 @@
 	{!!Form::text('propuestaValor',null,['class'=>'form-control', 'placeholder'=>'Propuesta de valor'])!!}
 </div>
 <div class="form-group">
-	
+	{!!Form::text('idUsuario',Auth::user()->id,['class'=>'form-control'])!!}
 </div>

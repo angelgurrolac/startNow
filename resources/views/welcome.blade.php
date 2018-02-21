@@ -1,4 +1,4 @@
-</html>
+ </html>
 
 <html lang="en">
 <head>
@@ -108,14 +108,14 @@
   <div class="col-md-4">   
    <center> <p class="text-center"><center><strong style="height:50px;">{!! $proyecto->nombre !!}</strong></center></p><br> <!-- Impresion de la variable desde la BD-->
     <a href="http://localhost:8080/startnow/public/info" data-toggle="collapse">
-      <img src="{!! $proyecto->imagenUrl!!}" class="img-circle person" class="img-responsive" alt="Random Name">
+      <img src="proyectosImg/{!! $proyecto->imagenUrl!!}" class="img-circle person" class="img-responsive" alt="Random Name">
     </a>
       <center> <p style="height:150px;">{!! $proyecto->descCorta !!}</p> <!-- Impresion de la variable desde la BD-->
   </div>
     </a>
 @endforeach
   <div class="center">
-      <a href="#">Ver mas</a>
+      <a href="todos">Ver mas</a>
   </div>
   </div>
   <br>
@@ -261,15 +261,11 @@
   <div class="youtube" class="vid-responsive">
 
   <div align="center">
-          <iframe width="420" height="315" id="vid" src="https://www.youtube.com/embed/YDIew2iEvBw" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+          <iframe width="900" height="500" id="vid" src="https://www.youtube.com/embed/YDIew2iEvBw" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
   </div>
 
 </div>
 </div>
-
-
-
-
 <br>
 <br>
 
@@ -286,7 +282,7 @@
  
 
   <div style="position:relative;bottom:100px;z-index:1;" class="w3-tooltip w3-right">   
-    <a class="w3-button w3-theme" href="http://localhost:8080/startnow/public/home"><span class="w3-xlarge">
+    <a class="w3-button w3-theme" href="#up"><span class="w3-xlarge">
     <i class="fa fa-chevron-circle-up"></i></span></a>
   </div>
   </footer>

@@ -4,18 +4,46 @@ namespace startnow\Http\Controllers;
 
 use Illuminate\Http\Request;
 use startnow\Http\Requests;
+use startnow\Http\Requests\UserCreateRequest;
+use startnow\Http\Requests\UserUpdateRequest;
 use startnow\user;
 use Redirect;
 use Session;
-#use startnow\User;
+
 use startnow\Http\Controllers\Controller;
 class UsuarioController extends Controller
 {
 
+    protected function validator(array $data)
+    {
+        
+       
+        return Validator::make($data, [
+            'name' => 'required|string|max:50',
+            'email' => 'required|unique:users|string|max:290',
+            'password' => 'required|string|max:15',
+            'Apeido_P' => 'required|string|max:50',
+            'Apeido_M' => 'required|string|max:50',
+            'metaMin' => 'required|money_format|max:7',
+            'metaMax' => 'required|numeric|max:7',
+            'Direccion' => 'required|string|max:300',
+            'CP' => 'required|numeric|max:10',
+            'Pais' => 'required|string|max:100',
+            'Numero_Ext' => 'required|numeric|max:10',
+            'Numero_Cel' => 'required|numeric|max:10',
+            'Numero_Casa' => 'required|numeric|max:10',
+            'Sex' => 'required|string|max:10',
+            'Fecha' => 'required|date(format)|max:10',
+            'Perfil' => 'required|string|max:100',
+          
+        ]);
+    }
+
+
 public function __construct(){
         $this->middleware('auth');
         $this->middleware('admin');
-        $this->middleware('@find',['only' => ['edit','update','destroy']]);
+        #$this->middleware('@find',['only' => ['edit','update','destroy']]);
     }
     public function find(Route $route){
         $this->user = User::find($route->getParameter('usuario'));
@@ -30,9 +58,6 @@ public function __construct(){
     
     $users= \startnow\user::paginate(10);
     return view ('usuario.index',compact('users'));
-
-
-
     }
     /**
      * Show the form for creating a new resource.
@@ -51,7 +76,7 @@ public function __construct(){
      */
 
 
-    public function store(Request $request)
+    public function store(UserCreateRequest $request)
     {
         \startnow\User::create([
 
@@ -102,7 +127,7 @@ public function __construct(){
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UserUpdateRequest $request, $id)
     {
     
         $user = User::find($id);

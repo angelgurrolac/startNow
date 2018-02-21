@@ -4,13 +4,20 @@ namespace startnow\Http\Controllers;
 
 use Illuminate\Http\Request;
 use startnow\Http\Requests;
+use startnow\Http\Requests\ProyectoCreateRequest;
+use startnow\Http\Requests\ProyectoUpdateRequest;
 use Redirect;
 use Session;
 use startnow\proyectos;
 use Illuminate\Routing\Route;
 
+use startnow\Http\Controllers\Controller;
+
+
+
 class ProyectoController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -26,9 +33,31 @@ class ProyectoController extends Controller
         return view ('proyectos.index',compact('proyectos'));
     }
 
-   
-
-
+    protected function validator(array $data)
+    {
+        
+       
+        return Validator::make($data, [
+            'nombre' => 'required|unique:proyectos|string|max:50',
+            'descCorta' => 'required|string|max:290',
+            'descLarga' => 'required|string|max:1000',
+            'imagenUrl' => 'required|string|max:150',
+            'videoUrl' => 'required|string|max:150',
+            'metaMin' => 'required|money_format|max:7',
+            'metaMax' => 'required|numeric|max:7',
+            'fechaInicio' => 'required|date',
+            'fechaFin' => 'required|',
+            'idProducto' => 'required|numeric|max:10',
+            'idMercado' => 'required|numeric|max:10',
+            'idUsuario' => 'required|numeric|max:10',
+            'numeroClientes' => 'required|numeric|max:10',
+            'inversion' => 'required|string|max:7',
+            'valorMercado' => 'required|string|max:290',
+            'descComollegarClientes' => 'required|string|max:1000',
+            'propuestaValor' => 'required|string|max:500',
+            'idMiembro' => 'required|numeric|max:10',
+        ]);
+    }
  
     /**
      * Show the form for creating a new resource.
@@ -46,7 +75,7 @@ class ProyectoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProyectoCreateRequest $request)
     {
         \startnow\proyectos::create([
 
@@ -72,6 +101,8 @@ class ProyectoController extends Controller
         ]);
         return "Proyecto registrado";
     }
+
+
 
     /**
      * Display the specified resource.
@@ -104,7 +135,7 @@ class ProyectoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ProyectoUpdateRequest $request, $id)
     {
         $proyecto = proyectos::find($id);
         $proyecto->fill($request->all());

@@ -26,7 +26,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Start Now Administrador</a>
+                <a class="navbar-brand" href="{!!URL::to('home')!!}">Start Now Administrador</a>
             </div>
            
 

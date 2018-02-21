@@ -2,30 +2,29 @@
 <head>
 	<title> Informacion proyectos</title>
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link rel="stylesheet" href="css/estilos.css">
-  <link rel="stylesheet" href="css/font-awesome.css">
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <script src="js/jquery-3.2.1.js"></script>
-  <script src="js/main.js"></script>
   <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="../js/main.js"></script>
+  {!!Html::style('css/navStyle.css')!!}
 
-<div align="top-left"><img src={{ asset('img/logo2.png') }} class="img-responsive "width="15%" height="15%"></div>
+  <style type="text/css">
+    nav ul {
+      width: 100%;
+    }
+  </style>
+
 </head>
 
 
 
 <body>
-
+@include('layouts.nav')
 
 <!-- impresion centrada del nombre del proyecto -->
 <center><h2>{!! $proyecto->nombre !!}</h2></center>
@@ -36,10 +35,11 @@
 <div class="container">
   <div class="row">
     <div class="col-md-6">
-	<img aling=rigth src="{!! $proyecto->imagenUrl!!}" class="img-responsive "width="50%" height="50%" alt="Random Name">
+	     <img aling=rigth src="../proyectosImg/{!!$proyecto->imagenUrl!!}" class="img-responsive "width="70%" alt="Random Name">
     </div>
 <!--- Creacion de la seccion de la tabla muestra datos del proyecto -->
 <div class="col-md-6">
+  <br><br><br>
 <table class="table">
   <thead>
     <tr>
@@ -52,8 +52,8 @@
   </thead>
   <tbody>
     <tr>
-      <td>{!! $proyecto->metaMax!!}</td>
-      <td>{!! $proyecto->metaMin!!}</td>
+      <td>${!! $proyecto->metaMax!!}</td>
+      <td>${!! $proyecto->metaMin!!}</td>
        <td>{!! $proyecto->fechaInicio!!}</td>
       <td>{!! $proyecto->fechaFin!!}</td>
     </tr>
@@ -188,36 +188,27 @@
 <!-- Seccion donde se realiza  la competencia directa del produto-->
 <hr align=center> </hr>
 <h2 align=center> Competencia directa </h2>
+
 <div class="container" align="bottom:100pz;">
 <div class="container">
 <br>
 <br>
 <br>
+<div class="row justify-content-center">
 @foreach($competencias as $competencia )
- <center> <div class="col-sm-4">
-  <h3><strong>{!!$competencia->nombreCompetencia!!}</strong></h3>
-  
-  <br>
-  <br>
+ <div class="col-sm-4" style="width:100%">
   <div class="w3-card-4" style="width:%100">
     <img src="{!! $competencia->urlImagenCompetencia!!}" alt="Norway" style="width:100%">
-    <div class="w3-container w3-center">
-    </div>
-  </div>
-  <br>
-  <br>
-<h2>{!!$competencia->nombreCompetencia!!}</h2>
+    <h2>{!!$competencia->nombreCompetencia!!}</h2>
   <p>{!!$competencia->descripcionCompetencia!!}</p>
-</div></center>
+  </div>
+</div>
 @endforeach
-<br>
-<br>
 </div>
 </div>
+</div>
 <br>
 <br>
-
-
 <!-- Seccion donde se realiza el acomodo del equipo que desarrollo el proyecto -->  
 
 <!--div class="container" align="bottom:100px;"-->
@@ -226,28 +217,20 @@
 <br>
 <br>
 <br>
+<div class="row">
 @foreach($miembrosequipo as $miembro )
- <center> <div class="col-sm-4">
-  <h3><strong>{!!$miembro->nombres.' '.$miembro->apellidoP.' '.$miembro->apellidoM!!}</strong></h3>
-  <a class="w3-button w3-large w3-teal w3-hide-small" href="{!!$miembro->urlPerfil!!}" title="Linkedin"><i class="fa fa-linkedin"></i></a>
-  <br>
-  <br>
-  <br>
-  <br>
-  <div class="w3-card-4" style="width:%100">
+  <div class="col-sm-4">
+  <div class="w3-card-4" style="width:%100; text-align:center">
+    <h4>{!!$miembro->nombres.' '.$miembro->apellidoP.' '.$miembro->apellidoM!!}</h4>
+    <a class="w3-button w3-large w3-teal w3-hide-small" href="{!!$miembro->urlPerfil!!}" title="Linkedin"><i class="fa fa-linkedin"></i></a>
     <img src="{!! $miembro->imagenUrl!!}" alt="Norway" style="width:100%">
-    <div class="w3-container w3-center">
-    </div>
+    <p>{!!$miembro->puesto!!}</p>
+    <p>{!!$miembro->descripcion!!}</p>
   </div>
-  <br>
-  <br>
-  <p>{!!$miembro->puesto!!}</p>
-  <p>{!!$miembro->descripcion!!}</p>
-</div></center>
+</div>
 @endforeach
 <br>
 <br>
-</div>
 </div>
 <br>
 <br>
@@ -273,25 +256,14 @@
       @endforeach
     </div>
   </div>
+</div>
   <br>
-
-
-
-
-
-
-
-
-
-
-
-<div class="container">
-    <div class="footer">
-      <!-- Footer -->
-<footer class="w3-container w3-padding-32 w3-theme-d1 w3-center">
+</div>
+  <!-- Footer -->
+<footer class=" w3-padding-32 w3-theme-d1 w3-center" style="width:100%;">
       
   <h4><strong>Siguenos.</strong></h4>
- <div align=center><img src={{ asset('img/logo2.png') }} class="img-responsive "width="15%" height="15%"></div>
+  <div align=center><img src={{ asset('img/logo2.png') }} class="img-responsive "width="15%" height="15%"></div>
   <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Facebook"><i class="fa fa-facebook"></i></a>
   <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Twitter"><i class="fa fa-twitter"></i></a>
   <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Google +"><i class="fa fa-google-plus"></i></a>
@@ -301,11 +273,9 @@
 
     <div style="position:relative;bottom:100px;z-index:1;" class="w3-tooltip w3-right">
     <span class="w3-text w3-padding w3-teal w3-hide-small">Go To Top</span>   
-    <a class="w3-button w3-theme" href="#myPage"><span class="w3-xlarge">
+    <a class="w3-button w3-theme" href="#up"><span class="w3-xlarge">
     <i class="fa fa-chevron-circle-up"></i></span></a>
     </div>
-      </div>
-  </div>
 </footer>
 
 
