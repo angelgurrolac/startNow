@@ -26,6 +26,7 @@ class ProyectoController extends Controller
         return view ('proyectos.index',compact('proyectos'));
     }
 
+   
 
 
  
@@ -91,7 +92,8 @@ class ProyectoController extends Controller
      */
     public function edit($id)
     {
-       $proyecto = proyectos::find($id);
+      
+        $proyecto = proyectos::find($id);
         return view('proyectos.edit',['proyecto'=>$proyecto]);
     }
 

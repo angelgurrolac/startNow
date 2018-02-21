@@ -1,6 +1,8 @@
 <?php
 
 namespace startnow\Http\Controllers;
+
+use Illuminate\Http\Request;
 use startnow\proyectos;
 use startnow\equipo;
 use startnow\competencias;
@@ -9,20 +11,21 @@ use startnow\Youtube;
 use startnow\productos;
 use startnow\etapas;
 use startnow\alianzas;
-use Illuminate\Http\Request;
 
-class prueba extends Controller
+class TodosController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+   public function index()
     {
-        //$id = $request->input('id');
-        $proyectos = proyectos::select('nombre')->where('idProyecto',1)->get();
-        return view('informacion',['proyectos'=>$proyectos]);
+
+    	$proyectos = proyectos::all();
+
+
+
+        
+       
+
+       # $proyectos = proyectos::select('nombre')->where('idProyecto',1)->get();
+        return view('todos',['proyectos'=>$proyectos]);
     }
 
     /**
@@ -58,37 +61,12 @@ class prueba extends Controller
          
         $proyectos = proyectos::select()->where('idProyecto',$id)->get();
 
-        $miembrosequipo = equipo::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
-
-        $competencias=competencias::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
-        //dd($competencias);
-
-        $mercados=mercados::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
-        //dd($mercados);
-
-
-        $productos=productos::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
-        //dd($productos);
-        
-        $etapas=etapas::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
-
-        //dd($etapas);
-
-         $alianzas=alianzas::select()->where('idProyecto',$proyectos[0]->idProyecto)->get();
-
-        //dd($alianzas);
-
-          $proyecto = proyectos::select()->where('idProyecto',$id)->get();
-          #dd($proyecto);
-
-
-
-
+     
 
 
         $url="http://youtube.com/embed/".Youtube::parseVIdFromURL($proyectos[0]->videoUrl)."";
         //dd($miembrosequipo);
-       return view('informacion',['proyecto'=>$proyectos[0],'URL'=>$url,'miembrosequipo'=>$miembrosequipo,'competencias'=>$competencias,'mercados'=>$mercados,'productos'=>$productos,'etapas'=>$etapas,'alianzas'=>$alianzas]);
+       return view('todos',['proyecto'=>$proyectos[0],'URL'=>$url,'miembrosequipo'=>$miembrosequipo,'competencias'=>$competencias,'mercados'=>$mercados,'productos'=>$productos,'etapas'=>$etapas,'alianzas'=>$alianzas]);
 
 
     }
@@ -126,5 +104,4 @@ class prueba extends Controller
     {
         //
     }
-    
 }

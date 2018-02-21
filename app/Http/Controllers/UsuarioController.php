@@ -7,9 +7,19 @@ use startnow\Http\Requests;
 use startnow\user;
 use Redirect;
 use Session;
+#use startnow\User;
 use startnow\Http\Controllers\Controller;
 class UsuarioController extends Controller
 {
+
+public function __construct(){
+        $this->middleware('auth');
+        $this->middleware('admin');
+        $this->middleware('@find',['only' => ['edit','update','destroy']]);
+    }
+    public function find(Route $route){
+        $this->user = User::find($route->getParameter('usuario'));
+    }
     /**
      * Display a listing of the resource.
      *

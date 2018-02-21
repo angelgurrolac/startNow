@@ -40,7 +40,8 @@
 </div>
 <div class="form-group">
 	{!!Form::label('inversion','Inversion:')!!}
-	{!!Form::text('inversion',null,['class'=>'form-control', 'placeholder'=>'inversion'])!!}
+	{!!Form::number('inversion',null,['class'=>'form-control', 'placeholder'=>'inversion'])!!}
+
 </div>
 <div class="form-group">
 	{!!Form::label('valorMercado','Valor en el mercado:')!!}

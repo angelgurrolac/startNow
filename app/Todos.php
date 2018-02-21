@@ -1,10 +1,12 @@
 <?php
+
 namespace startnow;
 
 use Illuminate\Database\Eloquent\Model;
 
-class informacion extends Model
+class Todos extends Model
 {
+    {
     protected $table="proyectos";
 
     public function scopeConsulta() {
@@ -16,4 +18,6 @@ class informacion extends Model
     	return $proyecto;
     }
     
+}
+
 }

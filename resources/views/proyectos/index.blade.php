@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@include('alerts.success')
 	<div class="proyectos">
 		
 		@section('content')
@@ -19,7 +20,7 @@
 					<td class="col-sm-4">{{$proyecto->descCorta}}</td>
 					<td class="col-sm-1"></td>
 					<td>
-						{!!link_to_route('proyectos.edit', $title = 'Editar', $parameters = $proyecto->id, $attributes = ['class'=>'btn btn-primary'])!!}
+						{!!link_to_route('proyectos.edit', $title = 'Editar', $parameters = $proyecto->idProyecto, $attributes = ['class'=>'btn btn-primary'])!!}
 					</td>
 				</tbody>
 			@endforeach

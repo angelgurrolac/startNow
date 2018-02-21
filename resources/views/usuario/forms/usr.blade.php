@@ -4,7 +4,7 @@
 	</div>
 <div class="form-group">
 		{!!Form::label('email','Correo:')!!}
-		{!!Form::text('email',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
+		{!! Form::email('email', null, ['class' => 'form-control' , 'required' => 'required']) !!}
 	</div>
 
 <div class="form-group">
@@ -26,7 +26,7 @@
 
 <div class="form-group">
 		{!!Form::label('CP','Codigo Postal:')!!}
-		{!!Form::text('CP',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
+		{!!Form::number('CP',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
 	</div>
 
 
@@ -42,17 +42,19 @@
 
 	<div class="form-group">
 		{!!Form::label('Numero_ext','Numero Exterior:')!!}
-		{!!Form::text('Numero_Ext',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
+		{!!Form::number('Numero_Ext',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
 	</div>
 
 <div class="form-group">
 		{!!Form::label('Numero_cel','Numero Celular:')!!}
-		{!!Form::text('Numero_Cel',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
+		{!!Form::number('Numero_Cel',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
+
+		
 	</div>
 
 <div class="form-group">
 		{!!Form::label('Numero_casa','Numero de casa:')!!}
-		{!!Form::text('Numero_Casa',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
+		{!!Form::number('Numero_Casa',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
 	</div>
 <div class="form-group">
 		{!!Form::label('Sex','Sexo:')!!}
@@ -60,7 +62,7 @@
 	</div>
 <div class="form-group">
 		{!!Form::label('Fecha','Fecha:')!!}
-		{!!Form::text('Fecha',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
+		{!!Form::date('fechaInicio', \Carbon\Carbon::now(), ['class' => 'form-control'])!!}
 	</div>
 
 	<div class="form-group">

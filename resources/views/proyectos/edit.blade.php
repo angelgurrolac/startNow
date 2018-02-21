@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 	@section('content')
-		  	{!!Form::model($proyecto,['route' => ['proyectos.update',$proyecto->id], 'method'=>'PUT','files' => true])!!}
+		  	{!!Form::model($proyecto,['route' => ['proyectos.update',$proyecto], 'method'=>'PUT','files' => true])!!}
 		  		@include('proyectos.forms.proyecto')
 				{!!Form::submit('Actualizar',['class'=>'btn btn-primary'])!!}
 			{!!Form::close()!!}

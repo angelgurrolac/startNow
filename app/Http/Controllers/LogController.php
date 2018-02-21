@@ -33,7 +33,7 @@ class LogController extends Controller
      */
     public function store(LoginRequest $request)
     {
-           $userdata = array(
+        $userdata = array(
         'email'     => $request['email'],
         'password'  => $request['password']
     );

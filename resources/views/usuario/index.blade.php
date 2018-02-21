@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 
 	
-
-
+@include('alerts.success')
+	@section('content')
 	<div class="users">
 		
-		@section('content')
+		
 		<table class="table">
 			<thead>
 				<th>Nombre</th>

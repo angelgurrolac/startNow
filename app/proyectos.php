@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class proyectos extends Model 
 {
     protected $table="proyectos";
+    protected $primaryKey = 'idProyecto';
 
    protected $fillable = ['nombre', 'descCorta', 'descLarga','imagenUrl','videoUrl','metaMin','metaMax','fechaInicio','fechaFin', 'idProducto','idUsuario','idMercado','numeroClientes','inversion','valorMercado', 'descComollegarClientes', 'propuestaValor', 'idMiembro'];
 
