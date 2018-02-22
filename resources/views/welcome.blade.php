@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">      
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link rel="stylesheet" href="css/estilos.css">
   <link rel="stylesheet" href="css/font-awesome.css">
   <script src="js/jquery-3.2.1.js"></script>
   <script src="js/main.js"></script>
@@ -227,38 +226,7 @@
 
 <!-- Portafolio de proyectos -->
 <div class="container" align="bottom:100pz;">
-
-<div class="container-fluid text-center bg-grey">
-  <h2>Campañas Nuevas.</h2>
-  <br>
-  <h4>Conoce mas campañas de innovacion.</h4>
-  <div class="row text-center">
-    <div class="col-sm-4">
-      <div class="thumbnail">
-        <img src="img/cel.jpg" alt="Paris">
-        <p><strong>Paris</strong></p>
-        <p>Yes, we built Paris</p>
-      </div>
-
-    </div>
-    <div class="col-sm-4">
-      <div class="thumbnail">
-        <img src="img/lampara.jpg" alt="New York">
-        <p><strong>New York</strong></p>
-        <p>We built New York</p>
-      </div>
-    </div>
-    <div class="col-sm-4">
-      <div class="thumbnail">
-        <img src="img/cien.jpg" alt="San Francisco">
-        <p><strong>San Francisco</strong></p>
-        <p>Yes, San Fran is ours</p>
-      </div>
-    </div>
-</div>
-</div>
-
-  <div class="youtube" class="vid-responsive">
+<div class="youtube" class="vid-responsive">
 
   <div align="center">
           <iframe width="900" height="500" id="vid" src="https://www.youtube.com/embed/YDIew2iEvBw" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>

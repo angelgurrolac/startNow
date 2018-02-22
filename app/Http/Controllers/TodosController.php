@@ -17,12 +17,7 @@ class TodosController extends Controller
    public function index()
     {
 
-    	$proyectos = proyectos::all();
-
-
-
-        
-       
+    	$proyectos = proyectos::all();       
 
        #         $proyectos = proyectos::select('nombre')->where('idProyecto',1)->get();
         return view('todos',['proyectos'=>$proyectos]);
