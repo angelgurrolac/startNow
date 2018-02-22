@@ -36,8 +36,8 @@
       overflow: hidden;
     }
     .card img {
-      height: 345px;
-      max-height: 345px;
+      height: 340px;
+      max-height: 340px;
     }
     .card a, .card a:hover {
       text-decoration: none;
@@ -61,17 +61,15 @@
   <br>
     @foreach($proyectos as $proyecto )
      <a href='{{ url('/info/' . $proyecto->idProyecto . ' ') }}'>
-    <div class="card col-sm-4" style="margin:10px; width:60rem;">
+    <div class="card col-sm-4" style="margin:10px; width:50rem;">
       <img class="card-img-top" src="proyectosImg/{!!$proyecto->imagenUrl!!}" alt="Card image cap">
       <div class="card-body">
-        
         <h5 class="card-title">{!!$proyecto->nombre!!}</h5>
         <p class="card-text">{!!$proyecto->descCorta!!}</p>
       </div>
     </div>
     </a>
     @endforeach
-
 </div>
 
 </body>

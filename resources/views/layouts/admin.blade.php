@@ -11,6 +11,11 @@
     {!!Html::style('css/metisMenu.min.css')!!}
     {!!Html::style('css/sb-admin-2.css')!!}
     {!!Html::style('css/font-awesome.min.css')!!}
+    <script type="text/javascript" src="{{ asset('js/jquery.min.js') }}"></script>
+    
+    <script type="text/javascript" src="{{ asset('js/money.js') }}"></script>
+
+
 </head>
 
 <body>
@@ -100,6 +105,7 @@
     {!!Html::script('js/bootstrap.min.js')!!}
     {!!Html::script('js/metisMenu.min.js')!!}
     {!!Html::script('js/sb-admin-2.js')!!}
+    <script type="text/javascript" src="{{ asset('js/jquery.formatCurrency-1.4.0.js') }}"></script>
 
 </body>
 

@@ -20,11 +20,11 @@
 </div>
 <div class="form-group">
 	{!!Form::label('MetaMin','Meta minima ($):')!!}
-	{!!Form::number('metaMin',null,['class'=>'form-control', 'placeholder'=>'Meta minima'])!!}
+	{!!Form::text('metaMin',null,['class'=>'form-control currency numbersonly', 'placeholder'=>'Meta minima', 'id' => 'numbersonly'])!!}
 </div>
 <div class="form-group">
 	{!!Form::label('MetaMax','Meta maxima ($):')!!}
-	{!!Form::number('metaMax',null,['class'=>'form-control', 'placeholder'=>'Ingresa una descripcion'])!!}
+	{!!Form::text('metaMax',null,['class'=>'form-control currency numbersonly', 'placeholder'=>'Meta maxima' , 'id' => 'numbersonly2'])!!}
 </div>
 <div class="form-group">
 	{!!Form::label('fechaInicio','Fecha de inicio:')!!}
@@ -40,7 +40,7 @@
 </div>
 <div class="form-group">
 	{!!Form::label('inversion','Inversion:')!!}
-	{!!Form::number('inversion','null',['class'=>'form-control', 'placeholder'=>'inversion'])!!}
+	{!!Form::text('inversion',null,['class'=>'form-control currency numbersonly', 'placeholder'=>'inversion al momento', 'id' => 'numbersonly3'])!!}
 
 </div>
 <div class="form-group">

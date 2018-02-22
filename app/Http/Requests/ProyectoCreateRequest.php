@@ -30,15 +30,15 @@ class ProyectoCreateRequest extends FormRequest
             'descLarga' => 'required|string|max:1000',
             'imagenUrl' => 'required|file|max:2000',
             'videoUrl' => 'required|string|max:150',
-            'metaMin' => 'required|numeric|max:7',
-            'metaMax' => 'required|numeric|max:7',
+            'metaMin' => 'required|string|max:15',
+            'metaMax' => 'required|string|max:15',
             'fechaInicio' => 'required|date',
             'fechaFin' => 'required|date',
             'idProducto' => 'required|numeric|max:10',
             'idMercado' => 'required|numeric|max:10',
             'idUsuario' => 'required|numeric|max:10',
             'numeroClientes' => 'required|numeric|max:10',
-            'inversion' => 'required|string|max:7',
+            'inversion' => 'required|string|max:12',
 
             'valorMercado' => 'required|string|max:290',
 

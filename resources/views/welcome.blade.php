@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">      
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="css/estilos.css">
   <link rel="stylesheet" href="css/font-awesome.css">
   <script src="js/jquery-3.2.1.js"></script>
   <script src="js/main.js"></script>
@@ -103,7 +104,7 @@
   <div id="proyectos">
     <div class="row">
 @foreach($proyectos as $proyecto ) <!-- Creacion del arreglo para que se itere el Div y ahorrar codigo-->
-    <a href='{{ url('/info/' . $proyecto->idProyecto . ' ') }}'class='my-link'>
+    <a href="{{ url('/info/' . $proyecto->idProyecto . ' ') }}" class='my-link'>
   <div class="col-md-4">   
    <center> <p class="text-center"><center><strong style="height:50px;">{!! $proyecto->nombre !!}</strong></center></p><br> <!-- Impresion de la variable desde la BD-->
     <a href="http://localhost:8080/startnow/public/info" data-toggle="collapse">
@@ -226,7 +227,8 @@
 
 <!-- Portafolio de proyectos -->
 <div class="container" align="bottom:100pz;">
-<div class="youtube" class="vid-responsive">
+
+  <div class="youtube" class="vid-responsive">
 
   <div align="center">
           <iframe width="900" height="500" id="vid" src="https://www.youtube.com/embed/YDIew2iEvBw" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
