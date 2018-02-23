@@ -103,6 +103,7 @@
     {!!Html::script('js/sb-admin-2.js')!!}
     {!! Html::script('js/dropdown.js') !!}
    
+    <script type="text/javascript" src="{{ asset('js/jquery.formatCurrency-1.4.0.js') }}"></script>
 
 </body>
 
