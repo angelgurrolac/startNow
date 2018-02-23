@@ -25,20 +25,19 @@ class UserUpdateRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:50',
-            'email' => 'required|unique:users|string|max:290',
+            'email' => 'required|string|max:290',
             'password' => 'required|string|max:15',
             'Apeido_P' => 'required|string|max:50',
             'Apeido_M' => 'required|string|max:50',
-            'metaMin' => 'required|money_format|max:7',
-            'metaMax' => 'required|numeric|max:7',
             'Direccion' => 'required|string|max:300',
-            'CP' => 'required|numeric|max:10',
-            'Pais' => 'required|string|max:100',
-            'Numero_Ext' => 'required|numeric|max:10',
-            'Numero_Cel' => 'required|numeric|max:10',
-            'Numero_Casa' => 'required|numeric|max:10',
+            'CP' => 'required|numeric',
+            'Pais' => 'required|string',
+            'CD' => 'required|string',
+            'Numero_Ext' => 'required|numeric',
+            'Numero_Cel' => 'required|numeric',
+            'Numero_Casa' => 'required|numeric',
             'Sex' => 'required|string|max:10',
-            'Fecha' => 'required|date(format)|max:10',
+            'Fecha' => 'required|date',
             'Perfil' => 'required|string|max:100',
         ];
     }

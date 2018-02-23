@@ -25,26 +25,24 @@ class ProyectoCreateRequest extends FormRequest
     {
         return 
         [
-             'nombre' => 'required|unique:proyectos|string|max:50',
+           'nombre' => 'required|unique:proyectos|string|max:50',
             'descCorta' => 'required|string|max:290',
             'descLarga' => 'required|string|max:1000',
-            'imagenUrl' => 'required|file|max:2000',
+            'imagenUrl' => 'required|string|max:150',
             'videoUrl' => 'required|string|max:150',
-            'metaMin' => 'required|numeric|max:7',
-            'metaMax' => 'required|numeric|max:7',
+            'metaMin' => 'required|string',
+            'metaMax' => 'required|string',
             'fechaInicio' => 'required|date',
             'fechaFin' => 'required|date',
-            'idProducto' => 'required|numeric|max:10',
-            'idMercado' => 'required|numeric|max:10',
-            'idUsuario' => 'required|numeric|max:10',
-            'numeroClientes' => 'required|numeric|max:10',
-            'inversion' => 'required|string|max:7',
-
+            'idProducto' => 'required|numeric',
+            'idMercado' => 'required|numeric',
+            'idUsuario' => 'required|numeric',
+            'numeroClientes' => 'required|numeric',
+            'inversion' => 'required|string',
             'valorMercado' => 'required|string|max:290',
-
             'descComollegarClientes' => 'required|string|max:1000',
             'propuestaValor' => 'required|string|max:500',
-            'idMiembro' => 'required|numeric|max:10',
+            'idMiembro' => 'required|numeric',
         ];
     }
 }

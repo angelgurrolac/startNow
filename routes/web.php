@@ -37,3 +37,6 @@ Route::resource('proyectos','ProyectoController');
 Route::get('admin','FrontController@admin');
 
 Route::resource('todos','TodosController');
+
+#Route::resource('usuario','StateController');
+Route::get('/usuario/towns/{id}','UsuarioController@getTowns');

@@ -7,8 +7,12 @@ use startnow\Http\Requests;
 use startnow\Http\Requests\UserCreateRequest;
 use startnow\Http\Requests\UserUpdateRequest;
 use startnow\user;
+use startnow\State;
 use Redirect;
 use Session;
+use startnow\Town;
+
+
 
 use startnow\Http\Controllers\Controller;
 class UsuarioController extends Controller
@@ -19,22 +23,21 @@ class UsuarioController extends Controller
         
        
         return Validator::make($data, [
-            'name' => 'required|string|max:50',
-            'email' => 'required|unique:users|string|max:290',
-            'password' => 'required|string|max:15',
-            'Apeido_P' => 'required|string|max:50',
-            'Apeido_M' => 'required|string|max:50',
-            'metaMin' => 'required|money_format|max:7',
-            'metaMax' => 'required|numeric|max:7',
-            'Direccion' => 'required|string|max:300',
-            'CP' => 'required|numeric|max:10',
-            'Pais' => 'required|string|max:100',
-            'Numero_Ext' => 'required|numeric|max:10',
-            'Numero_Cel' => 'required|numeric|max:10',
-            'Numero_Casa' => 'required|numeric|max:10',
-            'Sex' => 'required|string|max:10',
-            'Fecha' => 'required|date(format)|max:10',
-            'Perfil' => 'required|string|max:100',
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'password' => $request['password'],
+            'Apeido_P' => $request['Apeido_P'],
+            'Apeido_M' => $request['Apeido_M'],
+            'Direccion' => $request['Direccion'],
+            'CP' => $request['CP'],
+            'Pais' => $request['Pais'],
+            'CD' => $request['CD'],
+            'Numero_Ext' => $request['Numero_Ext'],
+            'Numero_Cel' => $request['Numero_Cel'],
+            'Numero_Casa' => $request['Numero_Casa'],
+            'Sex' => $request['Sex'],
+            'Fecha' => $request['Fecha'],
+            'Perfil' => $request['Perfil'],
           
         ]);
     }
@@ -47,6 +50,9 @@ public function __construct(){
     }
     public function find(Route $route){
         $this->user = User::find($route->getParameter('usuario'));
+
+
+
     }
     /**
      * Display a listing of the resource.
@@ -57,7 +63,12 @@ public function __construct(){
     {
     
     $users= \startnow\user::paginate(10);
+    
     return view ('usuario.index',compact('users'));
+
+
+
+
     }
     /**
      * Show the form for creating a new resource.
@@ -66,7 +77,13 @@ public function __construct(){
      */
     public function create()
     {
-        return view('usuario.create');
+        $states = State::pluck('name','id');
+        return view('usuario.create',compact('states'));
+    }
+    
+    public function getTowns($id){
+            $towns = Town::towns($id);
+            return response()->json($towns);
     }
     /**
      * Store a newly created resource in storage.
@@ -82,13 +99,13 @@ public function __construct(){
 
             'name' => $request['name'],
             'email' => $request['email'],
-            'password' => bcrypt($request['password']),
+            'password' => $request['password'],
             'Apeido_P' => $request['Apeido_P'],
             'Apeido_M' => $request['Apeido_M'],
             'Direccion' => $request['Direccion'],
             'CP' => $request['CP'],
-            'Pais' => $request['Pais'],
-            'CD' => $request['CD'],
+            'Pais' => $request->input('state'),
+            'CD' => $request->input('town'),
             'Numero_Ext' => $request['Numero_Ext'],
             'Numero_Cel' => $request['Numero_Cel'],
             'Numero_Casa' => $request['Numero_Casa'],
@@ -97,7 +114,7 @@ public function __construct(){
             'Perfil' => $request['Perfil'],
             
         ]);
-        return "Usuario registrado";
+        return "usuario registrado";
     }
     /**
      * Display the specified resource.
@@ -118,7 +135,8 @@ public function __construct(){
     public function edit($id)
     {
         $user = User::find($id);
-        return view('usuario.edit',['user'=>$user]);
+        $states = State::pluck('name','id');
+        return view('usuario.edit',['user'=>$user], compact('states'));
     }
     /**
      * Update the specified resource in storage.
@@ -133,6 +151,7 @@ public function __construct(){
         $user = User::find($id);
         $user->fill($request->all());
         $user->save();
+        $states = State::pluck('name','id');
         Session::flash('message','Usuario Actualizado Correctamente');
         return Redirect::to('/usuario');
 

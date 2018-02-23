@@ -1,3 +1,4 @@
+
 <div class="form-group">
 		{!!Form::label('nombre','Nombre:')!!}
 		{!!Form::text('name',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
@@ -29,15 +30,17 @@
 		{!!Form::number('CP',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
 	</div>
 
+<div class="form-group">
+</div>
 
 <div class="form-group">
-		{!!Form::label('Pais','Pais :')!!}
-		{!!Form::text('Pais',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
+		{!!Form::label('pais','Estado :')!!}
+		{!! Form::select('Pais',$states,null,['id'=>'state', 'class'=>'form-control']) !!}
 	</div>
 
 <div class="form-group">
-		{!!Form::label('CD','Ciudad:')!!}
-		{!!Form::text('CD',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
+		{!!Form::label('CD','Municipio:')!!}
+		{!! Form::select('CD',['placeholder'=>'Selecciona'],null,['id'=>'town', 'class'=>'form-control']) !!}
 	</div>
 
 	<div class="form-group">
@@ -62,7 +65,7 @@
 	</div>
 <div class="form-group">
 		{!!Form::label('Fecha','Fecha:')!!}
-		{!!Form::date('fechaInicio', \Carbon\Carbon::now(), ['class' => 'form-control'])!!}
+		{!!Form::date('Fecha', \Carbon\Carbon::now(), ['class' => 'form-control'])!!}
 	</div>
 
 	<div class="form-group">
@@ -73,3 +76,6 @@
 		{!!Form::label('password','Contraseña:')!!}
 		{!!Form::password('password',['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
 	</div>
+
+
+	

@@ -11,6 +11,9 @@
     {!!Html::style('css/metisMenu.min.css')!!}
     {!!Html::style('css/sb-admin-2.css')!!}
     {!!Html::style('css/font-awesome.min.css')!!}
+    {!! Html::script('js/jquery.min.js') !!}
+
+
 </head>
 
 <body>
@@ -95,11 +98,11 @@
 
     </div>
     
-
-    {!!Html::script('js/jquery.min.js')!!}
     {!!Html::script('js/bootstrap.min.js')!!}
     {!!Html::script('js/metisMenu.min.js')!!}
     {!!Html::script('js/sb-admin-2.js')!!}
+    {!! Html::script('js/dropdown.js') !!}
+   
 
 </body>
 
