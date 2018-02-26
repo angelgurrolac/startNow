@@ -40,3 +40,5 @@ Route::resource('todos','TodosController');
 
 #Route::resource('usuario','StateController');
 Route::get('/usuario/towns/{id}','UsuarioController@getTowns');
+
+Route::resource('miembros','MiembrosController');

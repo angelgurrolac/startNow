@@ -51,9 +51,7 @@
 <div class="form-group">
 		{!!Form::label('Numero_cel','Numero Celular:')!!}
 		{!!Form::number('Numero_Cel',null,['class'=>'form-control','placeholder'=>'Ingresa el Nombre del usuario'])!!}
-
-		
-	</div>
+</div>
 
 <div class="form-group">
 		{!!Form::label('Numero_casa','Numero de casa:')!!}

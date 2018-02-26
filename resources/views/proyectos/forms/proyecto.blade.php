@@ -55,6 +55,8 @@
 	{!!Form::label('propuestaValor','Propuesta de valor:')!!}
 	{!!Form::text('propuestaValor',null,['class'=>'form-control', 'placeholder'=>'Propuesta de valor'])!!}
 </div>
+
+
 <div class="form-group">
 	{!!Form::text('idUsuario',Auth::user()->id,['class'=>'form-control'])!!}
 </div>

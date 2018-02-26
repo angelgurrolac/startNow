@@ -11,6 +11,7 @@ use startnow\State;
 use Redirect;
 use Session;
 use startnow\Town;
+use DB;
 
 
 
@@ -61,8 +62,16 @@ public function __construct(){
      */
     public function index()
     {
+
+    $users = DB::table('users')
+        ->join('states', 'states.id', '=', 'users.Pais')
+        ->join('towns', 'towns.id', '=', 'users.CD')
+        ->select('users.name as usuario','states.name as estado', 'towns.name as municipio', 'users.email','users.id')
+        ->distinct()
+        ->get();
+    #$users= startnow\user::paginate(10);
+
     
-    $users= \startnow\user::paginate(10);
     
     return view ('usuario.index',compact('users'));
 
@@ -78,6 +87,10 @@ public function __construct(){
     public function create()
     {
         $states = State::pluck('name','id');
+
+
+
+
         return view('usuario.create',compact('states'));
     }
     
@@ -104,8 +117,8 @@ public function __construct(){
             'Apeido_M' => $request['Apeido_M'],
             'Direccion' => $request['Direccion'],
             'CP' => $request['CP'],
-            'Pais' => $request->input('state'),
-            'CD' => $request->input('town'),
+            'Pais' => $request->input('Pais'),
+            'CD' => $request->input('CD'),
             'Numero_Ext' => $request['Numero_Ext'],
             'Numero_Cel' => $request['Numero_Cel'],
             'Numero_Casa' => $request['Numero_Casa'],

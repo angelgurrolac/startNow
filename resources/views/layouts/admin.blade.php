@@ -104,6 +104,7 @@
     {!! Html::script('js/dropdown.js') !!}
    
     <script type="text/javascript" src="{{ asset('js/jquery.formatCurrency-1.4.0.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/money.js') }}"></script>
 
 </body>
 

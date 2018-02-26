@@ -27,7 +27,6 @@
                                 @endif
                             </div>
                         </div>
-                        <br>
                         <div class="form-group  {{ $errors->has('Apeido_P') ? ' has-error' : '' }} col-md-6  ">
                             <label for="Apeido_P" class="col-md-4 control-label">Apellido Paterno</label>
 
@@ -136,7 +135,6 @@
 
                             </div>
                       </div> 
-                        <br>
  
                      
                       <div class="form-group  {{ $errors->has('Numero_Cel') ? ' has-error' : '' }} col-md-6 ">
@@ -198,10 +196,9 @@
                                 @endif
                             </div>
                         </div>
-                          <br>
-
-                            <br>
-
+                        <br>
+                        <br>
+                        <br>
                         <div class="form-group {{ $errors->has('email') ? ' has-error' : '' }} col-md-6 ">
                             <label for="email" class="col-md-4 control-label">E-Mail Address</label>
 
@@ -215,6 +212,17 @@
                                 @endif
                             </div>
                         </div>
+                        <div class="form-group col-md-6 ">
+                            <label for="Perfil" class="col-md-4 control-label">Perfil</label>
+                            <div class="col-md-6">
+                                <select class="form-control" name="Perfil">
+                                    <option>Seleccione uno</option>
+                                    <option>Inversionista</option>
+                                    <option>Emprendedor</option>
+                                </select>
+
+                            </div>
+                      </div> 
                           <br>
 
                             <br>
@@ -231,34 +239,20 @@
                                     </span>
                                 @endif
                             </div>
+                            
                         </div>
-
-                         <div class="form-group col-md-6 ">
-                            <label for="Perfil" class="col-md-4 control-label">Perfil</label>
-                            <div class="col-md-6">
-                                <select class="form-control" name="Perfil">
-                                    <option>Seleccione uno</option>
-                                    <option>Inversionista</option>
-                                    <option>Emprendedor</option>
-                                </select>
-
-                            </div>
-                      </div> 
-                        <br>
-
-    
-                        <div class="form-group col-md-6  " >
+                        <div class="form-group col-md-6">
                             <label for="password-confirm" class="col-md-4 control-label">Confirm Password</label>
-
                             <div class="col-md-6">
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
                             </div>
                         </div>
+
                           
 
 
                         <div class="form-group col-md-6  alineacion" >
-                            <div class="col-md-7 col-md-offset-6">
+                            <div class="col-md-12 col-md-offset-2">
                                 <br>
                                 <button type="submit" class="btn btn-primary btn-lg"  >
                                     Crear usuario
