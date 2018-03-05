@@ -6,7 +6,9 @@ namespace startnow\Http\Controllers;
 use Illuminate\Http\Request;
 use startnow\Http\Requests;
 use startnow\Http\Controllers\Controller;
-use startnow\miembros;
+use startnow\Miembros;
+use DB;
+use Input;
 use Session;
 use Redirect;
 
@@ -20,7 +22,12 @@ class MiembrosController extends Controller
      */
     public function index()
     {
-      return view('miembros.create');
+        $proyectos = DB::table('proyectos')->orderBy('created_at', 'desc')->value('idProyecto');
+        $miembros = DB::table('miembrosequipo')
+            ->where('idProyecto', '=', $proyectos)
+            ->get();
+      
+      return view('proyectos.miembros', compact('proyectos', 'miembros'));
     }
     
     /**
@@ -30,7 +37,8 @@ class MiembrosController extends Controller
      */
     public function create()
     {
-        return view('miembros.create');
+        $proyectos = DB::table('proyectos')->select('idProyecto')->orderBy('created_at', 'desc')->first();
+
     }
     /**
      * Store a newly created resource in storage.
@@ -40,21 +48,27 @@ class MiembrosController extends Controller
      */
     public function store(Request $request)
     {
-        miembros::create([
-            'nombres' => $request['nombres'],
-            'apellido_P' => $request['apellido_P'],
-            'apellido_M' => $request['apellido_M'],
-            'urlPerfil' => $request['urlPerfil'],
-            'idProyecto' => $request['idProyecto'],
-			'imagenUrl' => $request['imagenUrl'],
-            'puesto' => $request['puesto'],
-            'descripcion' => $request['descripcion'],
-            
+        #array('field1' => 'value 1', 'field2' => 'value2', ...),
+        $input = $request->all();
+        $condition = $input['nombres'];
+        foreach ($condition as $key => $condition) {
+            $miembro = new miembros;
+            $miembro->nombres = $input['nombres'][$key];
+            $miembro->apellidoP = $input['apellidoP'][$key];
+            $miembro->apellidoM = $input['apellidoM'][$key];
+            $miembro->urlPerfil = $input['urlPerfil'][$key];
+            $miembro->idProyecto = $input['idProyecto'][$key];
+            $miembro->imagenUrl = $input['idProyecto'][$key];
+            $miembro->puesto = $input['puesto'][$key];
+            $miembro->descripcion = $input['descripcion'][$key];
 
-
-        ]);
+            $miembro->save();
+        }
+        #Miembros::insert($values);
         
-        return redirect('/')->with('message','store');
+        DB::table('miembrosequipo'); 
+        
+        return Redirect::to('miembros');
     }
     /**
      * Display the specified resource.

@@ -99,7 +99,7 @@ class ProyectoController extends Controller
             'idMiembro' => '1',
 
         ]);
-        return "Proyecto registrado";
+        return view('proyectos.miembros');
     }
 
 
