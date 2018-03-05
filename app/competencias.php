@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class competencias extends Model
 {
     protected $table="competencias";
+    protected $primaryKey = 'idCompetencia';
 
     public function scopeConsulta() {
 
@@ -18,7 +19,7 @@ class competencias extends Model
     }
     protected $fillable = ['idCompetencia','nombreCompetencia','descripcionCompetencia','urlImagenCompetencia','idProyecto'];
 
-    public function setImagenUrlAttribute($urlImagenCompetencia) { 
+    public function setUrlImagenCompetenciaAttribute($urlImagenCompetencia) { 
        $this->attributes['urlImagenCompetencia'] = Carbon::now()->second.$urlImagenCompetencia->getClientOriginalName(); 
        $name = Carbon::now()->second.$urlImagenCompetencia->getClientOriginalName(); 
        \Storage::disk('local')->put($name, \File::get($urlImagenCompetencia)); 

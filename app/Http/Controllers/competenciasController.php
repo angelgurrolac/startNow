@@ -1,11 +1,15 @@
 <?php
 
 namespace startnow\Http\Controllers;
-use startnow\competencias;
+
+use startnow\Http\Requests;
+use startnow\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use startnow\competencias;
 use DB;
 use Input;
 use Redirect;
+use Session;
 
 
 class CompetenciasController extends Controller
@@ -115,7 +119,8 @@ class CompetenciasController extends Controller
      */
     public function destroy($id)
     {
-        //
+        competencias::destroy($id);
+        return Redirect::to('/competencias');
     }
     
 }

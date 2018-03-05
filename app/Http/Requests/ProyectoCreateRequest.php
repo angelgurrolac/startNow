@@ -28,21 +28,16 @@ class ProyectoCreateRequest extends FormRequest
            'nombre' => 'required|unique:proyectos|string|max:50',
             'descCorta' => 'required|string|max:290',
             'descLarga' => 'required|string|max:1000',
-            'imagenUrl' => 'required|string|max:150',
             'videoUrl' => 'required|string|max:150',
             'metaMin' => 'required|string|max:15',
             'metaMax' => 'required|string|max:15',
             'fechaInicio' => 'required|date',
             'fechaFin' => 'required|date',
-            'idProducto' => 'required|numeric',
-            'idMercado' => 'required|numeric',
-            'idUsuario' => 'required|numeric',
             'numeroClientes' => 'required|numeric',
             'inversion' => 'required|string',
             'valorMercado' => 'required|string|max:290',
             'descComollegarClientes' => 'required|string|max:1000',
             'propuestaValor' => 'required|string|max:500',
-            'idMiembro' => 'required|numeric',
         ];
     }
 }

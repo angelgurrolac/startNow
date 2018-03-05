@@ -7,7 +7,7 @@
         <li><a href="{!!URL::to('home')!!}">Home</a></li>
         <li><a href="{!!URL::to('todos')!!}">Proyectos</a></li>
         <li><a href="{!!URL::to('proyectos')!!}">Mis proyectos</a></li>
-        <li><a href="#">¿Como funciona?</a></li>
+        <li><a href="#band">¿Como funciona?</a></li>
         <li><a href="#">Nosotros</a></li>
         <li class="submenu">
             <a href="#"><span class="fa fa-user"></span> {!!Auth::user()->name!!}</a>

@@ -1,7 +1,8 @@
-  <?php
+<?php
 
 namespace startnow\Http\Controllers;
 
+use startnow\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use startnow\Http\Requests;
 use startnow\Http\Requests\ProyectoCreateRequest;
@@ -11,7 +12,7 @@ use Session;
 use startnow\proyectos;
 use Illuminate\Routing\Route;
 
-use startnow\Http\Controllers\Controller;
+
 
 
 
@@ -41,21 +42,17 @@ class ProyectoController extends Controller
             'nombre' => 'required|unique:proyectos|string|max:50',
             'descCorta' => 'required|string|max:290',
             'descLarga' => 'required|string|max:1000',
-            'imagenUrl' => 'required|string|max:150',
             'videoUrl' => 'required|string|max:150',
-            'metaMin' => 'required|money_format|max:7',
-            'metaMax' => 'required|numeric|max:7',
+            'metaMin' => 'required|string|max:15',
+            'metaMax' => 'required|string|max:15',
             'fechaInicio' => 'required|date',
             'fechaFin' => 'required|',
-            'idProducto' => 'required|numeric|max:10',
-            'idMercado' => 'required|numeric|max:10',
             'idUsuario' => 'required|numeric|max:10',
             'numeroClientes' => 'required|numeric|max:10',
             'inversion' => 'required|string|max:7',
             'valorMercado' => 'required|string|max:290',
             'descComollegarClientes' => 'required|string|max:1000',
             'propuestaValor' => 'required|string|max:500',
-            'idMiembro' => 'required|numeric|max:10',
         ]);
     }
  
@@ -99,7 +96,7 @@ class ProyectoController extends Controller
             'idMiembro' => '1',
 
         ]);
-        return view('proyectos.miembros');
+        return Redirect::to('miembros');
     }
 
 

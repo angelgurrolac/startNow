@@ -23,7 +23,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-         $proyectos = proyectos::limit(6)->get(); 
+         $proyectos = proyectos::limit(6)->orderBy('created_at','desc')->get(); 
 
         return view('welcome',['proyectos'=>$proyectos]);
     }

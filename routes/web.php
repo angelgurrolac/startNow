@@ -42,4 +42,5 @@ Route::resource('todos','TodosController');
 Route::get('/usuario/towns/{id}','UsuarioController@getTowns');
 
 Route::resource('miembros','MiembrosController');
+
 Route::resource('competencias','CompetenciasController');

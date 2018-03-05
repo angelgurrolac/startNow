@@ -52,8 +52,8 @@
   </thead>
   <tbody>
     <tr>
-      <td>${!! $proyecto->metaMax!!}</td>
-      <td>${!! $proyecto->metaMin!!}</td>
+      <td>{!! $proyecto->metaMax!!}</td>
+      <td>{!! $proyecto->metaMin!!}</td>
        <td>{!! $proyecto->fechaInicio!!}</td>
       <td>{!! $proyecto->fechaFin!!}</td>
     </tr>
@@ -71,8 +71,8 @@
 <br>
 <br>
 <!--- Creacion de la seccion Descripcion larga -->
-<div id="band" class="container text-center">
-<p align=left>{!!$proyecto->descLarga!!}.</p>
+<div id="band" class="container center col-sm-12">
+<textarea name="" cols="150" rows="10" style="resize: none; border: none;">{!!$proyecto->descLarga!!}.</textarea>
 </div>
 <br>
 <br>
@@ -196,11 +196,11 @@
 <br>
 <div class="row justify-content-center">
 @foreach($competencias as $competencia )
- <div class="col-sm-4" style="width:100%">
+  <div class="col-sm-4" style="width:100%">
   <div class="w3-card-4" style="width:%100">
-    <img src="{!! $competencia->urlImagenCompetencia!!}" alt="Norway" style="width:100%">
+    <img src="../proyectosImg/{{$competencia->urlImagenCompetencia}}" alt="Norway" style="width:100%; height: 300px;">
     <h2>{!!$competencia->nombreCompetencia!!}</h2>
-  <p>{!!$competencia->descripcionCompetencia!!}</p>
+    <p>{!!$competencia->descripcionCompetencia!!}</p>
   </div>
 </div>
 @endforeach
@@ -217,13 +217,13 @@
 <br>
 <br>
 <br>
-<div class="row">
+<div class="row center">
 @foreach($miembrosequipo as $miembro )
-  <div class="col-sm-4">
+  <div class="col-sm-4 center">
   <div class="w3-card-4" style="width:%100; text-align:center">
     <h4>{!!$miembro->nombres.' '.$miembro->apellidoP.' '.$miembro->apellidoM!!}</h4>
     <a class="w3-button w3-large w3-teal w3-hide-small" href="{!!$miembro->urlPerfil!!}" title="Linkedin"><i class="fa fa-linkedin"></i></a>
-    <img src="{!! $miembro->imagenUrl!!}" alt="Norway" style="width:100%">
+    <img src="../proyectosImg/{{$miembro->imagenUrl}}" alt="Norway" style="width:100%">
     <p>{!!$miembro->puesto!!}</p>
     <p>{!!$miembro->descripcion!!}</p>
   </div>

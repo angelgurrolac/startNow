@@ -21,8 +21,13 @@
 					<td>{{$competencia -> nombreCompetencia}}</td>
 					<td>{{$competencia -> descripcionCompetencia}}</td>
 					
-					<td><img src="proyectosImg/{{$competencia -> urlImagenCompetencia}}"></td>
+					<td><img src="proyectosImg/{{$competencia -> urlImagenCompetencia}}" style="width: 30%;"></td>
 					<td>{{$competencia -> idProyecto}}</td>
+					<td>
+						{!!Form::open(['route'=>['competencias.destroy', $competencia-> idCompetencia], 'method' => 'DELETE'])!!}
+							{!!Form::submit('Eliminar',['class'=>'btn btn-danger'])!!}
+						{!!Form::close()!!}
+					</td>
 					
 				</tr>
 			@endforeach

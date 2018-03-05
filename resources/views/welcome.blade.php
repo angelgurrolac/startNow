@@ -108,9 +108,9 @@
   <div class="col-md-4">   
    <center> <p class="text-center"><center><strong style="height:50px;">{!! $proyecto->nombre !!}</strong></center></p><br> <!-- Impresion de la variable desde la BD-->
     <a href="http://localhost:8080/startnow/public/info" data-toggle="collapse">
-      <img src="proyectosImg/{!! $proyecto->imagenUrl!!}" class="img-circle person" class="img-responsive" alt="Random Name">
+      <img src="proyectosImg/{!! $proyecto->imagenUrl!!}" class="img-circle person" width="70%" height="25%" class="img-responsive" alt="Random Name">
     </a>
-      <center> <p style="height:150px;">{!! $proyecto->descCorta !!}</p> <!-- Impresion de la variable desde la BD-->
+      <center> <p style="height:150px; width: 250px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{!! $proyecto->descCorta !!}</p> <!-- Impresion de la variable desde la BD-->
   </div>
     </a>
 @endforeach

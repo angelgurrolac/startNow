@@ -24,9 +24,14 @@
 					<td>{{$miembro -> apellidoP}}</td>
 					<td>{{$miembro -> apellidoM}}</td>
 					<td>{{$miembro -> urlPerfil}}</td>
-					<td><img src="proyectosImg/{{$miembro -> imagenUrl}}"></td>
+					<td><img src="proyectosImg/{{$miembro -> imagenUrl}}" style="max-height:100px; max-width: 100px"></td>
 					<td>{{$miembro -> puesto}}</td>
 					<td>{{$miembro -> descripcion}}</td>
+					<td>
+						{!!Form::open(['route'=>['miembros.destroy', $miembro-> idMiembro], 'method' => 'DELETE'])!!}
+							{!!Form::submit('Eliminar',['class'=>'btn btn-danger'])!!}
+						{!!Form::close()!!}
+					</td>
 				</tr>
 			@endforeach
 		</table>
@@ -35,7 +40,7 @@
 		  		@include('proyectos.forms.miembroF')
 				{!!Form::submit('Registrar',['class'=>'btn btn-primary'])!!}
 				<button id="adicional" name="adicional" type="button" class="btn btn-warning" >Mas</button>
-				<a href="{{URL::to('proyectos')}}" class="btn btn-success">Listo</a>
+				<a href="{{URL::to('competencias')}}" class="btn btn-success">Siguiente</a>
 			{!!Form::close()!!}
 				
 	@endsection
