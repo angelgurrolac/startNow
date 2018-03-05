@@ -1,3 +1,5 @@
+
+
 @extends('layouts.admin')
 	@include('alerts.request')
 		@section('content')

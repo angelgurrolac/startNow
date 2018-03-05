@@ -24,7 +24,7 @@
 					<td>{{$miembro -> apellidoP}}</td>
 					<td>{{$miembro -> apellidoM}}</td>
 					<td>{{$miembro -> urlPerfil}}</td>
-					<td>{{$miembro -> imagenUrl}}</td>
+					<td><img src="proyectosImg/{{$miembro -> imagenUrl}}"></td>
 					<td>{{$miembro -> puesto}}</td>
 					<td>{{$miembro -> descripcion}}</td>
 				</tr>

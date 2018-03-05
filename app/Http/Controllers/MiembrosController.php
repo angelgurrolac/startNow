@@ -58,7 +58,7 @@ class MiembrosController extends Controller
             $miembro->apellidoM = $input['apellidoM'][$key];
             $miembro->urlPerfil = $input['urlPerfil'][$key];
             $miembro->idProyecto = $input['idProyecto'][$key];
-            $miembro->imagenUrl = $input['idProyecto'][$key];
+            $miembro->imagenUrl = $input['imagenUrl'][$key];
             $miembro->puesto = $input['puesto'][$key];
             $miembro->descripcion = $input['descripcion'][$key];
 

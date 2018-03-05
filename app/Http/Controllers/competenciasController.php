@@ -1,8 +1,12 @@
-<?ph
+<?php
 
 namespace startnow\Http\Controllers;
 use startnow\competencias;
 use Illuminate\Http\Request;
+use DB;
+use Input;
+use Redirect;
+
 
 class CompetenciasController extends Controller
 {
@@ -13,10 +17,15 @@ class CompetenciasController extends Controller
      */
     public function index(Request $request) 
     {
-        $id = $request->input('idCompetencia');
-        $competencias = competencias::select('nombreCompetencia')->where('idCompetencia',1)->get();
-        //return view('informacion',['competencias'=>$competencias]);
-        dd($competencias);
+        
+        $proyectos = DB::table('proyectos')->orderBy('created_at','desc')->value('idProyecto');
+        $competencias = DB::table('competencias')
+            ->where('idProyecto', '=', $proyectos)
+            ->get();
+      
+      return view('proyectos.competencias', compact('proyectos', 'competencias'));
+
+
     }
 
     /**
@@ -37,6 +46,25 @@ class CompetenciasController extends Controller
      */
     public function store(Request $request)
     {
+
+         $input = $request->all();
+        $condition = $input['nombreCompetencia'];
+        foreach ($condition as $key => $condition) {
+            $competencia = new competencias;
+
+            $competencia->nombreCompetencia = $input['nombreCompetencia'][$key];
+            $competencia->descripcionCompetencia = $input['descripcionCompetencia'][$key];
+            $competencia->urlImagenCompetencia = $input['urlImagenCompetencia'][$key];
+            $competencia->idProyecto = $input['idProyecto'][$key];
+       
+   
+            $competencia->save();
+        }
+        #Miembros::insert($values);
+         
+        DB::table('competencias'); 
+        
+        return Redirect::to('competencias');
          
     }
  

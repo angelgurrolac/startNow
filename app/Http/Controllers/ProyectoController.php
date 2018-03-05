@@ -1,4 +1,4 @@
-<?php
+  <?php
 
 namespace startnow\Http\Controllers;
 

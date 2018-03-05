@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="header-info">
-                <h1>BIG HERO 6</h1>
+                <br>
               {{ Form::open(array('url' => 'logon')) }}
                     <div class="form-group">
                         {!!Form::label('correo','Correo:')!!}   
