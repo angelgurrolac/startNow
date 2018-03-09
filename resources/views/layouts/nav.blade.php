@@ -3,7 +3,7 @@
 </div>
   <nav class="nav" id="up">
       <ul>
-        <img src="{{ asset('img/logo2.png') }}" class="img-responsive">
+        <img src="{{ asset('img/logo2.png') }}">
         <li><a href="{!!URL::to('home')!!}">Home</a></li>
         <li><a href="{!!URL::to('todos')!!}">Proyectos</a></li>
         <li><a href="{!!URL::to('proyectos')!!}">Mis proyectos</a></li>

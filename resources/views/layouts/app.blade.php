@@ -27,11 +27,9 @@
                         <span class="icon-bar"></span>
                     </button>
 
-                      
                     <!-- Branding Image -->
-                    <a class="navbar-brand" href="{{ url('/') }}">
-                        <br>
-                        <img src="img/logo2.png">  
+                    <a class="" href="{{ url('/') }}">
+                        <img src="img/logo2.png" width="50%">  
                     </a>
                 </div>
 
@@ -47,32 +45,12 @@
                         @if (Auth::guest())
                             <li><a href="{{ route('login') }}">Login</a></li>
                             <li><a href="{{ route('register') }}">Register</a></li>
-                        @else
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    {{ Auth::user()->name.' '.Auth::user()->Apeido_P.' '.Auth::User()->Apeido_M}} <span class="caret"></span>
-                                </a>
-
-                                <ul class="dropdown-menu" role="menu">
-                                    <li>
-                                        <a href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                            Logout
-                                        </a>
-
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                            {{ csrf_field() }}
-                                        </form>
-                                    </li>
-                                </ul>
-                            </li>
                         @endif
                     </ul>
                 </div>
-            </div>
+            
         </nav>
-
+        </div>
         @yield('content')
     </div>
 

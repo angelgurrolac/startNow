@@ -132,13 +132,13 @@ class ProyectoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ProyectoUpdateRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $proyecto = proyectos::find($id);
         $proyecto->fill($request->all());
         $proyecto->save();
         Session::flash('message','Proyecto Actualizado Correctamente');
-        return Redirect::to('/proyectos');
+        return Redirect::to('proyectos');
     }
 
     /**

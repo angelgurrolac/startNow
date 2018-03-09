@@ -48,8 +48,7 @@
 	display: none;
 	background:rgba(54,57,58,.1);
 	position: absolute;
-	width: 150%;
-	z-index:1000;
+	z-index:500;
 }
  
 .nav ul li .children li {

@@ -10,6 +10,12 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+   <script type="text/javascript" src="https://conektaapi.s3.amazonaws.com/v0.3.0/js/conekta.js"></script>
+        <script type="text/javascript">
+            // Conekta Public Key
+            Conekta.setPublishableKey('key_GPUKe83pUTXqr7UdKsXyWBw');
+            // ...
+        </script>
   <script src="../js/main.js"></script>
   {!!Html::style('css/navStyle.css')!!}
 
@@ -20,8 +26,6 @@
   </style>
 
 </head>
-
-
 
 <body>
 @include('layouts.nav')
@@ -60,7 +64,55 @@
   </tbody>
 </table>
 
-<center><button type="button" class="btn btn-primary btn-lg">Donar</button></center>
+<center><button type="button" data-toggle="modal" data-target="#modal" class="btn btn-primary btn-lg">Donar</button></center>
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Datos de la tarjeta</h4>
+        <button type="" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form action="/informacion/donar" method="POST" id="card-form">
+            <div class="form-group">
+              <label for="">Nombre del propietario</label>
+              <input type="text" class="form-control" data-conekta="card[name]">
+            </div>
+            <div class="form-group">
+              <label for="">Numero de tarjeta</label>
+              <input type="text" class="form-control" data-conekta="card[number]">
+            </div>
+            <div class="form-group">
+              <label for="">CVC</label>
+              <input type="text" class="form-control" data-conekta="card[cvc]">
+            </div>
+            <div class="form-group">
+              <div class="row">
+                <label class="col-sm-12" for="">Fecha de expiración</label>
+                <input type="text" placeholder="MM" class="form-control col-sm-2" data-conekta="card[exp_month]" style="margin:0 5px 0 14px;">
+                <input type="text" placeholder="YYYY" class="form-control col-sm-2" data-conekta="card[exp_year]">
+              </div>
+            </div>
+            <div class="input-group">
+              
+              <div class="input-group-prepend">
+                <div class="input-group-text">$</div>
+              </div>
+              <input type="text" class="form-control" placeholder="Cantidad en pesos MXN">
+            </div>
+             <button type="submit" class="btn btn-success">Donar!</button>
+            </form>
+            </div>
+            <div class="modal-footer">
+             
+        
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <hr></hr>
     </div>
   </div>
@@ -71,8 +123,8 @@
 <br>
 <br>
 <!--- Creacion de la seccion Descripcion larga -->
-<div id="band" class="container center col-sm-12">
-<textarea name="" cols="150" rows="10" style="resize: none; border: none;">{!!$proyecto->descLarga!!}.</textarea>
+<div id="band" class="container text-center center col-sm-12">
+<textarea name=""  cols="150" rows="10" style="resize: none; border: none;text-align: center;">{!!$proyecto->descLarga!!}.</textarea>
 </div>
 <br>
 <br>
@@ -277,7 +329,41 @@
     <i class="fa fa-chevron-circle-up"></i></span></a>
     </div>
 </footer>
+<script type="text/javascript">
+            jQuery(function($) {
+                
+                
+                var conektaSuccessResponseHandler;
+                conektaSuccessResponseHandler = function(token) {
+                    var $form;
+                    $form = $("#card-form");
 
+                    /* Inserta el token_id en la forma para que se envíe al servidor */
+                    $form.append($("<input type=\"hidden\" name=\"conektaTokenId\" />").val(token.id));
+
+                    /* and submit */
+                    $form.get(0).submit();
+                };
+                
+                conektaErrorResponseHandler = function(token) {
+                    console.log(token);
+                };
+                
+                $("#card-form").submit(function(event) {
+                    event.preventDefault();
+                    var $form;
+                    $form = $(this);
+
+                    /* Previene hacer submit más de una vez */
+                    $form.find("button").prop("disabled", true);
+                    Conekta.token.create($form, conektaSuccessResponseHandler, conektaErrorResponseHandler);
+                    /* Previene que la información de la forma sea enviada al servidor */
+                    return false;
+                });
+
+            });
+
+        </script>
 
 </body>
 </html>
