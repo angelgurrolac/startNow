@@ -1,0 +1,32 @@
+.modal-body {
+	margin-top: 50px;
+}
+.modal-body .botones a{
+	background-color: #98B656;
+	display: block;
+	margin: auto;
+	width: 90%;
+	height: 150px;
+	line-height: 110px;
+	color: #fff;
+	font-family: "Segoe UI",Frutiger,"Frutiger Linotype","Dejavu Sans","Helvetica Neue",Arial,sans-serif;
+	font-size: 3em;
+	padding: 15px;
+	font-weight: bold;
+	text-decoration: none;
+	box-shadow: 0 2px 10px #aaaaaa !important;
+}
+.iconosDiv svg {
+	color: #98B656;
+	font-size: 3.5em;
+}
+.iconosDiv {
+	margin-bottom: 10px;
+}
+.lblProy {
+	margin-top: 20px;
+	font-size: 2em;
+	font-family: "Segoe UI",Frutiger,"Frutiger Linotype","Dejavu Sans","Helvetica Neue",Arial,sans-serif;
+	font-weight: bold;
+	color: #6F7E9D;
+}

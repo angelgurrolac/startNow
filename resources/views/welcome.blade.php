@@ -1,5 +1,4 @@
- </html>
-
+ 
 <html lang="en">
 <head>
   <title></title>
@@ -8,245 +7,194 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">      
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link rel="stylesheet" href="css/estilos.css">
-  <link rel="stylesheet" href="css/font-awesome.css">
-  <script src="js/jquery-3.2.1.js"></script>
-  <script src="js/main.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
   
-    {!!Html::style('css/bootstrap.min.css')!!}
     {!!Html::style('css/metisMenu.min.css')!!}
-    {!!Html::style('css/sb-admin-2.css')!!}
-    {!!Html::style('css/font-awesome.min.css')!!}
+    {!!Html::style('css/welcome.css')!!}
     {!!Html::style('css/navStyle.css')!!}
+    <script src="js/main.js"></script>
 </head>
-<body>
-    <!--  Creacion  del Carousel manera responsiva -->
-    @include('layouts.nav');
-<div class="container"> 
- <div id="myCarousel" class="carousel slide" data-ride="carousel" align="bottom">
-    <!-- Indicators -->
-    <ol class="carousel-indicators">
-      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-      <li data-target="#myCarousel" data-slide-to="1"></li>
-      <li data-target="#myCarousel" data-slide-to="2"></li>
-    </ol>
-
-    <!-- Wrapper for slides -->
-    <div class="carousel-inner" role="listbox">
-      <div class="item active">
-        <img src="img/ny.jpg" alt="New York" class="img-responsive" >
-        <div class="carousel-caption">
-          <h3>New York</h3>
-          <p>The atmosphere in New York is lorem ipsum.</p>
-        </div>      
+<body>    
+  <div class="miContainer">
+    <header>
+        @include('layouts.nav')
+    </header>
+    <section id="banner">
+      <div id="headText" unselectable="on" onselectstart="return false;" onmousedown="return false;">
+        <span class="textoSpan" id="inova">Inovación</span> <br>
+        <span class="textoSpan" id="tecno">Tecnológica</span> <br>
+        <span class="textoSpan" id="apoyo">Apoya a los mejores Startups de inovación tecnologica</span>
       </div>
-
-      <div class="item">
-        <img src="img/chicago.jpg" alt="Chicago" class="img-responsive" >  <!-- Class="img-responsive" metodo de imagenes responsivas -->
-        <div class="carousel-caption">
-          <h3>Chicago</h3>
-          <p>Thank you, Chicago - A night we won't forget.</p>
-        </div>      
+    </section>
+    <div class="row startUps">
+      <div class="col-lg-4 text-center">
+        <span class="topSpan">STARTUPS FINALIZADOS</span>
+        <span class="numeroSpan">{!!$finalizados!!}</span>
       </div>
-    
-      <div class="item">
-        <img src="img/la.jpg" alt="Los Angeles" class="img-responsive" >
-        <div class="carousel-caption">
-          <h3>LA</h3>
-          <p>Even though the traffic was a mess, we had the best time playing at Venice Beach!</p>
-        </div>      
+      <div class="col-lg-4 text-center">
+        <span class="topSpan">STARTUPS APOYADOS</span>
+        <span class="numeroSpan">{!!$apoyados!!}</span>
+      </div>
+      <div class="col-lg-4 text-center">
+        <span class="topSpan">PERSONAS APOYANDO</span>
+        <span class="numeroSpan">{!!$apoyando!!}</span>
       </div>
     </div>
 
-
-    <!-- Creacion de controles del carousel siguiente o atras  -->
-    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-      <span class="sr-only">Previous</span>
-
-    </a>
-    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-      <span class="sr-only">Next</span>
-    </a>
-</div>
-
-</div>
-
-
-<br>
-<div class="container 1">
-  <center><h3>START NOW !</h3>
-  <p><em>We love music!</em></p>
-  <p>We have created a fictional band website. Lorem ipsum..</p>
-</center>
-</div>
-<br>
-
-
- <!-- Div de proyectos con el arreglo construido para que lo hagarre por default-->
-<div class="container" align="bottom:100pz;">
-  <div id="proyectos">
-    <div class="row">
-@foreach($proyectos as $proyecto ) <!-- Creacion del arreglo para que se itere el Div y ahorrar codigo-->
-    <a href="{{ url('/info/' . $proyecto->idProyecto . ' ') }}" class='my-link'>
-  <div class="col-md-4">   
-   <center> <p class="text-center"><center><strong style="height:50px;">{!! $proyecto->nombre !!}</strong></center></p><br> <!-- Impresion de la variable desde la BD-->
-    <a href="http://localhost:8080/startnow/public/info" data-toggle="collapse">
-      <img src="proyectosImg/{!! $proyecto->imagenUrl!!}" class="img-circle person" width="70%" height="25%" class="img-responsive" alt="Random Name">
-    </a>
-      <center> <p style="height:150px; width: 250px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{!! $proyecto->descCorta !!}</p> <!-- Impresion de la variable desde la BD-->
-  </div>
-    </a>
-@endforeach
- </div>
-  <div class="center">
-      <a href="todos">Ver mas</a>
-  </div>
- 
-  <br>
-  </div>
-</div>
-
-
-
-
-    <div class="container" align="bottom:100pz;">
-    <center><h3>THE BAND</h3> </center>
-    <p align=left>We have created a fictional band website. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-    </div>
-    <br>
-    <br>
-
-
- <div id="band" class="container text-center">
-    <h3 align=rigth>Preguntas Frecuentes </h3>
-
-    <br>
-    <br>
-  
-  <div class="panel-group" id="accordion">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
-        ¿Como Gano dinero? </a>
-      </h4>
-    </div>
-    <div id="collapse1" class="panel-collapse collapse in">
-      <div class="panel-heading">
-        Cuando te vuelves inversionista a través de Play Business, obtienes un pedacito de la Startup (equity). Si la empresa crece, tu inversión aumentará su valor proporcionalmente. Para ganar dinero debes vender tu participación (a esto se le llama exit) y hay varias formas de hacerlo:
-        Si la empresa crece, tu inversión aumentará su valor proporcionalmente. Para hacer liquida tu inversion hay varias opciones:  
-
-        * IPO (Oferta pública de inversión): La empresa sale a la bolsa y vendes tu participación 
-        * M&A: Compra tu participación un fondo de inversión u otra empresa.
-        * Nombre: El emprendedor (maker) u otro inversionista de la comunidad compra tu participación:
-        A esto le llamamos exit y es básicamente encontrar a alguien que quiera comprarte el pedazo de la empresa que tienes..</div>
-    </div>
-  </div>
-
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
-        ¿Que es Crownfunding?</a>
-      </h4>
-    </div>
-    <div id="collapse2" class="panel-collapse collapse">
-      <div class="panel-heading">Significa “fondeo de las masas” y son muchas personas haciendo lo imposible, si cada mexicano te da $1 peso, tienes más de $120 millones de pesos en el banco. Crowdfunding es exactamente ese concepto, sólo que se hace a través de una página de internet, de forma organizada y transparente. El que pide dinero ofrece “algo” a cambio y el que entrega dinero recibe esa cosa a cambio. En Play Business te vuelves dueño de una parte de la empresa a cambio de tu dinero..</div>
-    </div>
-  </div>
-
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
-        ¿Que es equity? </a>
-      </h4>
-  </div>
-
-    <div id="collapse3" class="panel-collapse collapse">
-      <div class="panel-heading">Viene del inglés y se utiliza mucho en este mundo, pero básicamente significa ser acreedor a una parte del dinero que genera o generará una empresa. Específicamente, si una empresa vale $1,000,000 y tú inviertes $10,000 vas a adquirir 1% de equity de la compañía, lo que significa que eres y serás dueño del 1% de todo el dinero que genere la compañía.
+    <div class="row categorias">
+      {{-- <div class="col-lg-1"></div> --}}
+      <div class="texto col-lg-9">
+        <span>PROYECTOS DE    </span><span class="colorTexto">INOVACION</span>
+        <div class="linea"></div>
+      </div>
+      <div class="col-lg-3 boton">
+        <a href="{!!URL::to('todos')!!}" class="btn-lg btn-primary">CATEGORIAS</a>
       </div>
     </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
-        ¿Que  gano cuando invierto?</a>
-      </h4>
-    </div>
-    <div id="collapse4" class="panel-collapse collapse">
-      <div class="panel-heading">Cuando inviertes en Play Business, por cada startup en la que inviertas, recibirás un certificado de inversión, estos son documentos encriptados y almacenados en nuestra plataforma que avalan tu inversión y por ende te acreditan como dueño. Estos los puedes imprimir o almacenar tu mismo, independientemente de lo que quieras hacer, estarán disponibles por siempre en Play Business.</div>
+   <!-- Div de proyectos con el arreglo construido para que lo hagarre por default-->
+      <div class="row proyectos">
+        @foreach($randoms as $random ) <!-- Creacion del arreglo para que se itere el Div y ahorrar codigo-->
+            <div class="col-md-4 text-center" style="text-align: center;">
+              <a style="text-decoration: none;" href="{{ url('/info/' . $random->idProyecto . ' ') }}" class='my-link'>
+                <p>{!! $random->nombre !!}</p>
+                <img src="proyectosImg/{!! $random->imagenUrl!!}" class="img-circle img-responsive" style="height: 320px;width: 100%;" alt="Random Name">
+              </a>
+            </div>
+        @endforeach
+      </div>
+
+      <div class="row text-center quienes">
+        <h3>¿QUIENES SOMOS?</h3>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempora iusto fugit, quis veniam autem illo optio dolores facilis, facere, molestiae voluptatem reprehenderit reiciendis, quas molestias alias nihil? Dolores, nihil similique!
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus sint possimus cupiditate quibusdam impedit, harum error dolorem doloribus voluptatum quidem natus, voluptas adipisci doloremque velit consequatur magni libero rem nobis!
+        </p>
+      </div>
+      
+    <div class="row preguntas">
+        <div class="texto col-lg-11">
+          <span>PREGUNTAS    </span><span class="colorTexto">FRECUENTES</span>
+          <div class="linea"></div>
+        </div>
+        <div class="col-lg-1 interrogacion colorTexto">
+            <span>?</span>
+        </div>
     </div>
 
-    <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
-        ¿Estamos regulados?</a>
-      </h4>
+    <div class="row">    
+      <div class="panel-group" id="accordion">
+
+        <div class="panel panel-default">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse">
+            <div class="panel-heading">
+              <h4 class="panel-title panelTitulo">¿Como Gano dinero?</h4>
+            </div>
+          </a>
+          <div id="collapse" class="panel-collapse collapse text-justify">
+            <div class="panel-heading panelTexto">
+              <p>
+                Cuando te vuelves inversionista a través de Play Business, obtienes un pedacito de la Startup (equity). Si la empresa crece, tu inversión aumentará su valor proporcionalmente. <br>
+                Para ganar dinero debes vender tu participación (a esto se le llama exit) y hay varias formas de hacerlo:
+              </p> 
+              <p>
+                Si la empresa crece, tu inversión aumentará su valor proporcionalmente. Para hacer liquida tu inversion hay varias opciones:
+              </p>
+              <ul>
+                <li>IPO (Oferta pública de inversión): La empresa sale a la bolsa y vendes tu participación</li>
+                <li>M&A: Compra tu participación un fondo de inversión u otra empresa.</li>
+                <li>Nombre: El emprendedor (maker) u otro inversionista de la comunidad compra tu participación:</li>
+              </ul>
+              <p>
+                A esto le llamamos exit y es básicamente encontrar a alguien que quiera comprarte el pedazo de la empresa que tienes..
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+            <div class="panel-heading">
+              <h4 class="panel-title panelTitulo">¿Que es crowfunding?</h4>
+            </div>
+          </a>
+          <div id="collapse1" class="panel-collapse collapse text-justify">
+            <div class="panel-heading panelTexto">
+              <p>
+                El crowdfunding, también conocido como micromecenazgo o financiación colectiva, es una alternativa excelente para aquellos que tienen un proyecto, sea en el ámbito que sea, y que buscan financiación para poder llevarlo a cabo.
+              </p> 
+              <p>
+                Este sistema de mecenazgo se da mediante plataformas destinadas. El objetivo consiste en recaudar fondos para que algunas personas (miles de personas en realidad) entren como inversores y financien mediante pequeñas cantidades de dinero los proyectos publicados.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+            <div class="panel-heading">
+              <h4 class="panel-title panelTitulo">¿Que es equity?</h4>
+            </div>
+          </a>
+          <div id="collapse2" class="panel-collapse collapse text-justify">
+            <div class="panel-heading panelTexto">
+              <p>
+                El equity crowdfunding es una forma de financiación colectiva en la que varios inversores hacen su aportación de capital en una empresa a cambio de un porcentaje de la misma.
+              </p> 
+              <p>
+                Este tipo de inversión, en la mayoría de los casos, suele darse en startups o empresas de reciente creación, que se encuentran en fases iniciales y requieren de apoyo económico para hacer despegar su proyecto.
+              </p>
+              <p class="text-danger">*El porcentaje de equity cambia segun el crecimiento o valor de tu empresa</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+            <div class="panel-heading">
+              <h4 class="panel-title panelTitulo">¿Que gano cuando invierto?</h4>
+            </div>
+          </a>
+          <div id="collapse3" class="panel-collapse collapse text-justify">
+            <div class="panel-heading panelTexto">
+              <p>
+                Cuando inviertes en StartNow, por cada startup en la que inviertas, recibiras un certificado de inversión, estos documentos son encriptados y almacenados en nuestra plataforma que avalan tu inversión y por ende te acreditan como dueño. Estos los puedes imprimir o almacenar tu mismo, independientemente de lo que quieras hacer, estaran disponibles por siempre en StartNow
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+            <div class="panel-heading">
+              <h4 class="panel-title panelTitulo">¿estamos regulados?</h4>
+            </div>
+          </a>
+          <div id="collapse4" class="panel-collapse collapse text-justify">
+            <div class="panel-heading panelTexto">
+              <p>
+                ¡Ya casí! La inovacion de StartNow nacío de un modelo legal diseñado para Startups, aunque tenemos muy buena relación con los reguladores (SHCP y CNBV), aun no tienen las facultades para regularnos. En cuanto salga la Ley Fintech todo cambiara, mientras tanto todos nnuestros procesos y experiencia estan ayudando a sentar las bases de esta Ley.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div id="collapse5" class="panel-collapse collapse">
-      <div class="panel-heading">¡Ya casí! La innovación de Play Business nació de un modelo legal diseñado para Startups, aunque tenemos muy buena relación con los reguladores (SHCP y CNBV), aún no tienen las facultades para regularnos. En cuanto salga la Ley Fintech todo cambiará, mientras tanto todos nuestros procesos y experiencia está ayudando a sentar las bases de la Ley.</div>
+    <div class="row newProy text-center">
+      <h1>NUEVOS PROYECTOS</h1>
     </div>
-  </div> 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapse6">
-        ¿Como operamos legalmente.?</a>
-      </h4>
+    <div class="row newProyImg">
+      @foreach($proyectos as $proyecto ) <!-- Creacion del arreglo para que se itere el Div y ahorrar codigo-->
+          <a href="{{ url('/info/' . $proyecto->idProyecto . ' ') }}">
+            <div class="col-md-4">
+              <img src="proyectosImg/{!! $proyecto->imagenUrl!!}" class="img person" width="100%" height="30%" alt="Random Name">
+            </div>
+          </a>
+        @endforeach
     </div>
-
-    <div id="collapse6" class="panel-collapse collapse collapse">
-      <div class="panel-heading">Operamos a través de contratos y firmas electrónicas avanzadas, todos nuestros modelos han sido revisado por firmas de abogados privadas, el equipo interno de Play Business e incluso el regulador CNBV. El modelo está creado para aumentar la eficiencia al máximo, manteniendo la seguridad jurídica como prioridad para todos..</div>
-    </div>
+    @include('layouts.footer')
   </div>
-</div>
-</div>
-</div>
-</div>
-
-
-<!-- Portafolio de proyectos -->
-<div class="container" align="bottom:100pz;">
-
-  <div class="youtube" class="vid-responsive">
-
-  <div align="center">
-          <iframe width="900" height="500" id="vid" src="https://www.youtube.com/embed/YDIew2iEvBw" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
-  </div>
-
-</div>
-</div>
-<br>
-<br>
-
-
-<!-- Footer -->
-<footer class="w3-container w3-padding-15 w3-theme-d1 w3-center">
- <div align=center><img src={{ asset('img/logo2.png') }} class="img-responsive" width="15%" height="15%"></div>
-
-  <div align="center">
-    <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Facebook"><i class="fa fa-facebook"></i></a>
-    <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Twitter"><i class="fa fa-twitter"></i></a>
-    <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Google +"><i class="fa fa-google-plus"></i></a>
-    <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Google +"><i class="fa fa-instagram"></i></a>
-    <a class="w3-button w3-large w3-teal w3-hide-small" href="javascript:void(0)" title="Linkedin"><i class="fa fa-linkedin"></i></a>
-  </div>
- 
-
-  <div style="position:relative;bottom:100px;z-index:1;" class="w3-tooltip w3-right">   
-    <a class="w3-button w3-theme" href="#up"><span class="w3-xlarge">
-    <i class="fa fa-chevron-circle-up"></i></span></a>
-  </div>
-  </footer>
 
 </body>
 </html>

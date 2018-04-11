@@ -1,34 +1,33 @@
+@import url('https://fonts.googleapis.com/css?family=Coda+Caption:800');
+@import url('https://fonts.googleapis.com/css?family=Lato:100');
 * {
 	padding:0;
 	margin:0;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
+	
 }
-.nav img {
+.nav a img {
 	display: inline-block;
-	width: 5%;
+	width: 15%;
 	margin: 0 20px;
 }
 .nav {
-	background-color: rgba(255,255,255,.9);
-	box-shadow: 0 4px 3px rgba(0,0,0,.1);
+	background-color: transparent;
 	margin: 0;
 	padding: 0;
 	height: 60px;
 }
-.nav a {
+
+.nav li a {
 	text-decoration: none;
 	color: black;
 	display:block;
 	padding: 20px;
-}	
-.nav ul li:hover, .nav ul li a:hover {
-	background-color: rgba(54,57,58,.5);
-	color: white !important;
 }
 .nav ul {
 	list-style: none;
+	display: inline-block;
+	float: right;
+	margin: 2% 1%;
 }
 .submenu {
 	float: right;
@@ -71,24 +70,101 @@
 	margin-left:10px;
 	margin-right:0px;
 }
-
-
+.whiteLink {
+	color: #FFF !important;
+	font-size: 1.2em;
+	border-left: 1px solid #FFF;
+	padding: 0px 10px !important;
+}
+.greenLink {
+	color: #A3BF59 !important;
+	font-weight: bold;
+	font-size: 1.5em;
+	cursor: default;
+}
 .menu_bar {
 	display:none;
 }
-
-.center {
-	text-align: center;
+section#banner {
 	width: 100%;
+	margin: auto;
+	background-image: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(../img/chicago.jpg);
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
 }
-.center a {
-	padding: 20px;
-	text-decoration: none;
-	color: white;
-	border-radius: 5px;
-	background-color: rgba(43,136,182,1);
+header {
+	position: absolute;
+	width: 75%;
+	height: 70%;
+	background-color: transparent;
 }
-
+#registrate, #login {
+	background-color: rgba(255,255,255,.54);
+	padding: 5px;
+	color: #000;
+	font-family: 'helvetica', sans-serif;
+	font-weight: bold;
+	font-size: 1.5em;
+	letter-spacing: 1px;
+	border-radius: 10px;
+}
+#registrate:hover {
+	background-color: #656565 ;
+	color: rgba(255,255,255,.54);
+}
+#login {
+	background-color: rgba(0,0,0,.54);
+	color: #9AB554;
+}
+#login:hover {
+	background-color: #9AB554;
+	color: rgba(0,0,0,.54);
+}
+.miContainer {
+	width: 75%;
+	margin: auto;
+	/*overflow-x: hidden;*/
+}
+#headText {
+	display: block;
+	position: absolute;
+	top: 25%;
+	/*width: 100%;*/
+	margin-left: 1%;
+}
+#headText span {
+	color: #fff;
+	font-family: 'Arial black ;', sans-serif;
+	letter-spacing: 1px;
+	line-height: .8;
+}
+#inova {
+	font-size: 5em;
+	font-weight: bold;
+}
+#tecno {
+	font-size: 9em;
+	margin-left: 5px;
+	font-weight: bold;
+}
+#apoyo {
+	font-size: 3em;
+	line-height: 2.5 !important;
+	font-family: 'Lato', sans-serif !important;
+}
+/*FOOTER ESTILOS*/
+.footer {
+	background-color: #383F59 !important;
+}
+.redes {
+	padding-bottom: 20px;
+}
+.redes svg {
+	color: #fff;
+	font-size: 2em;
+	margin: 0 20px; 
+}
 @media screen and (max-width:800px ) {
 	.nav {
 		width:100%;

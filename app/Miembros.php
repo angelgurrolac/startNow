@@ -14,12 +14,12 @@ class Miembros extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombres', 'apellidoP', 'apellidoM','urlPerfil','idProyecto','imagenUrl','puesto','descripcion'];
+    protected $fillable = ['nombres', 'apellidoP', 'apellidoM','urlPerfil','idProyecto','imagenMiembro','puesto','descripcion'];
 
-    public function setImagenUrlAttribute($imagenUrl) {
-       $this->attributes['imagenUrl'] = Carbon::now()->second.$imagenUrl->getClientOriginalName(); 
-       $name = Carbon::now()->second.$imagenUrl->getClientOriginalName(); 
-       \Storage::disk('local')->put($name, \File::get($imagenUrl)); 
+    public function setimagenMiembroAttribute($imagenMiembro) {
+       $this->attributes['imagenMiembro'] = Carbon::now()->second.$imagenMiembro->getClientOriginalName(); 
+       $name = Carbon::now()->second.$imagenMiembro->getClientOriginalName(); 
+       \Storage::disk('local')->put($name, \File::get($imagenMiembro)); 
    } 
 }   
   

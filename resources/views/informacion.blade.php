@@ -2,369 +2,158 @@
 <head>
 	<title> Informacion proyectos</title>
 
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
    <script type="text/javascript" src="https://conektaapi.s3.amazonaws.com/v0.3.0/js/conekta.js"></script>
         <script type="text/javascript">
             // Conekta Public Key
             Conekta.setPublishableKey('key_GPUKe83pUTXqr7UdKsXyWBw');
+            Conekta.setPublicKey('key_GPUKe83pUTXqr7UdKsXyWBw');
+            Conekta.setLanguage("es");
+            Conekta.getLanguage();
             // ...
         </script>
   <script src="../js/main.js"></script>
   {!!Html::style('css/navStyle.css')!!}
-
-  <style type="text/css">
-    nav ul {
-      width: 100%;
-    }
-  </style>
+  {!!Html::style('css/todos.css')!!}
+  {!!Html::style('css/info.css')!!}
 
 </head>
 
 <body>
-@include('layouts.nav')
-
-<!-- impresion centrada del nombre del proyecto -->
-<center><h2>{!! $proyecto->nombre !!}</h2></center>
-<br>
-
+  <div class="miContainer">
+    @include('layouts.nav')
+  </div><br><br><br>
 
 <!--- Creacion de la seccion de la imagen del proyecto traida desde la  BD  -->
-<div class="container">
-  <div class="row">
-    <div class="col-md-6">
-	     <img aling=rigth src="../proyectosImg/{!!$proyecto->imagenUrl!!}" class="img-responsive "width="70%" alt="Random Name">
+<div class="miContainer">
+  <div class="row banner">
+    <div id="headText" class="text-center" unselectable="on" onselectstart="return false;" onmousedown="return false;">
+      <span class="textoSpan">{!! $proyecto->nombre !!}</span>
     </div>
-<!--- Creacion de la seccion de la tabla muestra datos del proyecto -->
-<div class="col-md-6">
-  <br><br><br>
-<table class="table">
-  <thead>
-    <tr>
-  	<br>
-      <th scope="col">Meta Maxima</th>
-      <th scope="col">Meta Minima</th>
-      <th scope="col">Fecha De Inicio</th>
-      <th scope="col">Fecha De Termino</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>{!! $proyecto->metaMax!!}</td>
-      <td>{!! $proyecto->metaMin!!}</td>
-       <td>{!! $proyecto->fechaInicio!!}</td>
-      <td>{!! $proyecto->fechaFin!!}</td>
-    </tr>
-  </tbody>
-</table>
+  </div>
 
-<center><button type="button" data-toggle="modal" data-target="#modal" class="btn btn-primary btn-lg">Donar</button></center>
-
-<div id="modal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Datos de la tarjeta</h4>
-        <button type="" class="close" data-dismiss="modal">&times;</button>
+  <div class="row margen-top apoyo text-center">
+    <div class="row">
+      <button type="button" data-toggle="modal" data-target="#modal" class="">APOYAR PROYECTO</button>
+    </div>
+    <div class="row">
+      <div class="row">
+        <img src="../proyectosImg/{!!$proyecto->imagenUrl!!}" alt="ImgProyecto">
       </div>
-      <div class="modal-body">
-        <form action="/informacion/donar" method="POST" id="card-form">
-            <div class="form-group">
-              <label for="">Nombre del propietario</label>
-              <input type="text" class="form-control" data-conekta="card[name]">
-            </div>
-            <div class="form-group">
-              <label for="">Numero de tarjeta</label>
-              <input type="text" class="form-control" data-conekta="card[number]">
-            </div>
-            <div class="form-group">
-              <label for="">CVC</label>
-              <input type="text" class="form-control" data-conekta="card[cvc]">
-            </div>
-            <div class="form-group">
-              <div class="row">
-                <label class="col-sm-12" for="">Fecha de expiración</label>
-                <input type="text" placeholder="MM" class="form-control col-sm-2" data-conekta="card[exp_month]" style="margin:0 5px 0 14px;">
-                <input type="text" placeholder="YYYY" class="form-control col-sm-2" data-conekta="card[exp_year]">
-              </div>
-            </div>
-            <div class="input-group">
-              
-              <div class="input-group-prepend">
-                <div class="input-group-text">$</div>
-              </div>
-              <input type="text" class="form-control" placeholder="Cantidad en pesos MXN">
-            </div>
-             <button type="submit" class="btn btn-success">Donar!</button>
-            </form>
-            </div>
-            <div class="modal-footer">
-             
-        
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+      <div class="row metas">
+        <span>META MINIMA: <strong>{!!$proyecto->metaMin!!}</strong></span>
+        <span>META MAXIMA: <strong>{!!$proyecto->metaMax!!}</strong></span>
+        <div class="row fechas">
+          <span class="col-lg-6">INICIO: <strong>{!!$proyecto->fechaInicio!!}</strong></span>
+          <span class="col-lg-6">FIN: <strong>{!!$proyecto->fechaFin!!}</strong></span>
+        </div>
+
       </div>
     </div>
-  </div>
 </div>
+    <div class="row margen-top text-left">
+        <h3>Introducción</h3>
+        <div class="col-lg-12 linea"></div>
+        <p>{!! $proyecto->descCorta !!}</p>
+        <div class="row margen-top text-center">
+          <iframe width="720" height="425" id="vid" src={{$URL}} frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe> 
+        </div>
+    </div>
+    <div class="row margen-top text-left">
+        <h3>Descripción</h3>
+        <div class="col-lg-12 linea"></div>
+        <p>{!! $proyecto->descLarga !!}</p>
+    </div>
+    <div class="row margen-top text-left">
+        <h3>Mercado</h3>
+        <div class="col-lg-12 linea"></div>
+        <p>{!! $proyecto->valorMercado !!}</p>
+    </div>
 
-<hr></hr>
+    <div class="row margen-top text-left">
+        <div class="col-lg-6">
+          <h3 class="margenVerde">Como llegar al cliente</h3>
+          <p>{!! $proyecto->descComollegarClientes !!}</p>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="margenVerde">Propuesta de valor</h3>
+          <p>{!! $proyecto->propuestaValor !!}</p>
+        </div>
+    </div>
+
+    <div class="row margen-top text-center">
+      <div class="row">
+        <h2>EQUIPO</h2>
+      </div>
+      <div class="row">
+        @foreach($miembrosequipo as $miembro ) 
+          @if(count($miembrosequipo) > 3)
+            <div class="col-sm-3 text-center"> 
+              <div class="w3-card-3" style="text-align:center"> 
+                <img src="../proyectosImg/{{$miembro->imagenMiembro}}" alt="Norway" style="width:100%">
+                <a class="linked" href="{!!$miembro->urlPerfil!!}" title="Linkedin"><i class="fab fa-linkedin"></i></a> 
+                <h4 class="nombre">{!!$miembro->nombres.' '.$miembro->apellidoP.' '.$miembro->apellidoM!!}</h4> 
+                <p>{!!$miembro->puesto!!}</p> 
+              </div> 
+            </div>
+          @else
+            <div class="col-sm-4 text-center"> 
+              <div class="w3-card-3" style="text-align:center"> 
+                <img src="../proyectosImg/{{$miembro->imagenMiembro}}" alt="Norway" style="width:100%">
+                <a class="linked" href="{!!$miembro->urlPerfil!!}" title="Linkedin"><i class="fab fa-linkedin"></i></a> 
+                <h4 class="nombre">{!!$miembro->nombres.' '.$miembro->apellidoP.' '.$miembro->apellidoM!!}</h4> 
+                <p>{!!$miembro->puesto!!}</p> 
+              </div> 
+            </div>
+          @endif
+        @endforeach
     </div>
   </div>
-<hr></hr>
-  </div>
-  </div>
+  @include('layouts.footer')
 </div>
-<br>
-<br>
-<!--- Creacion de la seccion Descripcion larga -->
-<div id="band" class="container text-center center col-sm-12">
-<textarea name=""  cols="150" rows="10" style="resize: none; border: none;text-align: center;">{!!$proyecto->descLarga!!}.</textarea>
-</div>
-<br>
-<br>
-
-@foreach($etapas as $etapa)
-
-<div class="container">
-  @foreach($productos as $producto)
-  <h2>Descripcion del Producto.</h2>
-  <ul class="list-group">
-    <li class="list-group-item active">{!!$producto->nombreProducto!!}</li>
-    <li class="list-group-item ">Descripcion:  {!!$producto->descAFondo!!}</li>
-    <li class="list-group-item ">Tipo:      {!!$producto->TipoProducto!!}</li>
-    <li class="list-group-item ">Etapa:      {!!$etapa->nombreEtapa!!}</li>
-    <li class="list-group-item ">Descripcion Etapa :      {!!$etapa->descripcionEtapa!!}</li>
-  </ul>
-  @endforeach
-</div>
-
-@endforeach
-
+<script type="text/javascript"> 
+            jQuery(function($) { 
+                 
+                 
+                var conektaSuccessResponseHandler; 
+                conektaSuccessResponseHandler = function(token) { 
+                    var $form; 
+                    $form = $("#card-form"); 
  
-  <br>
-  <br>
-<!-- Contenedor del video de cada proyecto --> 
-<div class="youtube" class="vid-responsive">
-
-  <div align="center">
-
-          <iframe width="720" height="425" id="vid" src={{$URL}} frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
-  </div>
-</div>  
-
-
-<br>
-<br>
-<!-- creacion de  como llegar a los clientes y propuestas de valor en  tarjetas -->
-<center><div class="w3-container">
-  <div class="w3-card-4" style="width:75%">
-    <header class="w3-container w3-light-blue">
-      <h3>Como llegar a los clientes.</h3>
-    </header>
-    <div class="w3-container">
-      <hr>
-      <img src="https://cdn.dribbble.com/users/35310/screenshots/3386707/oliver_teaser.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:70px">
-      <p align="left">{!!$proyecto->descComollegarClientes!!}</p>
-      <br>
-    </div>
-    
-  </div>
-</div>
-<br>
-<br>
-  <div class="w3-container">
-  <div class="w3-card-4" style="width:75%">
-    <header class="w3-container w3-light-blue">
-      <h3>Propuesta de valor.</h3>
-    </header>
-    <div class="w3-container">
-      <hr>
-      <img src="https://cdn.dribbble.com/users/35310/screenshots/3386707/oliver_teaser.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:70px">
-      <p align="left">{!!$proyecto->propuestaValor!!}</p>
-      <br>
-    </div>
-  </div>
-</div>
-<br>
-<br>
-<div class="w3-container">
-  <div class="w3-card-4" style="width:75%">
-    <header class="w3-container w3-light-blue">
-      <h3>Valor de Mercado</h3>
-    </header>
-    <div class="w3-container">
-      <hr>
-      <img src="https://cdn.dribbble.com/users/35310/screenshots/3386707/oliver_teaser.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:70px">
-      <p align="left">{!!$proyecto->valorMercado!!}</p>
-      <br>
-    </div>
-  </div>
-</div>
-<br>
-</center> <!-- centramos los paneles de valor de mercado como llegar a los clientes ETC.-->
-<br>
-
-<!--- Impresiones de  ID del proyecto  de manera invisible -->
-<INPUT type="hidden" name="idProducto" value="{!! $proyecto->idProducto!!}">
-<INPUT type="hidden" name="idUsuario" value="{!! $proyecto->idUsuario!!}">
-<INPUT type="hidden" name="idMercado" value="{!! $proyecto->idMercado!!}">
-<br>
-<br>
-<!-- Mercado donde opera -->
- <div align=center class="w3-container">
-  @foreach($mercados as $mercado)
-  <div class="w3-card-4" style="width:75%">
-    <header class="w3-container w3-light-blue">
-      <h3>Mercado Donde Opera.</h3>
-    </header>
-    <div class="w3-container">
-      <hr>
-      <img src="{!!$mercado->urlMercado!!}" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:100px">
-      <p align="left"> {!!$mercado->nombreMercado!!}</p>
-      <p align="left"> {!!$mercado->descMercado!!}</p>
-      <br>
-    </div>
-  </div>
-  @endforeach
-</div>
-
-<br>
-<br>
-<br>
-<!-- Seccion donde se realiza  la competencia directa del produto-->
-<hr align=center> </hr>
-<h2 align=center> Competencia directa </h2>
-
-<div class="container" align="bottom:100pz;">
-<div class="container">
-<br>
-<br>
-<br>
-<div class="row justify-content-center">
-@foreach($competencias as $competencia )
-  <div class="col-sm-4" style="width:100%">
-  <div class="w3-card-4" style="width:%100">
-    <img src="../proyectosImg/{{$competencia->urlImagenCompetencia}}" alt="Norway" style="width:100%; height: 300px;">
-    <h2>{!!$competencia->nombreCompetencia!!}</h2>
-    <p>{!!$competencia->descripcionCompetencia!!}</p>
-  </div>
-</div>
-@endforeach
-</div>
-</div>
-</div>
-<br>
-<br>
-<!-- Seccion donde se realiza el acomodo del equipo que desarrollo el proyecto -->  
-
-<!--div class="container" align="bottom:100px;"-->
-<div aling=center class="container">
-<center><h1><strong>Equipo desarrollador.</strong></h1></center>
-<br>
-<br>
-<br>
-<div class="row center">
-@foreach($miembrosequipo as $miembro )
-  <div class="col-sm-4 center">
-  <div class="w3-card-4" style="width:%100; text-align:center">
-    <h4>{!!$miembro->nombres.' '.$miembro->apellidoP.' '.$miembro->apellidoM!!}</h4>
-    <a class="w3-button w3-large w3-teal w3-hide-small" href="{!!$miembro->urlPerfil!!}" title="Linkedin"><i class="fa fa-linkedin"></i></a>
-    <img src="../proyectosImg/{{$miembro->imagenUrl}}" alt="Norway" style="width:100%">
-    <p>{!!$miembro->puesto!!}</p>
-    <p>{!!$miembro->descripcion!!}</p>
-  </div>
-</div>
-@endforeach
-<br>
-<br>
-</div>
-<br>
-<br>
-
-
-<!-- Acomodo de las alianzas externas al equipo de desarrollo -->
-<h2 align=center> Colaboradores </h2>
-<br>
-<br>
-<br>
-
-@foreach ($alianzas as $alianza)
-<div align=center class="container">
-  
-  <p></p>
-  <div class="card" style="width:400px">
-    <img class="card-img-top" src="{!!$alianza->urlImagenAlianza!!}" alt="Card image" style="width:100%">
-    <div class="card-body">
-      <h2>{!!$alianza->nombreAlianza!!}</h2>
-      <p class="card-text">{!!$alianza->descripcionAlianza!!}</p>
-      <p class="card-text">Some example text.</p>
-      <a href="{!!$alianza->urlAlianza!!}" class="btn btn-primary">Visitanos</a>
-      @endforeach
-    </div>
-  </div>
-</div>
-  <br>
-</div>
-  <!-- Footer -->
-<footer class=" w3-padding-32 w3-theme-d1 w3-center" style="width:100%;">
-      
-  <h4><strong>Siguenos.</strong></h4>
-  <div align=center><img src={{ asset('img/logo2.png') }} class="img-responsive "width="15%" height="15%"></div>
-  <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Facebook"><i class="fa fa-facebook"></i></a>
-  <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Twitter"><i class="fa fa-twitter"></i></a>
-  <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Google +"><i class="fa fa-google-plus"></i></a>
-  <a class="w3-button w3-large w3-teal" href="javascript:void(0)" title="Google +"><i class="fa fa-instagram"></i></a>
-  <a class="w3-button w3-large w3-teal w3-hide-small" href="javascript:void(0)" title="Linkedin"><i class="fa fa-linkedin"></i></a>
+                    /* Inserta el token_id en la forma para que se envíe al servidor */ 
+                    $form.append($("<input type=\"hidden\" name=\"conektaTokenId\" />").val(token.id)); 
  
-
-    <div style="position:relative;bottom:100px;z-index:1;" class="w3-tooltip w3-right">
-    <span class="w3-text w3-padding w3-teal w3-hide-small">Go To Top</span>   
-    <a class="w3-button w3-theme" href="#up"><span class="w3-xlarge">
-    <i class="fa fa-chevron-circle-up"></i></span></a>
-    </div>
-</footer>
-<script type="text/javascript">
-            jQuery(function($) {
-                
-                
-                var conektaSuccessResponseHandler;
-                conektaSuccessResponseHandler = function(token) {
-                    var $form;
-                    $form = $("#card-form");
-
-                    /* Inserta el token_id en la forma para que se envíe al servidor */
-                    $form.append($("<input type=\"hidden\" name=\"conektaTokenId\" />").val(token.id));
-
-                    /* and submit */
-                    $form.get(0).submit();
-                };
-                
-                conektaErrorResponseHandler = function(token) {
+                    /* and submit */ 
+                    $form.get(0).submit(); 
+                }; 
+                 
+                conektaErrorResponseHandler = function(token) { 
                     console.log(token);
-                };
-                
-                $("#card-form").submit(function(event) {
-                    event.preventDefault();
-                    var $form;
-                    $form = $(this);
-
-                    /* Previene hacer submit más de una vez */
-                    $form.find("button").prop("disabled", true);
-                    Conekta.token.create($form, conektaSuccessResponseHandler, conektaErrorResponseHandler);
-                    /* Previene que la información de la forma sea enviada al servidor */
-                    return false;
-                });
-
-            });
-
-        </script>
-
+                    var $form = $("#card-form");
+                    $form.find(".card-errors").text(token.message_to_purchaser);
+                    $form.find("button").prop("disabled", false);
+                }; 
+                 
+                $("#card-form").submit(function(event) { 
+                    event.preventDefault(); 
+                    var $form; 
+                    $form = $(this); 
+ 
+                    /* Previene hacer submit más de una vez */ 
+                    $form.find("button").prop("disabled", true); 
+                    Conekta.token.create($form, conektaSuccessResponseHandler, conektaErrorResponseHandler); 
+                    /* Previene que la información de la forma sea enviada al servidor */ 
+                    return false; 
+                }); 
+ 
+            }); 
+ 
+        </script> 
+  @include('layouts.modalPago')
 </body>
 </html>
 

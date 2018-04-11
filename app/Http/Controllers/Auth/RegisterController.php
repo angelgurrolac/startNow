@@ -6,7 +6,8 @@ use startnow\User;
 use Validator;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use startnow\Http\Controllers\Controller;
-
+use startnow\State;
+use startnow\Town;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
 
@@ -31,7 +32,6 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -40,7 +40,7 @@ class RegisterController extends Controller
      */
      public function __construct()
     {
-        $this->middleware('guest', ['except' => 'getLogout']);
+        // $this->middleware('guest', ['except' => 'getLogout']);
     }
 
     /**
@@ -51,15 +51,24 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        
-       
+        // dd($data);
         return Validator::make($data, [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
+            'Apeido_P' => 'required|string|max:32',
+            'Apeido_M' => 'required|string|max:32',
+            'Direccion' => 'required|string|max:255',
+            'CP' => 'required|numeric|digits:5',
+            'Pais' => 'required|string|max:32',
+            'CD' => 'required|string|max:32',
+            'Numero_Cel' => 'required|numeric|digits:10',
+            'Numero_Casa' => 'required|numeric|digits_between:7,10',
+            'Sex' => 'required|string|max:10',
+            'Fecha' => 'required|date',
+            'Fecha' => 'required|date',
         ]);
     }
-
     /**
      * Create a new user instance after a valid registration.
      *
@@ -70,6 +79,7 @@ class RegisterController extends Controller
     {
         return User::create([
             'name' => $data['name'],
+            'remember_token' => $data['_token'],
             'email' => $data['email'],
             'Apeido_P' => $data['Apeido_P'],
             'Apeido_M' => $data['Apeido_M'],
@@ -77,13 +87,11 @@ class RegisterController extends Controller
             'CP' => $data['CP'],
             'Pais' => $data['Pais'],
             'CD' => $data['CD'],
-            'Numero_Ext' => $data['Numero_Ext'],
             'Numero_Cel' => $data['Numero_Cel'],
             'Numero_Casa' => $data['Numero_Casa'],
             'Sex' => $data['Sex'],
             'Fecha' => $data['Fecha'],
-            'Perfil' => $data['Perfil'],
-            'password' => bcrypt($data['password']),
+            'password' => $data['password'],
         ]);
     }
 }

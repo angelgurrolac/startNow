@@ -37,18 +37,16 @@ class UsuarioController extends Controller
             'Numero_Cel' => $request['Numero_Cel'],
             'Numero_Casa' => $request['Numero_Casa'],
             'Sex' => $request['Sex'],
-            'Fecha' => $request['Fecha'],
-            'Perfil' => $request['Perfil'],
-          
+            'Fecha' => $request['Fecha']          
         ]);
     }
 
 
-public function __construct(){
-        $this->middleware('auth');
-        $this->middleware('admin');
-        #$this->middleware('@find',['only' => ['edit','update','destroy']]);
-    }
+// public function __construct(){
+//         $this->middleware('auth');
+//         $this->middleware('admin');
+//         #$this->middleware('@find',['only' => ['edit','update','destroy']]);
+//     }
     public function find(Route $route){
         $this->user = User::find($route->getParameter('usuario'));
 

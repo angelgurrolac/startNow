@@ -2,6 +2,8 @@
 
 namespace startnow\Http\Controllers;
 use startnow\proyectos;
+use startnow\user;
+use DB;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -13,7 +15,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        #$this->middleware('auth');
     }
 
     /**
@@ -23,9 +25,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-         $proyectos = proyectos::limit(6)->orderBy('created_at','desc')->get(); 
+         $proyectos = proyectos::limit(3)->orderBy('created_at','desc')->get();
+         $randoms = proyectos::limit(3)->inRandomOrder()->get();
+         $apoyando = DB::table('users')->count();
+         $apoyados = DB::table('proyectos')->count();
+         $finalizados = proyectos::where('estatus', '=', 'completo')->count();
 
-        return view('welcome',['proyectos'=>$proyectos]);
+        return view('welcome',['proyectos'=>$proyectos,'randoms' => $randoms , 'apoyando' => $apoyando, 'apoyados' => $apoyados, 'finalizados' => $finalizados]);
     }
 }
 

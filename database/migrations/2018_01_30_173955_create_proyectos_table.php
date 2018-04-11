@@ -17,23 +17,22 @@ class CreateProyectosTable extends Migration
 
             $table->increments('idProyecto');
             $table->string('nombre',100);
+            $table->integer('idUsuario');
             $table->string('descCorta',200);
-            $table->binary('descLarga');
+            $table->text('descLarga');
             $table->string('imagenUrl',500);
             $table->string('videoUrl',100);
             $table->double('metaMin',8,2);
             $table->double('metaMax', 8, 2);
             $table->dateTime('fechaInicio');
             $table->dateTime('fechaFin');
-            $table->integer('idProducto');
-            $table->integer('idUsuario');
-            $table->integer('idMercado');
             $table->double('numeroClientes',8,2);
             $table->binary('valorMercado');
             $table->binary('descComoLlegarClientes');
             $table->binary('propuestaValor');
             $table->boolean('inversion');
             $table->timestamps();
+            $table->string('estatus');
 
             });
     }

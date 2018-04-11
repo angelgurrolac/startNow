@@ -1,0 +1,43 @@
+.miContainer {
+	height: 100%;
+}
+footer {
+    width: 75%;
+    margin: auto;
+}
+footer .logp {
+	height: auto;
+}
+.footer {
+    bottom: 0;
+    width: 100%;
+}
+.whiteLink, .greenLink {
+	color: #9AB554 !important;
+	border-left: 1px solid #B2B2B2;
+	font-weight: bold;
+	font-size: 1.5em;
+}
+.greenLink {
+	padding-left: 5px;
+}
+
+.active {
+	color: #48547E !important;
+}
+.margenTop {
+	margin-top: 10%;
+}
+.opciones {
+	box-shadow: 0 2px 10px #aaaaaa !important;
+	padding: 20px 0;
+}
+.opciones a {
+	color: #46547B;
+	text-decoration: none;
+	font-size: 2.5em;
+	font-family: "Franklin Gothic Medium","Franklin Gothic","ITC Franklin Gothic",Arial,sans-serif;
+}
+.activa {
+	border-bottom: 2px solid #9AB554;
+}

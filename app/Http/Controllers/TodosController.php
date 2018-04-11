@@ -11,16 +11,18 @@ use startnow\Youtube;
 use startnow\productos;
 use startnow\etapas;
 use startnow\alianzas;
+use startnow\categorias;
 
 class TodosController extends Controller
 {
    public function index()
     {
 
-    	$proyectos = proyectos::all();       
+    	$proyectos = proyectos::paginate(8);
+        $categorias = categorias::get();
 
        #         $proyectos = proyectos::select('nombre')->where('idProyecto',1)->get();
-        return view('todos',['proyectos'=>$proyectos]);
+        return view('todos',['proyectos'=>$proyectos, 'categorias' => $categorias]);
     }
 
     /**
@@ -32,7 +34,13 @@ class TodosController extends Controller
     {
         //
     }
+    public function filter($cat) {
+        $proyectos = proyectos::where('fk_categoria', '=', $cat)->paginate(8);
+        $categorias = categorias::get();
 
+        // dd($proyectos);
+        return view('todos',['proyectos'=>$proyectos, 'categorias' => $categorias]);
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -50,18 +58,24 @@ class TodosController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($cat)
     {
+        
+        $proyectos = proyectos::where('fk_categoria', '=', $cat)->paginate(8);
+        // dd($proyectos);
+        $categorias = categorias::get();
 
+        // dd($proyectos);
+        return view('todos',['proyectos'=>$proyectos, 'categorias' => $categorias]);
          
-        $proyectos = proyectos::select()->where('idProyecto',$id)->get();
+       //  $proyectos = proyectos::select()->where('idProyecto',$id)->get();
 
      
 
 
-        $url="http://youtube.com/embed/".Youtube::parseVIdFromURL($proyectos[0]->videoUrl)."";
-        //dd($miembrosequipo);
-       return view('todos',['proyecto'=>$proyectos[0],'URL'=>$url,'miembrosequipo'=>$miembrosequipo,'competencias'=>$competencias,'mercados'=>$mercados,'productos'=>$productos,'etapas'=>$etapas,'alianzas'=>$alianzas]);
+       //  $url="http://youtube.com/embed/".Youtube::parseVIdFromURL($proyectos[0]->videoUrl)."";
+       //  //dd($miembrosequipo);
+       // return view('todos',['proyecto'=>$proyectos[0],'URL'=>$url,'miembrosequipo'=>$miembrosequipo,'competencias'=>$competencias,'mercados'=>$mercados,'productos'=>$productos,'etapas'=>$etapas,'alianzas'=>$alianzas]);
 
 
     }

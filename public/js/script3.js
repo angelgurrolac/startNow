@@ -1,4 +1,4 @@
-$(document).on('click','.pagination a',function(e){
+$(document).on('click','.pager a',function(e){
     e.preventDefault();
     var page = $(this).attr('href').split('page=')[1];
     var route = "http://localhost:8000/usuario";

@@ -1,0 +1,84 @@
+.banner {
+	background-image: linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url(../img/startup.gif);
+}
+#headText span {
+	display: block !important;
+	border: none;
+}
+.row {
+	margin-left: 0;
+	margin-right: 0;
+}
+.margen-top {
+	margin-top: 50px;
+}
+.whiteLink {
+	color: #000 !important;
+	border-left: 1px solid #000;
+}
+.apoyo button {
+	background-color: #6F7E9D;
+	font-size: 3em;
+	font-family: Optima,Segoe,"Segoe UI",Candara,Calibri,Arial,sans-serif;
+	padding: 10px;
+	border-radius: 10px;
+	font-weight: bold;
+	color: #FFF;
+	border: none;
+	box-shadow: 0 2px 10px #aaaaaa !important;
+}
+.apoyo button:hover {
+	background-color: #535F78;
+}
+.apoyo img {
+	position: relative;
+	margin-top: 2%;
+	width: 50%;
+	max-width: 525px;
+	max-height: 525px;
+}
+.metas {
+	border: 4px solid #535F78;
+	padding: 20px;
+	margin: auto;
+	width: 70%;
+}
+.metas span {
+	display: block;
+	font-size: 2em;
+	margin: 5px 0;
+	font-weight: bold;
+}
+.metas span strong {
+	color: #6E7E9F;
+}
+.linea {
+	background-color: #9AB554 !important;
+	height: .4%;
+}
+.row h3 {
+	font-weight: bold;
+	font-size: 3em;
+	font-family: Optima,Segoe,"Segoe UI",Candara,Calibri,Arial,sans-serif;
+}
+.row p {
+	font-family: Optima,Segoe,"Segoe UI",Candara,Calibri,Arial,sans-serif;
+	font-size: 1.5em;
+	word-wrap: break-word;
+}
+.margenVerde {
+	border-left: 5px solid #9AB554;
+	padding-left: 5px;
+}
+.row h2 {
+	font-size: 5em;
+	color: #97B555;
+	font-weight: bold;
+}
+.linked {
+	font-size: 2em;
+	text-decoration: none;
+}
+.nombre {
+	font-weight: bold;
+}

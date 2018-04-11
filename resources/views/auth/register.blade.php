@@ -1,272 +1,167 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="container">
-    <br>
-    <br>
-    <div class="row">
-        <div class="col-md-10 col-md-offset-2">
-            <div class="panel panel-primary">
-                <div class="panel-heading">Registro de usuarios.</div>
-                <div class="panel-body">
-                    <form class="form-inline" method="POST" action="{{ route('register') }}" aling="center">
-                        {{ csrf_field() }}
-                        <BR>
-                        <BR>
-                        <br>
-                        <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }} col-md-6 ">
-                            <label for="name" class="col-md-4 control-label">Nombre</label>
-
-                            <div class="col-md-6">
-                                <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
-
-                                @if ($errors->has('name'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('name') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="form-group  {{ $errors->has('Apeido_P') ? ' has-error' : '' }} col-md-6  ">
-                            <label for="Apeido_P" class="col-md-4 control-label">Apellido Paterno</label>
-
-                            <div class="col-md-6">
-                                <input id="Apeido_P" type="text" class="form-control" name="Apeido_P" value="{{ old('Apeido_P') }}" required autofocus>
-
-                                @if ($errors->has('Apeido_P'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('Apeido_P') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                          <br>
-                          <BR>
-                          <div class="form-group {{ $errors->has('Apeido_M') ? ' has-error' : '' }} col-md-6 ">
-                            <label for="Apeido_M" class="col-md-4 control-label">Apellido Materno</label>
-
-                            <div class="col-md-6">
-                                <input id="Apeido_M" type="text" class="form-control" name="Apeido_M" value="{{ old('Apeido_M') }}" required autofocus>
-
-                                @if ($errors->has('Apeido_M'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('Apeido_M') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                          <br>
-
-
-                         <div class="form-group  {{ $errors->has('Direccion') ? ' has-error' : '' }} col-md-6 ">
-                            <label for="Direccion" class="col-md-4 control-label">Direccion</label>
-
-                            <div class="col-md-6">
-                                <input id="Direccion" type="text" class="form-control" name="Direccion" value="{{ old('Direccion') }}" required autofocus>
-
-                                @if ($errors->has('Direccion'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('Direccion') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                          <br>
-
-
-
-                         <div class="form-group  {{ $errors->has('CP') ? ' has-error' : '' }} col-md-6  ">
-                            <label for="CP" class="col-md-4 control-label">Codigo Postal</label>
-
-                            <div class="col-md-6">
-                                <input id="CP" type="text" class="form-control" name="CP" value="{{ old('CP') }}" required autofocus>
-
-                                @if ($errors->has('CP'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('CP') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                          <br>
-
-
-                         <div class="form-group {{ $errors->has('Numero_Ext') ? ' has-error' : '' }} col-md-6  ">
-                            <label for="Numero_Ext" class="col-md-4 control-label">Numero Exterior</label>
-
-                            <div class="col-md-6">
-                                <input id="Numero_Ext" type="text" class="form-control" name="Numero_Ext" value="{{ old('Numero_Ext') }}" required autofocus>
-
-                                @if ($errors->has('Numero_Ext'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('Numero_Ext') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                          <br>
-
-
-
-                        <div class="form-group col-md-6 ">
-                            <label for="Pais" class="col-md-4 control-label">Pais</label>
-                            <div class="col-md-6">
-                                <select class="form-control" name="Pais">
-                                    <option>Mexico</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                </select>
-
-                            </div>
-                      </div> 
-                        <br>
- 
-
-                      <div class="form-group col-md-6 ">
-                            <label for="CD" class="col-md-4 control-label">Ciudad</label>
-                            <div class="col-md-6">
-                                <select class="form-control" name="CD">
-                                    <option>Durango</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                </select>
-
-                            </div>
-                      </div> 
- 
-                     
-                      <div class="form-group  {{ $errors->has('Numero_Cel') ? ' has-error' : '' }} col-md-6 ">
-
-                            <label for="Numero_Cel" class="col-md-4 control-label">Numero Celular</label>
-
-                            <div class="col-md-6">
-                                <input id="Numero_Cel" type="text" class="form-control" name="Numero_Cel" value="{{ old('Numero_Cel') }}" required autofocus>
-
-                                @if ($errors->has('Numero_Cel'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('Numero_Cel') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                         <br>
-
-                         <br>
-                        <div class="form-group  {{ $errors->has('Numero_Casa') ? ' has-error' : '' }} col-md-6 ">
-                            <label for="Numero_Casa" class="col-md-4 control-label">Numero Casa</label>
-
-                            <div class="col-md-6">
-                                <input id="Numero_Casa" type="text" class="form-control" name="Numero_Casa" value="{{ old('Numero_Casa') }}" required autofocus>
-
-                                @if ($errors->has('Numero_Casa'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('Numero_Casa') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                            
-                        </div>
-                         <div class="form-group col-md-6 ">
-                            <label for="Sex" class="col-md-4 control-label">Sexo</label>
-                            <div class="col-md-6">
-                                <select class="form-control" name="Sex">
-                                    <option>Seleccione uno</option>
-                                    <option>Masculino</option>
-                                    <option>Femenino</option>
-                                    
-                                </select>
-
-                            </div>
-                      </div>
-                        <br>
- 
-                      <br>
-                      <div class="form-group  {{ $errors->has('Fecha') ? ' has-error' : '' }} col-md-6 ">
-                            <label for="Fecha" class="col-md-4 control-label">Fecha De Nacimiento</label>
-
-                            <div class="col-md-6">
-                                <input id="Fecha" type="text" class="form-control" name="Fecha" value="{{ old('Fecha') }}" required autofocus>
-
-                                @if ($errors->has('Fecha'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('Fecha') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                        <br>
-                        <br>
-                        <br>
-                        <div class="form-group {{ $errors->has('email') ? ' has-error' : '' }} col-md-6 ">
-                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
-
-                                @if ($errors->has('email'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="form-group col-md-6 ">
-                            <label for="Perfil" class="col-md-4 control-label">Perfil</label>
-                            <div class="col-md-6">
-                                <select class="form-control" name="Perfil">
-                                    <option>Seleccione uno</option>
-                                    <option>Inversionista</option>
-                                    <option>Emprendedor</option>
-                                </select>
-
-                            </div>
-                      </div> 
-                          <br>
-
-                            <br>
-
-                        <div class="form-group  {{ $errors->has('password') ? ' has-error' : '' }} col-md-6  ">
-                            <label for="password" class="col-md-4 control-label">Password</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password" required>
-
-                                @if ($errors->has('password'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                            
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="password-confirm" class="col-md-4 control-label">Confirm Password</label>
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
-                            </div>
-                        </div>
-
-                          
-
-
-                        <div class="form-group col-md-6  alineacion" >
-                            <div class="col-md-12 col-md-offset-2">
-                                <br>
-                                <button type="submit" class="btn btn-primary btn-lg"  >
-                                    Crear usuario
-                                </button>
-                            </div>
-                        </div>
-                          <br>
-
-                    </form>
-
-                    
-                </div>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  
+    {!!Html::style('css/registro.css')!!}
+    {!!Html::style('css/datepicker.css')!!}
+    
+</head>
+<body>    
+    <div class="miContainer">
+        <div class="row head">
+            <a href="{!!URL::to('/')!!}"><img src="{{ asset('img/logo2.png') }}" alt=""></a>
         </div>
+        <div class="row">
+            <form class="form" method="POST" action="{{ route('register') }}" aling="center">
+                {{ csrf_field() }}
+                <div class="row form-group">
+                    <input type="text" id="name" name="name" placeholder="Nombre" class="col-md-5">
+                    <div class="col-md-2"></div>
+                    <input type="text" id="Apeido_P" name="Apeido_P" placeholder="Apellido Paterno" class="col-md-5">
+                </div>
+                <div class="row form-group">
+                    <input type="text" id="Apeido_M" name="Apeido_M" placeholder="Apellido Materno" class="col-md-5">
+                    <div class="col-md-2"></div>
+                    <input type="email" id="email" name="email" placeholder="Correo electronico" class="col-md-5">
+                </div>
+                <div class="row form-group">
+                    <input type="text" id="Direccion" name="Direccion" placeholder="Dirección" class="col-md-5">
+                    <div class="col-md-2"></div>
+                    <input type="text" id="CP" name="CP" placeholder="Codigo Postal" class="col-md-5">
+                </div>
+                <div class="row form-group">
+                    <input type="text" id="Pais" name="Pais" placeholder="País" class="col-md-5">
+                    <div class="col-md-2"></div>
+                    <input type="text" id="CD" name="CD" placeholder="Ciudad" class="col-md-5">
+                </div>
+                <div class="row form-group">
+                    <input type="text" id="Numero_Cel" name="Numero_Cel" placeholder="Celular" class="col-md-5">
+                    <div class="col-md-2"></div>
+                    <input type="number" id="Numero_Casa" name="Numero_Casa" placeholder="Telefono" class="col-md-5">
+                </div>
+                <div class="row form-group">
+                    <select name="Sex" id="sexo" class="col-md-5">
+                        <option value="" selected disabled>Sexo</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                    </select>
+                    <div class="col-md-2"></div>
+                    <input type="text" id="Fecha" name="Fecha" class=" col-md-5" data-toggle="datepicker" placeholder="Fecha de Nacimiento">
+                </div>
+                <div class="row form-group">
+                    <input type="password" id="password" name="password" placeholder="Contraseña" class="col-md-5">
+                    <div class="col-md-2"></div>
+                    <input type="password" name="password_confirmation" placeholder="Confirma tu contraseña" class="col-md-5">
+                </div>
+                <div class="row">
+                        <div class="col-md-3"></div>
+                        <input type="submit" class="col-md-6 button" value="Crear Cuenta">
+                        <div class="col-md-3"></div>
+                </div>
+            </form>
+        </div>
+        @include('layouts.footer')
     </div>
-</div>
-@endsection
+    @if ($errors->any())
+        @php
+             // dd($errors);
+        @endphp
+    @endif
+    @if ($errors->has('name'))
+        <script>
+            $('#name').addClass('alert-danger');
+        </script>
+    @endif
+    @if ($errors->has('Apeido_P'))
+        <script>
+            $('#Apeido_P').addClass('alert-danger');
+        </script>
+    @endif
+    @if ($errors->has('Apeido_M'))
+        <script>
+            $('#Apeido_M').addClass('alert-danger');
+        </script>
+    @endif
+    @if ($errors->has('email'))
+        <script>
+            $('#email').addClass('alert-danger');
+        </script>
+    @endif
+    @if ($errors->has('Direccion'))
+        <script>
+            $('#Direccion').addClass('alert-danger');
+        </script>
+    @endif
+    @if ($errors->has('CP'))
+        <script>
+            $('#CP').addClass('alert-danger');
+        </script>
+    @endif
+    @if ($errors->has('Pais'))
+        <script>
+            $('#Pais').addClass('alert-danger');
+        </script>
+    @endif
+    @if ($errors->has('CD'))
+        <script>
+            $('#CD').addClass('alert-danger');
+        </script>
+    @endif
+    @if ($errors->has('Numero_Cel'))
+        <script>
+            $('#Numero_Cel').addClass('alert-danger');
+        </script>
+    @endif
+    @if ($errors->has('Numero_Casa'))
+        <script>
+            $('#Numero_Casa').addClass('alert-danger');
+        </script>
+    @endif
+    @if ($errors->has('Sex'))
+        <script>
+            $('#sexo').addClass('alert-danger');
+        </script>
+    @endif
+    @if ($errors->has('Fecha'))
+        <script>
+            $('#Fecha').addClass('alert-danger');
+        </script>
+    @endif
+    @if ($errors->has('password'))
+        <script>
+            $('#password').addClass('alert-danger');
+            $('#password_confirmation').addClass('alert-danger');
+        </script>
+    @endif
+
+    {!!Html::script('js/datepicker.js') !!}
+    @include('layouts.loginModal')
+    <script>
+        $(function() {
+          $('[data-toggle="datepicker"]').datepicker({
+            autoHide: true,
+            zIndex: 2048,
+            format: 'yyyy-mm-dd',
+          });
+        });
+        // function modal() {
+        //     $(document).ready(function (){
+        //         console.log('El modal');
+        //         $('#Mymodal').modal('toggle');
+        //     });
+        // }
+  </script>
+  
+</body>
+</html>

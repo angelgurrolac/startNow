@@ -1,0 +1,3578 @@
+<?php
+
+use yii\helpers\Html;
+use yii\widgets\DetailView;
+use yii\widgets\ActiveForm;
+use yii\helpers\Url;
+use yii\jui\DatePicker;
+use yii\helpers\ArrayHelper;
+use app\models\TblDocumentos;
+use app\models\TblCatR;
+use app\models\TblPeriodos;
+use app\models\TblPerfilEmpleados;
+use app\models\TblCatPorcentajes;
+/* @var $this yii\web\View */
+/* @var $model app\models\TblAsignaciones */
+
+$this->title = 'Detalle de asignación';
+$this->params['breadcrumbs'][] = ['label' => 'Tbl Asignaciones', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
+$modelo_cargado='asignaciones';
+$total_paginas='1';
+$colums='col-xs-12 col-sm-6 col-md-6 col-lg-4';
+$colums2='col-xs-6 col-sm-2 col-md-2 col-lg-6';
+
+//Reglas de negocio para asignacion Cerrada Estatus = 4 y Cancelada = 5
+$reemplazar = Url::to(['empleados/index', 'idAsignacion' => $model->PK_ASIGNACION]);
+$disabled = '';
+if ($model->FK_ESTATUS_ASIGNACION == 4 || $model->FK_ESTATUS_ASIGNACION == 5) {
+    $reemplazar = 'javascript:void(0);';
+    $disabled = 'disabled="disabled"';
+}
+
+if($sql['RFC']=='BMN930209927'||$sql['RFC']=='ITA081127UZ1'||$sql['RFC']=='IMC9701024T5'){
+    $modeloDocumentos = new TblDocumentos(['scenario'=>TblDocumentos::SCENARIO_BANORTE]);
+}else{
+    $modeloDocumentos = new TblDocumentos(['scenario'=>TblDocumentos::SCENARIO_OTROS]);
+}
+$datosEmpresas = ArrayHelper::map(TblCatR::find()->asArray()->all(), 'PK_RAZON_SOCIAL', 'EMPRESA');
+$modeloPeriodos = new TblPeriodos();
+$usuario = user_info()['FK_EMPLEADO'];
+$unidadNegocioUsuario = TblPerfilEmpleados::find()->select('FK_UNIDAD_NEGOCIO')->where(['=', 'FK_EMPLEADO', $usuario])->asArray()->one();
+
+/*Iva*/
+$IVA = TblCatPorcentajes::find()->select('VALOR_PORCENTAJE')->where(['=','DESC_PORCENTAJE','IVA'])->asArray()->one();
+?>
+
+<script>
+    var keyAsignacion = '<?php echo ($_GET['id']); ?>'
+    var ajaxUrl = '<?php echo Url::to(["$modelo_cargado/documentos"]); ?>';
+    var ajaxUrlAltaPeriodo  = '<?php echo Url::to(["periodos/create"]); ?>';
+    var ajaxUrlActualizaP  = '<?php echo Url::to(["periodos/update"]); ?>';
+    var ajaxUrlFechas  = '<?php echo Url::to(["asignaciones/getallasig"]); ?>';
+    var ajaxUrlComparaFechas  = '<?php echo Url::to(["periodos/compara"]); ?>';
+    var empleado = '<?php echo $sql["PK_EMPLEADO"]; ?>';
+    var _csrfToken = '<?=Yii::$app->request->getCsrfToken()?>';
+    var url_view = '<?php echo Url::to(["$modelo_cargado/view",'PK_CONTACTO'=>'lorem','FK_CLIENTE'=>'cliente_lorem']); ?>';
+    var url_update = '<?php echo Url::to(["$modelo_cargado/update",'PK_CONTACTO'=>'lorem','FK_CLIENTE'=>'cliente_lorem']); ?>';
+    var url_delete = '<?php echo Url::to(["$modelo_cargado/delete",'PK_CONTACTO'=>'lorem','FK_CLIENTE'=>'cliente_lorem']); ?>';
+    var ajaxUrlDoc = '<?php echo Url::to(["periodos/getmodelid"]); ?>';
+    var ajaxEliminarODC = '<?php echo Url::to(["periodos/eliminar_odc"]) ?>';
+    var ajaxUrlPeriodo   = '<?php echo Url::to(["facturas/get_periodo_docs_factura"]); ?>';
+    var preeliminacion            = '<?php echo Url::to(["periodos/preborrado"]); ?>';
+    var ajaxUrlEliminarPeriodo    = '<?php echo Url::to(["periodos/deleteajax"]); ?>';
+    var ajaxEliminarHDE = '<?php echo Url::to(["periodos/eliminar_hde"]) ?>';
+</script>
+<style type="text/css">
+.datepicker {
+    z-index: 999999 !important;
+}
+
+.asignaciones-view-table{/*aplica un altura de 300px y posicion relativa al elemento*/
+    height:300px;
+    position: relative;
+}
+
+.asignaciones-view-table thead tr, .asignaciones-view-table tbody tr{/*aplica una anchura del 100% y desplegado en linea*/
+    width: 100%;
+    display: inline-table;
+}
+
+.asignaciones-view-table thead{/*aplica posicion estatica al elemento*/
+  position: static;
+}
+
+.asignaciones-view-table thead tr{/*aplica un color de fondo negro y color blanco a las letras y un tamaño pequeño*/
+    background-color: #0F1F50;
+    color: white;
+    font-size: small;
+}
+
+.asignaciones-view-table tbody{
+/*oculta la barra de desplazamiento en el eje y en caso que se genere una,
+ aplica una altura del 95% y una anchura del 100% con posicion absolute*/
+  overflow-y: scroll;
+  height: 90%;
+  width: 100%;
+  position: absolute;
+}
+
+.asignaciones-view-table tbody tr:nth-child(even) {/*aplica color de fondo gris*/
+    background-color: #F5F5F5;
+}
+
+.asignaciones-view-table tbody tr:nth-child(odd) {/*aplica color de fondo blanco a los tr impares*/
+    background-color: #FFFFFF;
+}
+
+.asignaciones-view-table tbody tr td{/*aplica borde inferior a tbody, tr y td*/
+    border-bottom: 1px solid #ddd;
+}
+
+.resultados2 {/*padding de 25 pixeles*/
+    padding: 25px 0;
+}
+.resultados2 {/*aplica color de fondo blanco, padding del 20 pixeles y sombre negra*/
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 1px 3px 0px #666;
+}
+
+
+.resultados2 {
+    padding: 25px 0;
+}
+.hand{
+    cursor:  pointer;
+}
+.scroll-y{
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height:100%;
+}
+
+.btn-delete {
+    background-color: red;
+    font-size: 13px;
+    color: #fff;
+    border-radius: 0;
+    border-color: red;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 0;
+    margin-left: 5px;
+}
+
+#ODC .modal-body, #ADP .modal-body{
+  height: 500px;
+overflow-y: auto;
+}
+
+.glyphicon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#eliminar{background-color: transparent; border:transparent;}
+</style>
+<style>
+    /*
+    Max width before this PARTICULAR table gets nasty
+    This query will take effect for any screen smaller than 760px
+    and also iPads specifically.
+    */
+    @media
+    only screen and (max-width: 760px),
+    (min-device-width: 768px) and (max-device-width: 1024px)  {
+
+        /* Force table to not be like tables anymore */
+        table, thead, tbody, th, td, tr {
+            display: block;
+        }
+
+        /* Hide table headers (but not display: none;, for accessibility) */
+        thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        tr { border: 1px solid #ccc; }
+
+        td {
+            /* Behave  like a "row" */
+            border: none;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-left: 50%!important;
+            word-break: break-all;
+        }
+
+        td:before {
+            /* Now like a table header */
+            position: absolute;
+            /* Top/left values mimic padding */
+            top: 6px;
+            left: 6px;
+            width: 45%;
+            padding-right: 10px;
+            white-space: nowrap;
+        }
+
+        /*
+        Label the data
+        */
+        td:nth-of-type(1):before { content: "#";  text-align:  center; font-weight: 700;}
+        td:nth-of-type(2):before { content: "Reemplazo";  text-align:  center; font-weight: 700;}
+        td:nth-of-type(3):before { content: "Fecha inicio";  text-align:  center; font-weight: 700;}
+        td:nth-of-type(4):before { content: "Fecha fin";  text-align:  center; font-weight: 700;}
+        td:nth-of-type(5):before { content: "Tarifa";  text-align:  center; font-weight: 700;}
+        /*td:nth-of-type(3):before { content: "Motivo";  text-align:  center; font-weight: 700;}*/
+        /*td:nth-of-type(4):before { content: "Comentarios"; text-align:  center; font-weight: 700; }*/
+       /* td:nth-of-type(5):before { content: "Wars of Trek?"; }
+        td:nth-of-type(6):before { content: "Porn Name"; }
+        td:nth-of-type(7):before { content: "Date of Birth"; }
+        td:nth-of-type(8):before { content: "Dream Vacation City"; }
+        td:nth-of-type(9):before { content: "GPA"; }
+        td:nth-of-type(10):before { content: "Arbitrary Data"; }*/
+    }
+
+    /* Smartphones (portrait and landscape) ----------- */
+    /*@media only screen
+    and (min-device-width : 320px)
+    and (max-device-width : 480px) {
+        body {
+            padding: 0;
+            margin: 0;
+            width: 320px; }
+        }*/
+
+    /* iPads (portrait and landscape) ----------- */
+    /*@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+        body {
+            width: 495px;
+        }
+    }*/
+    .años{
+      margin-top: 2%;
+    }
+</style>
+<h1 class="title row">
+    <div class="col-lg-7">
+        <a href="<?php echo Url::to(['asignaciones/index']); ?>"  class="return-arrow icon-12x21"></a> <?= Html::encode($this->title) ?>
+    </div>
+    <div class="col-lg-5" style="text-align: right;">
+        <!-- INICIO HRIBI 160316 - Validación para no mostrar la opción de cancelar asignación cuando la asignación ya ha sido cancelada -->
+        <?php if(valida_permisos(['cancelar_asignacion'])&&($model->FK_USUARIO==user_info()['PK_USUARIO'])) { ?>
+            <?php if($model->FK_ESTATUS_ASIGNACION != 5){ ?>
+                <a href="#view-cancelar-asignacion" style="color:red; text-decoration: none; font-wight: bold; font-size: 16px;" data-toggle="modal" >CANCELAR ASIGNACION </a>
+            <?php } ?>
+        <?php } ?>
+        <!-- FIN HRIBI 160316 - Validación para no mostrar la opción de cancelar asignación cuando la asignación ya ha sido cancelada -->
+    </div>
+</h1>
+<div class="row">
+     <div class="col-lg-12 col-md-6 col-sm-12 col-xs-12">
+        <div class="resultados clientes-view">
+            <div class="campos" style="position:relative">
+                <?php if($model->FK_ESTATUS_ASIGNACION==6){ ?>
+                <a href="#javascript:void(0)" data-toggle="modal" class="ver_mas_detenida_e modal_detenida font-bold der">Ver M&aacute;s</a>
+                <?php } ?>
+                <?php if($model->FK_ESTATUS_ASIGNACION==5){ ?>
+                <a href="#modal-cancelada" data-toggle="modal" class="ver_mas_detenida_e font-bold der">Ver M&aacute;s</a>
+                <?php } ?>
+                <div class="estatus-item estatus-asignacion-<?php echo $extra['ESTATUSID']?>"><?php echo $extra['ESTATUSDESC']?></div>
+                <div class="clear"></div>
+            <h3 class="campos-title-0 font-bold">
+                <?php if((($model->FK_USUARIO==user_info()['PK_USUARIO']&&$model->FK_ESTATUS_ASIGNACION==7)||($model->FK_ESTATUS_ASIGNACION!=4 && $model->FK_ESTATUS_ASIGNACION!=5 && $model->FK_ESTATUS_ASIGNACION!=6))){ ?>
+                    <a href="<?php echo Url::to(["update_asignacion",'id'=>$model->PK_ASIGNACION]); ?>" title="Ver" class="item-update iconview-24x24"></a>
+                <?php } ?>
+                <?php echo $model->NOMBRE ?>
+            </h3>
+            <?php
+            if(!empty($extra['CANT_REEMPLAZOS'])&&($model->FK_EMPLEADO!=$extra['CANT_REEMPLAZOS']['FK_EMPLEADO'])){
+            ?>
+                <h5 style="background-color: #9A9796; color: white;padding: 3px;float:left;">Esta Asignación ha sufrido un reemplazo el d&iacute;a  <?php echo date('d/m/Y', strtotime($extra['CANT_REEMPLAZOS']['FECHA_FIN'])); ?> </h5>
+                <div class="clear"> </div>
+            <?php
+            } if (!empty($extra['FUE_DETENIDA'])&&$model->FK_ESTATUS_ASIGNACION!=6) { ?>
+                <h5 style="background-color: #9A9796; color: white;padding: 3px;float:left;">Esta Asignación fue detenida del <?php echo transform_date($extra['FUE_DETENIDA'][0]['FECHA_FIN'],'d/m/Y') ?> al <?php echo transform_date($extra['FUE_DETENIDA'][0]['FECHA_RETOMADA'],'d/m/Y') ?></h5>
+                <a href="#javascript:void(0)" data-toggle="modal"  class="ver_mas_detenida modal_detenida font-bold"style="margin: 10px; display: inline-block;">Ver M&aacute;s</a>
+                <div class="clear"> </div>
+            <?php
+            } if (!empty($extra['NUEVA_TARIFA'])) { ?>
+                <h5 style="background-color: #9A9796; color: white;padding: 3px;float:left;">Esta Asignación ha sufrido un cambio de tarifa </h5>
+                <div class="clear"> </div>
+            <?php
+            }
+            ?>
+            <div class="row">
+                <div class="col-lg-7">
+                  <div class="form-group col-lg-3 col-md-12 col-sm-6">
+                      <?= Html::label('Nombre del asignado actual',null,['class'=>'campos-label']) ?>
+                      <p class="font-bold"><?php echo $extra['NOMBRE_EMP'] ?></p>
+                  </div>
+                  <div class="form-group col-lg-3 col-md-6 col-sm-3">
+                      <?= Html::label($model->getAttributeLabel('FECHA_INI'),null,['class'=>'campos-label']) ?>
+                      <p class="font-bold"><?php echo date("d/m/Y", strtotime($model->FECHA_INI)) ?></p>
+                  </div>
+                  <div class="form-group col-lg-3 col-md-6 col-sm-3">
+                      <?= Html::label($model->getAttributeLabel('FECHA_FIN'),null,['class'=>'campos-label']) ?>
+                      <p class="font-bold"><?php echo date("d/m/Y", strtotime(($extra['ASIGNACIONES']['FECHA_FIN'])?$extra['ASIGNACIONES']['FECHA_FIN']:$model->FECHA_FIN)) ?></p>
+                  </div>
+                  <div class="form-group col-lg-3 col-md-12 col-sm-6">
+                      <?= Html::label('Puesto',null,['class'=>'campos-label']) ?>
+                      <p class="font-bold"><?php echo $extra['DESC_PUESTO'] ?></p>
+                  </div>
+                  <div class="clearfix"></div>
+                  <div class="form-group col-lg-3 col-md-6 col-sm-6">
+                      <?= Html::label('Rank Técnico',null,['class'=>'campos-label']) ?>
+                      <p>
+                          <?= Html::label($extra['DESC_RANK_TECNICO'],null,['class'=>'font-bold']) ?>
+                      </p>
+                  </div>
+                  <div class="form-group col-lg-3 col-md-6 col-sm-6">
+                      <?= Html::label($model->getAttributeLabel('PORC_RENTABILIDAD'),null,['class'=>'campos-label']) ?>
+                      <p class="font-bold"><?php echo $model->PORC_RENTABILIDAD.'%'?></p>
+                  </div>
+                  <div class="form-group col-lg-6 col-md-12 col-sm-6">
+                      <?= Html::label('Unidad de Negocio',null,['class'=>'campos-label']) ?>
+                      <p class="font-bold">
+                          <?= Html::label($extra['DESC_UNIDAD_NEGOCIO'],null,['class'=>'font-bold']) ?>
+                      </p>
+                  </div>
+                  <div class="clearfix"></div>
+                  <div class="form-group col-lg-3 col-md-6 col-sm-6">
+                      <label for="" class="campos-label"><?php echo $model->getAttributeLabel('TARIFA') ?> <?php echo (!empty($extra['DESC_TARIFA']))?'- <span style="color:#000; text-decoration:underline">'.$extra['DESC_TARIFA'].'</span>':'' ?> </label>
+                      <?php
+                      if($cliente['RFC'] == 'STE9607266C7'){ ?>
+                          <p class="font-bold"><?php echo '$ '.number_format($model->TARIFA,3,'.',',') ?></p>
+                      <?php  }else{ ?>
+                          <p class="font-bold"><?php echo '$ '.number_format($model->TARIFA,2,'.',',') ?></p>
+                      <?php
+                      }
+                      ?>
+                  </div>
+                  <div class="form-group col-lg-3 col-md-6 col-sm-6">
+                      <?= Html::label($model->getAttributeLabel('HORAS'),null,['class'=>'campos-label']) ?>
+                      <p class="font-bold"><?php echo $model->HORAS ?></p>
+                  </div>
+                  <div class="form-group col-lg-3 col-md-6 col-sm-6">
+                      <?= Html::label($model->getAttributeLabel('MONTO'),null,['class'=>'campos-label']) ?>
+                      <p class="font-bold"><?php echo '$ '.number_format((float)$model->MONTO,2,'.',',')  ?></p>
+
+                  </div>
+                  <div class="form-group col-lg-3 col-md-6 col-sm-6">
+                      <?php
+                          $fechaInicial = substr($model->FECHA_INI, 0, 8).'01';
+                              if (isset($model->FECHA_FIN)) {
+                                $fechaFinal = substr($model->FECHA_FIN, 0, 8).'01';
+                                $fechaFinal = substr($model->FECHA_FIN, 0, 8).'01';
+                                $fechainicialFormat = new DateTime($fechaInicial);
+                                $fechafinalFormat = new DateTime($fechaFinal);
+
+                                $diferencia = $fechainicialFormat->diff($fechafinalFormat);
+                                $meses = ( $diferencia->y * 12 ) + $diferencia->m + 1;
+                              } else {
+                                $meses = 0;
+                              }
+
+                      ?>
+                      <?= Html::label('Periodo(meses)',null,['class'=>'campos-label']) ?>
+                      <p class="font-bold"><?php echo $meses ?></p>
+                  </div>
+                </div>
+                <div class="col-lg-5 col-md-6 col-sm-12 col-xs-12">
+                    <!-- <div class="resultados clientes-view"> -->
+                        <!-- <div class="campos"> -->
+                            <div class="form-group col-lg-12 col-md-12 col-sm-12">
+                              <h3 class="campos-title-0 font-bold">
+                                  Cliente
+                              </h3>
+                            </div>
+                            <!-- <div class="row"> -->
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12">
+                                    <?= Html::label('Nombre / razón social',null,['class'=>'campos-label']) ?>
+                                    <p class="font-bold"><?php echo $extra['NOMBRE_CLIENTE'] ?></p>
+                                </div>
+                                <div class="form-group col-lg-3 col-md-6 col-sm-6">
+                                    <?= Html::label('Nombre del contacto',null,['class'=>'campos-label']) ?>
+                                    <p class="font-bold"><?php echo $extra['NOMBRE_CONTACTO'] ?></p>
+                                </div>
+                                <div class="form-group col-lg-3 col-md-6 col-sm-6">
+                                    <?= Html::label('Teléfono de oficina',null,['class'=>'campos-label']) ?>
+                                    <p class="font-bold"><?php echo $extra['TEL_OFICINA'] ?></p>
+                                </div>
+                                <!-- <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                                    <?= Html::label('Extensión',null,['class'=>'campos-label']) ?>
+                                    <p class="font-bold"><?php echo $extra['TEL_EXTENSION'] ?></p>
+                                </div> -->
+                                <div class="form-group col-lg-3 col-md-6 col-sm-6">
+                                    <?= Html::label('Teléfono celular',null,['class'=>'campos-label']) ?>
+                                    <p class="font-bold"><?php echo $extra['TEL_CELULAR'] ?></p>
+                                </div>
+                                <div class="form-group col-lg-3 col-md-6 col-sm-6">
+                                    <?= Html::label('Correo electrónico',null,['class'=>'campos-label']) ?>
+                                    <p class="font-bold"><?php echo $extra['EMAIL'] ?></p>
+                                </div>
+                                <div class="clear"></div>
+                            <!-- </div> -->
+                        <!-- </div> -->
+                    <!-- </div> -->
+                </div>
+              </div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 header-tabla">
+  <!-- Detalle de periodos -->
+  <div class="col-lg-3">
+    <h3 class="campos-title-0 font-bold">
+        Detalle de periodos
+    </h3>
+  </div>
+  <div class="col-lg-3 text-center años">
+      <?php
+        if ($anios != null) {
+          foreach ($anios as $anio) {
+            echo "<a class='añoPeriodo texto-rojo' href='javascript:void(0);'>".$anio['AÑO']."</a> ";
+          }
+        }
+      ?>
+  </div>
+  <div class="col-lg-6">
+      <?php if(valida_permisos(['asignaciones/update'])){ ?>
+          <?php if(($model->FK_USUARIO==user_info()['PK_USUARIO']&&$model->FK_ESTATUS_ASIGNACION==7)||($model->FK_ESTATUS_ASIGNACION!=7)){ ?>
+              <a href="<?= $reemplazar; ?>" type="button" <?= $disabled; ?> class="btn btn-success der">REEMPLAZAR RECURSO</a>
+          <?php } ?>
+      <?php } ?>
+      <a type="button" id="btn-verModal-generarPeriodo" data-toggle="modal" data-target="#modalPeriodoNuevo" class="btn btn-success der">Generar periodo</a>
+  </div>
+</div>
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="resultados clientes-view">
+        <?= Html::beginForm(Url::to(["Asignaciones/documentos"]),'post',['class' => 'form', 'id'=>'form-ajax-2','style'=>'display:none']); ?>
+            <div class="form-group col-lg-3 col-md-4 col-sm-4">
+                <?= Html::hiddenInput('FK_ASIGNACION',$model->PK_ASIGNACION)?>
+                <?php
+                if ($anios != null) {
+                  $anios = array_reverse($anios); ?>
+                  <?= Html::hiddenInput('año',$anios[0]['AÑO'], ['id' => 'buscaAño'])?>
+                <?php
+                }
+                ?>
+            </div>
+        <?= Html::endForm(); ?>
+        <input id="unidadNegocio" type="hidden" value="<?php echo $unidadNegocioUsuario['FK_UNIDAD_NEGOCIO']; ?>">
+        <input id="iva" type="hidden" value="<?php echo $IVA['VALOR_PORCENTAJE']; ?>">
+        <div class="campos">
+            <div class="row" style="height: 510px;">
+                <table id="detallePeriodo" class="cell-border table table-striped table-bordered dt-responsive order-column hover row-border dataTable" style="font-size:12px; border:1px solid #eaeaea">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>Recurso</th>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Tarifa</th>
+                        <th>ODC</th>
+                        <th>Horas Estimadas</th>
+                        <th>Monto Estimado</th>
+                        <th>ADP</th>
+                        <th>Horas Reales</th>
+                        <th>Monto Real</th>
+                        <th>Factura</th>
+                        <th>Monto Facturable</th>
+                        <th>Monto Factura</th>
+                        <th>Estatus Factura</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<?php  if($extra['reemplazos']){ ?>
+    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+        <div class="resultados clientes-view">
+            <div class="campos">
+                <h3 class="campos-title-0 font-bold">
+                    Historial de recursos de la Asignaci&oacute;n
+                </h3>
+                <div class="row" style="overflow-y: auto;height: 125px;">
+                    <table class="table table-hover" style="font-size:12px; border:1px solid #eaeaea">
+                        <thead>
+                            <th>#</th>
+                            <th>Nombre del asignado</th>
+                            <th>Fecha inicio</th>
+                            <th>Fecha fin</th>
+                            <th>Tarifa</th>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $reemplazo_cont= 1;
+                            $ultimaFechaFinReemplazos = date('Y-m-d', strtotime($extra['reemplazos'][0]['FECHA_FIN']) + 86400); ?>
+                            <tr>
+                                <td><?php echo $reemplazo_cont; $reemplazo_cont++; ?></td>
+                                <td><?php echo $extra['NOMBRE_EMP'] ?></td>
+                                <td><?php echo transform_date($ultimaFechaFinReemplazos,'d/m/Y') ?></td>
+                                <td><?php echo "-" ?></td>
+                                <td>
+                                    <?php
+                                    if($cliente['RFC'] == 'STE9607266C7'){ ?>
+                                        <?php echo '$ '.number_format($model->TARIFA,3,'.',',') ?>
+                                    <?php  }else{ ?>
+                                        <?php echo '$ '.number_format($model->TARIFA,2,'.',',') ?>
+                                    <?php
+                                    }
+                                    ?>
+                                </td>
+                            </tr>
+                            <?php
+                            foreach ($extra['reemplazos'] as $key => $value) { ?>
+                                <tr>
+                                    <td><?php echo $reemplazo_cont; $reemplazo_cont++; ?></td>
+                                    <td><?php echo $value['nombre_emp'] ?></td>
+                                    <td><?php echo transform_date($value['FECHA_INICIO'],'d/m/Y') ?></td>
+                                    <td><?php echo transform_date($value['FECHA_FIN'],'d/m/Y') ?></td>
+                                    <td>$ <?php echo number_format($value['TARIFA'],2,',','.') ?></td>
+                                </tr>
+
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<div class="clear"></div>
+
+<!-- <div class="resultados asignaciones-view">
+    <div class="campos">
+        <!-- <h3 class="campos-title-0 font-bold">Documentos
+            <?php if(($model->FK_USUARIO==user_info()['PK_USUARIO']&&$model->FK_ESTATUS_ASIGNACION!=7)||($model->FK_ESTATUS_ASIGNACION!=7&&valida_permisos(['periodos/index']))||is_super_admin()){ ?>
+                <a href="<?php echo Url::to(['periodos/index', 'id' => $model->PK_ASIGNACION]); ?>" style="margin: -6px 5px 10px 0" type="button" class="btn btn-success der">ADMINISTRAR DOCUMENTOS</a>
+            <?php }?>
+        </h3> -->
+
+            <!-- <div class="form-group col-lg-3">
+                <ul class="pagination izq" data-pagina='1' data-total_paginas=<?php echo $total_paginas; ?>>
+                    <li class="prev disabled"><span>«</span></li>
+                    <li class="active "><span class="current-page">1</span></li>
+                    <li class="next"><span>»</span></li>
+                </ul>
+                <p class="izq paginas">
+                    P&aacute;ginas : <?php echo $total_paginas; ?>
+                </p>
+            </div>
+            <div class="clear"></div> -->
+
+    <!-- </div> -->
+    <!-- <div class="contenedor-parent row">
+        <div class="contenedor">
+            <div class="clear"></div>
+        </div>
+    </div> -->
+<!-- </div> -->
+
+
+<div class="resultados2 asignaciones-view ">
+    <div class="campos">
+        <?php $form = ActiveForm::begin(['id'=>'form-seguimiento', 'action' => Url::to(["asignaciones/registrar_seguimiento"])  ]); ?>
+            <div class="form-group col-xs-12 col-lg-12 col-md-12 col-sm-12">
+                Seguimiento</br></br>
+            </div>
+        <?php if(($model->FK_USUARIO==user_info()['PK_USUARIO']&&$model->FK_ESTATUS_ASIGNACION==7)||($model->FK_ESTATUS_ASIGNACION!=7)||is_super_admin()) { ?>
+            <div class="form-group col-xs-12 col-lg-9 col-md-9 col-sm-12">
+                <?= Html::hiddenInput('FK_ASIGNACION',$model->PK_ASIGNACION)?>
+                <?= $form->field($modelSeguimiento, 'COMENTARIOS',
+                        [
+                            'template' => ' <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">{label}{input}{error}{hint}<div class="clear"></div></div>',
+                        ]
+                )->textarea(['maxlength' => true, 'rows' => '3', 'required' => true, 'style' =>['resize' => 'none']])->label(false) ?>
+            </div>
+            <div class="form-group col-xs-12 col-lg-3 col-md-3 col-sm-12">
+                <?= Html::submitButton('REGISTRAR COMENTARIO', ['class' => 'btn btn-success der', 'id'=>'botonEnviar']) ?>
+            </div>
+            <div class="clear"></div>
+        <?php }?>
+        <?php ActiveForm::end(); ?>
+    </div>
+    <div class="contenedor-parent row">
+        <div class="contenedor">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <table class="table table-striped asignaciones-view-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Usuario</th>
+                            <th style="width: 15%;">Fecha</th>
+                            <th style="width: 55%;">Histórico Registrado</th>
+                            <th style="width:10%"</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <script>
+                        var arr_ver =[];
+                        </script>
+                        <?php
+                        $i=0;
+                            foreach ($modelSeguimientoRegistros as $row) {
+                                $fecha = new DateTime($row['FECHA_REGISTRO'])
+                        ?>
+                        <script>
+                            var coment = '<?= $row['COMENTARIOS']; ?>';
+                        </script>
+                            <tr>
+                                <td style="width: 20%;"><?= $row['NOMBRE_COMPLETO'] ?></td>
+                                <td style="width: 15%;"><?= date_format($fecha, 'd/m/Y'); ?></td>
+                                <td style="width: 55%;" id="cm_<?=$i?>"><?= $row['COMENTARIOS'] ?> </td>
+                                <td style="width: 10%;"id="vm_<?=$i?>"></td>
+                            </tr>
+                    <script>
+                       if(coment.length >60){
+                           var comentario = coment.substring(0,60)
+                           var vermas_<?=$i?> = coment;
+                               $("#cm_<?=$i?>").html(comentario)
+                               $("#vm_<?=$i?>").html("<a id='<?=$i?>' class='hand' onclick='comentarios(<?=$i?>);' data-toggle='modal' data-target='#vermascomentarios'>Ver más...</a>");
+                               arr_ver[<?=$i?>] = coment;
+
+                            }
+                    </script>
+                        <?php
+                        $i++;
+                            }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+jQuery(document).ready(function($) {
+
+  $.ajax({
+    url: ajaxUrlFechas,
+    type: 'post',
+    data: {
+        data: {'FK_EMPLEADO':empleado,'PK_ASIGNACION':$('#idAsig').val()},
+        _csrf  : _csrfToken
+    },
+    success: function (data) {
+        datos = data;
+    }, error: function(error) {
+
+
+    }
+  });
+
+  jQuery('#btn-verModal-generarPeriodo').click(function(){
+
+    jQuery('.fecha_ini').datepicker('setDate', null);
+    jQuery('.fecha_fin').datepicker('setDate', null);
+
+  })
+  jQuery('body').on('click', '#edit', function(){
+
+    //jQuery('.fecha_ini').datepicker('setDate', null);
+    //jQuery('.fecha_fin').datepicker('setDate', null);
+
+    $('#w2').val($(this).attr('data-fecha_ini'));
+    $('#w3').val($(this).attr('data-fecha_fin'));
+
+    $("#nom").text($(this).attr('data-nombre'));
+
+    $('#pkPeriodo').val($(this).attr('data-id_periodo'));
+
+    validar_fechas_calculo_horas_edit();
+
+  })
+  jQuery('.datepicker').datepicker({
+    format: 'dd/mm/yyyy',
+    autoclose: true,
+    todayBtn: true,
+    todayHighlight: true
+  }).on('changeDate', function(ev) {
+
+    if (ev.viewMode=='days') {
+      $('.dropdown-menu').hide();
+    };
+    validar_fechas($(this));
+    validar_fechas_calculo_horas();
+    validar_fechas_calculo_horas_edit();
+
+  });
+  $('.datepicker').on('change , blur ', function(event) {
+    validar_fechas($(this));
+  });
+
+  $('#HORAS_DEVENGAR').on('input', function () {
+    this.value = this.value.replace(/[^0-9\.]/g,'');
+  });
+
+});
+
+function validar_fechas(element){
+
+      //var f_ini_a = $('#datoFechaInicioAsignacion').val();
+
+      //var ini_asignacion = convierteFecha(f_ini_a);
+
+      if(element.prop('id')=="tbldocumentos-fecha_documento" || element.prop('id')=="tblfacturas-fecha_ingreso_banco"
+        || element.prop('id')=="tblfacturas-fecha_emision" || element.prop('id')=="tblfacturas-fecha_entrega_cliente"
+        || element.prop('id')=="tblfacturas-fecha_recepcion_ir"){
+          return false;
+      }
+      var parent_fecha=element.parent();
+      var contenedor_parent=element.parent().parent().parent();
+      if(element.val()==''){
+        element.parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacío');
+        return false;
+      }
+      if(!validaFechaDDMMAAAA(element.val())){
+        element.parent().addClass('has-error').find('.help-block').html('El formato de las fechas no es correcto, favor de validarlo');
+        return false;
+      }
+      if(element.hasClass('fecha_fin')){
+
+        fi = convierteFecha2($(contenedor_parent).find('.fecha_ini').val());
+        ff = convierteFecha2(element.val());
+
+        var d = $('.fecha_ini').val();
+        var mes_fin = $('.fecha_fin').val();
+
+        var rango = moment(ff).diff(moment(fi), 'days') + 1;
+
+        var fecha_ini_mes = d.substring(3,5);
+        var fecha_ini_anio = d.substring(6,10);
+        var dato_mes_fin = mes_fin.substring(3,5);
+
+        var dias_mes = get_month_days(fecha_ini_mes,fecha_ini_anio);
+
+        if(rango > dias_mes || fecha_ini_mes != dato_mes_fin){
+
+          $('#modalErrorFechas').show();
+          $('#msg-modalErrorFechas').text('Un periodo no puede cubrir más de un mes');
+        }
+
+        if( (new Date(element.val().split("/").reverse().join("-")).getTime() <= new Date($(contenedor_parent).find('.fecha_ini').val().split("/").reverse().join("-")).getTime()))
+        {
+            element.parent().addClass('has-error').find('.help-block').html('La fecha Fin debe ser mayor a la fecha de Inicio, favor de verificar');
+
+            if((new Date($(contenedor_parent).find('.fecha_ini').val().split("/").reverse().join("-")).getTime() >= new Date(element.val().split("/").reverse().join("-")).getTime())){
+
+              $(contenedor_parent).find('.fecha_ini').parent().addClass('has-error').find('.help-block').html('La fecha de Inicio debe ser menor a la fecha Fin, favor de verificar');
+            }
+            // $('.btnGuardarAsignacion').prop('disabled', true)
+        }else{
+            element.parent().removeClass('has-error').find('.help-block').html('')
+
+            $(contenedor_parent).find('.fecha_ini').parent().removeClass('has-error').find('.help-block').html('')
+            // $('.btnGuardarAsignacion').prop('disabled', false)
+        }
+        $(contenedor_parent).find('.fecha_ini').change();
+      }else if(element.hasClass('fecha_ini')){
+
+        if( (new Date(element.val().split("/").reverse().join("-")).getTime() >= new Date($(contenedor_parent).find('.fecha_fin').val().split("/").reverse().join("-")).getTime()))
+        {
+            element.parent().addClass('has-error').find('.help-block').html('La fecha de Inicio debe ser menor a la fecha Fin, favor de verificar');
+            // $('.btnGuardarAsignacion').prop('disabled', true)
+        }else{
+            element.parent().removeClass('has-error').find('.help-block').html('')
+            // $('.btnGuardarAsignacion').prop('disabled', false)
+        }
+
+        var fecha = $(contenedor_parent).find('.fecha_ini').val();
+        var asig = keyAsignacion;
+
+        $.ajax({
+          url: ajaxUrlComparaFechas ,
+          type: 'post',
+          data: {
+            fecha : fecha,
+            asig : asig,
+            _csrf  : _csrfToken
+          },
+          success: function (data) {
+            console.log(data);
+            if(data.b == 1 || data.b2 == true){
+
+              element.parent().removeClass('has-error').find('.help-block').html('');
+
+            }else{
+
+              element.parent().addClass('has-error').find('.help-block').html('La fecha de Inicio debe ser mayor o igual a la fecha de Inicio de Asignación y menor a la fecha Fin de asignación, favor de verificar');
+            }
+          }
+        })
+
+        /*else if((new Date(element.val().split("/").reverse().join("-")).getTime() < new Date(ini_asignacion.split("/").reverse().join("-")).getTime())){
+            element.parent().addClass('has-error').find('.help-block').html('La fecha de Inicio debe ser mayor o igual a la fecha de Inicio de Asignación, favor de verificar');
+        }*/
+        $(contenedor_parent).find('.fecha_fin').change();
+      }
+
+    }
+
+function validar_fechas_calculo_horas(){
+
+  var tarifa = <?php echo $sql['TARIFA'] ?>;
+
+  /*var id = element.data('idemp');
+
+  if(element.val()==''){
+    element.parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+
+    return false;
+  }*/
+
+  //if($('#tblasignaciones-fecha_fin').val() && $('#tblasignaciones-fecha_ini').val())
+  if ($('.fecha_ini').val() && $('.fecha_fin').val())
+  {
+    //var fecha_ini = $('#tblasignaciones-fecha_ini').val();
+    var fecha_ini = $('.fecha_ini').val();
+    var fecha_ini_dia = fecha_ini.substring(0,2);
+    var fecha_ini_mes = fecha_ini.substring(3,5);
+    var fecha_ini_anio = fecha_ini.substring(6,10);
+    //var fecha_fin = $('#tblasignaciones-fecha_fin').val();
+    var fecha_fin = $('.fecha_fin').val();
+    var fecha_fin_dia = fecha_fin.substring(0,2);
+    var fecha_fin_mes = fecha_fin.substring(3,5);
+    var fecha_fin_anio = fecha_fin.substring(6,10);
+    //var fecha_ini_horas = new Date(reverse_date_ddmmYY($('.fecha_ini'+id).val()));
+    var fecha_ini_horas = new Date(fecha_ini_anio,parseInt(fecha_ini_mes)-1,fecha_ini_dia,0,0,0);
+    var fecha_fin_horas = new Date(fecha_fin_anio,parseInt(fecha_fin_mes)-1,fecha_fin_dia,0,0,0);
+    var dia_mls = (24*60*60*1000);
+    var hora_mls = (60*60*1000)+1;
+    var dias = 0;
+    var dia_fecha_inicio_ultimo = get_month_days(fecha_ini_mes,fecha_ini_anio);//Ultimo dia del mes de la fecha de inicio
+    var dia_fecha_fin_ultimo = get_month_days(fecha_fin_mes,fecha_fin_anio);//Ultimo dia del mes de la fecha fin
+    var dias_habiles = 0;
+    var dias_habiles_mes_uno = 0;
+    var dias_habiles_mes_dos = 0;
+
+                  //Si la fecha de inicio y la fecha de fin estan en un mes diferente
+    if((fecha_ini_mes!=fecha_fin_mes)||(fecha_ini_mes==fecha_fin_mes && fecha_ini_anio!=fecha_fin_anio)){
+
+      //Si la fecha inicial no inicia el dia primero, se toman en cuenta solo los dias habiles correspondientes a ese mes y acorde a la fecha de inicio
+      if(fecha_ini_dia!='01'){
+        var fecha_inicio_calculada = new Date(fecha_ini_anio,parseInt(fecha_ini_mes)-1,fecha_ini_dia,0,0,0); //Inicializa la fecha de inicio
+        var fecha_inicio_mes_fin = new Date(fecha_ini_anio, parseInt(fecha_ini_mes)-1, dia_fecha_inicio_ultimo, 0, 0, 0);//Inicializa la fecha fin de este mes
+        var tiempo_inicio_mls = fecha_inicio_calculada.getTime();
+        var tiempo_fin_mls = fecha_inicio_mes_fin.getTime();
+        for(i=tiempo_inicio_mls;i<=tiempo_fin_mls;i=i+dia_mls){
+          tiempo_inicio_date = new Date(i);
+          if(tiempo_inicio_date.getDay()>0&&tiempo_inicio_date.getDay()<6){
+            dias_habiles++;
+            dias_habiles_mes_uno++;
+          }
+        }
+        fecha_ini_horas = new Date(fecha_inicio_mes_fin.getTime()+dia_mls);
+      }
+
+     //Se saca la diferencia de dias entre la fecha de inicio y la fecha de fin, y se le agrega un dia mas, correspondiente al ultimo dia de la fecha fin
+      dias_diferencia = (fecha_fin_horas.getTime()-fecha_ini_horas.getTime()+dia_mls)/dia_mls;
+      dias = dias + dias_diferencia;
+      dias_del_mes=0;
+
+     //Si el dia de la fecha fin no es el dia final del mes
+      if(parseInt(dia_fecha_fin_ultimo) != parseInt(fecha_fin_dia)){
+        fecha_inicio_mes_fin = new Date(fecha_fin_anio,parseInt(fecha_fin_mes)-1,1,0,0,0);
+        for(i=fecha_inicio_mes_fin.getTime();i<=fecha_fin_horas.getTime();i=i+dia_mls){
+          tiempo_actual = new Date(i);
+          if(tiempo_actual.getDay()>0&&tiempo_actual.getDay()<6){
+            dias_habiles++;
+            dias_habiles_mes_dos++;
+          }
+          dias_del_mes++;
+        }
+        dias = dias - dias_del_mes;
+      }
+      meses = Math.round(dias/30);
+    } else {//Si la fecha de inicio y la fecha de fin estan en el mismo mes
+      if(fecha_ini_dia=='01' && parseInt(dia_fecha_fin_ultimo)==parseInt(fecha_fin_dia)){//Si el mes no esta completo
+        meses = 1;
+      }else{//Se sacan dias habiles
+        for(i=fecha_ini_horas.getTime();i<=(fecha_fin_horas.getTime()+hora_mls);i=i+dia_mls){//En la condicion se agrega una hora mas un milisegundo por efectos del cambios de horario
+          tiempo = new Date(i);
+
+          if(tiempo.getDay()>0&&tiempo.getDay()<6){
+            dias_habiles++;
+            dias_habiles_mes_uno++;
+          }
+        }
+        meses = 0;
+      }
+    }
+    //var horas_cliente = ($('#horas_cliente').val());
+    var horas_cliente = <?php echo $sql['HORAS_ASIGNACION'] ?>;
+    var horas_mes_uno = 0.00;
+    var horas_mes_dos = 0.00;
+    var horas_dias_habiles = 0.00;
+
+    //Calcula las horas del primer mes incompleto
+    if(dias_habiles_mes_uno*8>horas_cliente){
+      horas_mes_uno = horas_cliente;
+    } else {
+      horas_mes_uno = dias_habiles_mes_uno*8;
+    }
+
+    //Calcula las horas del ultimo mes incompleto
+    if(dias_habiles_mes_dos*8>horas_cliente){
+      horas_mes_dos = horas_cliente;
+    } else {
+      horas_mes_dos = dias_habiles_mes_dos*8;
+    }
+
+    horas_dias_habiles = parseFloat(horas_mes_uno) + parseFloat(horas_mes_dos);
+
+    if(meses > 0){
+      var horasTotal = (dias_habiles * 8) + Math.floor(meses * horas_cliente);
+    }else{
+      var horasTotal = (dias_habiles * 8);
+    }
+
+    $('#horas_cliente').val(horasTotal);
+    $('#id_hora_estimada').val(horasTotal);
+
+   monto_total = horasTotal * tarifa;
+    $('#id_tarifa_value').val(tarifa);
+    /* INICIO HRIBI 08082016 - Cambio para mostrar 3 decimales en el alta de Periodos sólo cuando sea una asignación del RFC perteneciente a cliente STEFANINI */
+    <?php if( $sql['RFC'] == 'STE9607266C7' ){ ?>
+        $('#id_tarifa_mascara').val('$ '+(tarifa).formatMoney(3, '.', ','));
+    <?php }else{ ?>
+        $('#id_tarifa_mascara').val('$ '+(tarifa).formatMoney(2, '.', ','));
+    <?php } ?>
+    /* INICIO HRIBI */
+    $('#id_monto_total_value').val(monto_total);
+    $('#id_monto_total_mascara').val('$ '+(monto_total).formatMoney(2, '.', ','));
+
+  }
+}
+
+function validar_fechas_calculo_horas_edit(){
+
+  var list = JSON.parse('<?php echo json_encode( $tarifas ) ?>');
+  var tarifaAsig = eval(list[$('#id_periodo').val()]);
+  var horasTotal = 0;
+
+  var tarifa = tarifaAsig;
+
+  if (tarifaAsig == undefined) {
+    tarifa = <?php echo $sql['TARIFA'] ?>;
+  }
+
+
+  //if($('#tblasignaciones-fecha_fin').val() && $('#tblasignaciones-fecha_ini').val())
+  if ($('#modalEditarPeriodo .fecha_ini').val() && $('#modalEditarPeriodo .fecha_fin').val())
+  {
+    //var fecha_ini = $('#tblasignaciones-fecha_ini').val();
+    var fecha_ini = $('#modalEditarPeriodo .fecha_ini').val();
+    var fecha_ini_dia = fecha_ini.substring(0,2);
+    var fecha_ini_mes = fecha_ini.substring(3,5);
+    var fecha_ini_anio = fecha_ini.substring(6,10);
+    //var fecha_fin = $('#tblasignaciones-fecha_fin').val();
+    var fecha_fin = $('#modalEditarPeriodo .fecha_fin').val();
+    var fecha_fin_dia = fecha_fin.substring(0,2);
+    var fecha_fin_mes = fecha_fin.substring(3,5);
+    var fecha_fin_anio = fecha_fin.substring(6,10);
+    //var fecha_ini_horas = new Date(reverse_date_ddmmYY($('.fecha_ini'+id).val()));
+    var fecha_ini_horas = new Date(fecha_ini_anio,parseInt(fecha_ini_mes)-1,fecha_ini_dia,0,0,0);
+    var fecha_fin_horas = new Date(fecha_fin_anio,parseInt(fecha_fin_mes)-1,fecha_fin_dia,0,0,0);
+    var dia_mls = (24*60*60*1000);
+    var hora_mls = (60*60*1000)+1;
+    var dias = 0;
+    var dia_fecha_inicio_ultimo = get_month_days(fecha_ini_mes,fecha_ini_anio);//Ultimo dia del mes de la fecha de inicio
+    var dia_fecha_fin_ultimo = get_month_days(fecha_fin_mes,fecha_fin_anio);//Ultimo dia del mes de la fecha fin
+    var dias_habiles = 0;
+    var dias_habiles_mes_uno = 0;
+    var dias_habiles_mes_dos = 0;
+
+    //Si la fecha de inicio y la fecha de fin estan en un mes diferente
+    if((fecha_ini_mes!=fecha_fin_mes)||(fecha_ini_mes==fecha_fin_mes && fecha_ini_anio!=fecha_fin_anio)){
+
+      //Si la fecha inicial no inicia el dia primero, se toman en cuenta solo los dias habiles correspondientes a ese mes y acorde a la fecha de inicio
+      if(fecha_ini_dia!='01'){
+        var fecha_inicio_calculada = new Date(fecha_ini_anio,parseInt(fecha_ini_mes)-1,fecha_ini_dia,0,0,0);
+        //Inicializa la fecha de inicio
+        var fecha_inicio_mes_fin = new Date(fecha_ini_anio, parseInt(fecha_ini_mes)-1, dia_fecha_inicio_ultimo, 0, 0, 0);//Inicializa la fecha fin de este mes
+        var tiempo_inicio_mls = fecha_inicio_calculada.getTime();
+        var tiempo_fin_mls = fecha_inicio_mes_fin.getTime();
+        for(i=tiempo_inicio_mls;i<=tiempo_fin_mls;i=i+dia_mls){
+          tiempo_inicio_date = new Date(i);
+          if(tiempo_inicio_date.getDay()>0&&tiempo_inicio_date.getDay()<6){
+            dias_habiles++;
+            dias_habiles_mes_uno++;
+          }
+        }
+        fecha_ini_horas = new Date(fecha_inicio_mes_fin.getTime()+dia_mls);
+      }
+
+      //Se saca la diferencia de dias entre la fecha de inicio y la fecha de fin, y se le agrega un dia mas, correspondiente al ultimo dia de la fecha fin
+      dias_diferencia = (fecha_fin_horas.getTime()-fecha_ini_horas.getTime()+dia_mls)/dia_mls;
+      dias = dias + dias_diferencia;
+      dias_del_mes=0;
+
+      //Si el dia de la fecha fin no es el dia final del mes
+      if(parseInt(dia_fecha_fin_ultimo) != parseInt(fecha_fin_dia)){
+        fecha_inicio_mes_fin = new Date(fecha_fin_anio,parseInt(fecha_fin_mes)-1,1,0,0,0);
+        for(i=fecha_inicio_mes_fin.getTime();i<=fecha_fin_horas.getTime();i=i+dia_mls){
+          tiempo_actual = new Date(i);
+          if(tiempo_actual.getDay()>0&&tiempo_actual.getDay()<6){
+            dias_habiles++;
+            dias_habiles_mes_dos++;
+          }
+          dias_del_mes++;
+        }
+        dias = dias - dias_del_mes;
+      }
+      meses = Math.round(dias/30);
+    } else {//Si la fecha de inicio y la fecha de fin estan en el mismo mes
+      if(fecha_ini_dia=='01' && parseInt(dia_fecha_fin_ultimo)==parseInt(fecha_fin_dia)){//Si el mes no esta completo
+        meses = 1;
+      }else{//Se sacan dias habiles
+        for(i=fecha_ini_horas.getTime();i<=(fecha_fin_horas.getTime()+hora_mls);i=i+dia_mls){//En la condicion se agrega una hora mas un milisegundo por efectos del cambios de horario
+          tiempo = new Date(i);
+
+          if(tiempo.getDay()>0&&tiempo.getDay()<6){
+            dias_habiles++;
+            dias_habiles_mes_uno++;
+          }
+        }
+        meses = 0;
+      }
+    }
+
+    //var horas_cliente = ($('#horas_cliente').val());
+    var horas_cliente = <?php echo $sql['HORAS_ASIGNACION'] ?>;
+    var horas_mes_uno = 0.00;
+    var horas_mes_dos = 0.00;
+    var horas_dias_habiles = 0.00;
+
+    //Calcula las horas del primer mes incompleto
+    if(dias_habiles_mes_uno*8>horas_cliente){
+      horas_mes_uno = horas_cliente;
+    } else {
+      horas_mes_uno = dias_habiles_mes_uno*8;
+    }
+
+    //Calcula las horas del ultimo mes incompleto
+    if(dias_habiles_mes_dos*8>horas_cliente){
+      horas_mes_dos = horas_cliente;
+    } else {
+      horas_mes_dos = dias_habiles_mes_dos*8;
+    }
+
+    horas_dias_habiles = parseFloat(horas_mes_uno) + parseFloat(horas_mes_dos);
+
+    if(meses > 0){
+      var horasTotal = (dias_habiles * 8) + Math.floor(meses * horas_cliente);
+    }else{
+      var horasTotal = (dias_habiles * 8);
+    }
+
+    //alert(horasTotal);
+
+    $('#horas_cliente_edit').val(horasTotal);
+    $('#id_hora_estimada_edit').val(horasTotal);
+
+    monto_total = horasTotal * tarifa;
+    $('#id_tarifa_value_edit').val(tarifa);
+    $('#id_tarifa_mascara_edit').val('$ '+(tarifa).formatMoney(2, '.', ','));
+    $('#id_monto_total_value_edit').val(monto_total);
+    $('#id_monto_total_mascara_edit').val('$ '+(monto_total).formatMoney(2, '.', ','));
+  }
+
+}
+
+Number.prototype.formatMoney = function(c, d, t){
+
+  var n = this,
+    c = isNaN(c = Math.abs(c)) ? 2 : c,
+    d = d == undefined ? "." : d,
+    t = t == undefined ? "," : t,
+    s = n < 0 ? "-" : "",
+    i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
+    j = (j = i.length) > 3 ? j % 3 : 0;
+
+  return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+};
+
+function cambiarFecha(cadena) {
+  if(cadena.charAt(2) == '/') {
+      var nueva = cadena.split('/');
+      return nueva[2]+'-'+nueva[1]+'-'+nueva[0];
+  } else {
+      return cadena;
+  }
+}
+
+function convierteFecha(fecha){
+
+    var separador = "-";
+
+    var dato = fecha.split(separador);
+
+    fecha = dato[2] + "/" + dato[1] + "/" + dato[0];
+
+    return fecha;
+  }
+
+function convierteFecha2(fecha){
+
+  var separador = "/";
+
+  var dato = fecha.split(separador);
+
+  fecha = dato[2] + "/" + dato[1] + "/" + dato[0];
+
+  return fecha;
+}
+
+function get_month_days(mes,anio) {
+  var meses = ['01', '03', '05', '07', '08', '10', '12'];
+
+  if(jQuery.inArray(mes,meses) !== -1){
+    dias = 31;
+  } else if(mes=='02'){
+
+      if(parseInt(anio)%4==0){
+        dias = 29
+      } else {
+          dias = 28
+      }
+  } else {
+      dias = 30
+  }
+
+  return dias;
+}
+
+function comentarios(id){
+        $("#v-mas").html(' ');
+        $("#v-mas").html("<p>"+arr_ver[id]+"</p>");
+    }
+
+function cerrar(){
+  $('#w0').val('');
+  $('#w1').val('');
+  $('#id_tarifa_mascara').val('');
+  $('#id_monto_total_mascara').val('');
+  $('#id_hora_estimada').val('');
+  $('#HORAS_DEVENGAR').val('');
+  $('#id_monto_real_mascara_edit').val('');
+
+  $('.fecha_ini').parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacío');
+  $('.fecha_fin').parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacío');
+
+  $('#modalEditarPeriodo .fecha_ini').parent().removeClass('has-error').find('.help-block').html('');
+  $('#modalEditarPeriodo .fecha_fin').parent().removeClass('has-error').find('.help-block').html('');
+
+  $('#modalErrorFechas').hide();
+}
+
+function cerrar2(){
+
+  window.location.reload();
+}
+
+jQuery(document).ready(function(){
+
+  $('.guardarPeriodo').click(function(e){
+
+    e.preventDefault();
+    $('#res-modal').html('').parent().removeClass('has-error');
+
+    if($('#modalPeriodoNuevo .has-error').length>0){
+      return false;
+    }
+
+    bandera = true;
+
+    var Fecha_ini = cambiarFecha($('#w0').val());
+    var Fecha_fin = cambiarFecha($('#w1').val());
+
+    for (var i = 0; i < datos.modelo.length; i++) {
+
+      if (datos.modelo[i].FECHA_INI) {
+        fechadeinicio = datos.modelo[i].FECHA_INI;
+
+      } else if(datos.modelo[i].FECHA_INICIO) {
+
+        fechadeinicio = datos.modelo[i].FECHA_INICIO;
+
+        if ( datos.modelo[i].FECHA_INICIO < Fecha_ini || datos.modelo[i].FECHA_FIN > Fecha_ini ){
+          continue;
+        }
+      }
+
+      if (datos.modelo[i].PK_ASIGNACION != keyAsignacion) {
+        //Si la asignacion ha sido cancelada solo podra asignar fechas mayores a la fecha de cancelacion
+        if (datos.modelo[i].FK_ESTATUS_ASIGNACION == 5) {
+
+          for(var k in datos.canceladas) {
+
+            if (datos.canceladas.id == datos.modelo[i].PK_ASIGNACION) {
+
+              if (Fecha_ini <= datos.canceladas.fecha || Fecha_fin <= datos.canceladas.fecha) {
+                $('#res-modal').parent().parent().addClass('has-error').find('.help-block').html('¡Esta asignación incluye fechas que ya están definidas en otra asignación donde el recurso se encuentra actualmente asignado, Favor de Verificarlo!').parent().addClass('has-error');
+                bandera = false;
+                break;
+              } else {
+                $('#res-modal').html('').parent().addClass('has-error');
+                bandera = true;
+              }
+            }
+          }
+        } else {
+
+          if (Fecha_ini > fechadeinicio && Fecha_ini < datos.modelo[i].FECHA_FIN) {
+            $('#res-modal').html('¡La fecha inicio incluye fechas que ya están definidas en otra asignación donde el recurso se encuentra actualmente asignado, Favor de Verificarlo!').parent().addClass('has-error');
+            //$('#tblasignaciones-fecha_ini').parent().parent().addClass('has-error').find('.help-block').html('¡Esta asignación incluye fechas que ya están definidas en otra asignación donde el recurso se encuentra actualmente asignado, Favor de Verificarlo!');
+            bandera = false;
+            break;
+          }else if (Fecha_fin > fechadeinicio && Fecha_fin < datos.modelo[i].FECHA_FIN) {
+            $('#res-modal').html('¡La Fecha fin incluye fechas que ya están definidas en otra asignación donde el recurso se encuentra actualmente asignado, Favor de Verificarlo!').parent().addClass('has-error');
+            //$('#tblasignaciones-fecha_fin').parent().parent().addClass('has-error').find('.help-block').html('¡Esta asignación incluye fechas que ya están definidas en otra asignación donde el recurso se encuentra actualmente asignado, Favor de Verificarlo!');
+            bandera = false;
+            break;
+          } else {
+          $('#res-modal').html('').parent().addClass('has-error');
+          bandera = true;
+          }
+        }
+      }
+    }
+
+    var data = $('#altaPeriodo').serialize();
+
+    if (bandera) {
+
+      $.ajax({
+        url: ajaxUrlAltaPeriodo ,
+        type: 'post',
+        data: {
+          data : data,
+          _csrf  : _csrfToken
+        },
+        success: function (data) {
+
+          if(data.insert||data.insert2||data.insert3){
+            $('#modalErrorFechas').show();
+            $('#msg-modalErrorFechas').text('¡Este periodo incluye fechas que ya están definidas en otro periodo, favor de verificarlo!');
+          }else{
+            $('#res-modal').html('');
+            $('#modalPeriodoNuevo').modal('hide');
+            window.location.reload();
+          }
+        }
+      })
+    }
+
+  });
+
+  /* Carga documentos */
+$('.editarPeriodo').click(function(e){
+
+    e.preventDefault();
+    $('#res-modal').html('').parent().removeClass('has-error');
+
+    if($('#modalEditarPeriodo .has-error').length>0){
+      return false;
+    }
+
+    bandera = true;
+
+    var data = $('#EditarPeriodo').serialize();
+
+    if (bandera) {
+      $.ajax({
+        url: ajaxUrlActualizaP ,
+        type: 'post',
+        data: {
+          data : data,
+          _csrf  : _csrfToken
+        },
+        success: function (data) {
+          //console.log(data);
+          if(data.insert||data.insert2||data.insert3){
+            $('#modalErrorFechas').show();
+            $('#msg-modalErrorFechas').text('¡Este periodo incluye fechas que ya están definidas en otro periodo, favor de verificarlo!');
+            //$('#res-modal').html(data.res).parent().addClass('has-error');
+          }else{
+            $('#res-modal').html('');
+            $('#modalEditarPeriodo').modal('hide');
+            $('#form-ajax-2').submit();
+            window.location.reload();
+          }
+        }
+      })
+    }
+  });
+
+/*$('#HORAS_DEVENGAR').on('change', function(){
+
+  validar_fechas_calculo_horas_edit();
+});*/
+
+  $("#ODC #botonGuardar").on('click', function(e){
+      var bandhde = true;
+      if($(this).hasClass('adp')) {
+          bandhde = false;
+      }
+      var post = true;
+      var selected = '';
+      $('input[name="chkPeriodos[]"]').each(function(){
+          if (this.checked) {
+              selected += $(this).val()+', ';
+          }
+      });
+
+      //Variable que inidca si existen´periodos pintados dentro del form de facturación. valor > a 0 indica que sí existen.
+      var existenPeriodosFormCargaFACTURA = $('#cargaFACTURA').find('input[name^="periodo"]:checked').length;
+      if (selected != '') {
+        //Recorrelos checkbox con propiedad checked
+        $('#cargarODC input[name="chkPeriodos[]"]:checked').each(function() {
+          var id = $(this).val();
+          var horas = $("#cargarODC #txtHoras_"+id).val();
+          var monto = $("#cargarODC #txtMonto_"+id).val();
+          //Si detecta algun CHK checkeado y que no esta lleno el campo de Monto correcpondiente, detiene el POST
+          if(monto.toString().length == 0){
+            post = false;
+            $("#cargarODC #txtHoras_"+id).parent().parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+            $("#cargarODC #txtMonto_"+id).parent().parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+          }
+        })
+      }
+
+      if($("#postType").val()=='create'){
+          if($("#subirarchivo-file").val()==''){
+              post = false;
+              $("#subirarchivo-file").parent().parent().addClass('has-error').find('.help-block').html('Favor de seleccionar un documento');
+          } else {
+              $("#subirarchivo-file").parent().parent().removeClass('has-error').find('.help-block').html('');
+          }
+      } else {
+          $("#subirarchivo-file").parent().parent().removeClass('has-error').find('.help-block').html('');
+      }
+
+      var cantidadPeriodos = $('#cargarODC #NumPeriodos').val();
+      var periodosSeleccionados = $('#cargarODC').find('input[name^="chkPeriodos"]:checked').length;
+
+          if($("#cargarODC #NumPeriodos").val()==''){
+              post = false;
+              $("#cargarODC #NumPeriodos").parent().parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+          } else {
+              $("#cargarODC #NumPeriodos").parent().parent().removeClass('has-error').find('.help-block').html('');
+          }
+
+          if (periodosSeleccionados > cantidadPeriodos) {
+            post = false;
+            $('#modalErrorFechas').show();
+            $('#msg-modalErrorFechas').text('El número de periodos seleccionados debe ser menor o igual a ' + cantidadPeriodos);
+          }
+
+          if($("#cargarODC #tbldocumentos-fecha_documento").val()==''){
+              post = false;
+              $("#cargarODC #tbldocumentos-fecha_documento").parent().parent().addClass('has-error').find('.help-block').html('Favor de ingresar la fecha');
+          } else {
+              $("#cargarODC #tbldocumentos-fecha_documento").parent().parent().removeClass('has-error').find('.help-block').html('');
+          }
+
+          if($("#cargarODC #tbldocumentos-fk_razon_social").val()==''){
+              post = false;
+              $("#cargarODC #tbldocumentos-fk_razon_social").parent().parent().addClass('has-error').find('.help-block').html('Favor de seleccionar la empresa');
+          } else {
+              $("#cargarODC #tbldocumentos-fk_razon_social").parent().parent().removeClass('has-error').find('.help-block').html('');
+          }
+
+          if($("#cargarODC #subirarchivo-5-file").val()==''){
+              post = false;
+              $("#cargarODC #subirarchivo-5-file").parent().parent().addClass('has-error').find('.help-block').html('Selecciona un archivo');
+          } else {
+              $("#cargarODC #subirarchivo-5-file").parent().parent().removeClass('has-error').find('.help-block').html('');
+          }
+
+      if($('#tbldocumentos-num_documento').val() == ''){
+          $('#tbldocumentos-num_documento').val($('#numeroODCAutogenerado').val());
+          $("#tbldocumentos-num_documento").parent().parent().removeClass('has-error').find('.help-block').html('');
+      }
+      return post;
+  });
+
+  $("#ADP #botonGuardar").on('click', function(e){
+      var bandhde = true;
+      if($(this).hasClass('adp')) {
+          bandhde = false;
+      }
+      var post = true;
+
+          if($("#cargarADP #subirarchivo-6-file").val()==''){
+              post = false;
+              console.log('error7');
+              $("#cargarADP #subirarchivo-6-file").parent().parent().addClass('has-error').find('.help-block').html('Selecciona un archivo');
+          } else {
+              $("#cargarADP #subirarchivo-6-file").parent().parent().removeClass('has-error').find('.help-block').html('');
+          }
+
+
+      if($('#tbldocumentos-num_documento').val() == ''){
+          $('#tbldocumentos-num_documento').val($('#numeroADPAutogenerado').val());
+          $("#tbldocumentos-num_documento").parent().parent().removeClass('has-error').find('.help-block').html('');
+      }
+      return post;
+      console.log(post);
+  });
+
+  $('#HORAS_DEVENGAR').keyup(function() {
+
+    var list = JSON.parse('<?php echo json_encode( $tarifas ) ?>');
+    var tarifaAsig = eval(list[$('#id_periodo').val()]);
+
+    var tarifa = tarifaAsig;
+
+    if (tarifaAsig == undefined) {
+      tarifa = <?php echo $sql['TARIFA'] ?>;
+    }
+
+    var horasR = $('#HORAS_DEVENGAR').val();
+    var montoR = horasR * tarifa;
+
+    $('#MONTO_REAL').val(montoR);
+    $('#id_monto_real_mascara_edit').val('$ '+(montoR).formatMoney(2, '.', ','));
+
+  });
+
+});
+
+</script>
+
+<div class="modal fade" id="vermascomentarios" role="dialog">
+     <div class="modal-dialog modal-sm scroll-y"  >
+        <!-- Modal content-->
+        <div class="modal-content" style='border-radius: 0px;'>
+            <div class="modal-body" style="padding: 0px;">
+                <div>
+                    <img src="/erteisei_devcap_DES/web/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+
+                    <div class="row" style="margin: 0px; padding: 0px;">
+                        <div id="v-mas" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+                        </div>
+                    </div>
+                    <div class="row text-center" >
+                        <button type="button" class="btn btn-cancel" data-dismiss="modal">Cerrar</button>
+                        <div class="form-group">
+                            <div class="help-block" id="res-modal"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal para crear un periodo -->
+<div class="modal fade" id="modalPeriodoNuevo" tabindex="-1" role="dialog" aria-labelledby="modalPeriodoNuevoLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style='border-radius: 0px;'>
+      <div class="modal-body" style="padding: 0px; position: relative;">
+        <img src="<?php echo get_home_url() ?>/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+        <div class="clear"></div>
+        <h3 class="modal-title">Registro de Nuevo Periodo</h3>
+        <form method="post" action="" id="altaPeriodo" style="padding: 25px; ">
+          <div class="form-group" style="padding: 15px;border:1px solid #dddddd;">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                <div class="form-group font-bold">
+                  <p class="razon_social">
+                    <?= Html::label($sql['NOMBRE_EMP'].' ') ?>
+                    <?= Html::label($sql['APELLIDO_PAT_EMP']) ?>
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="form-group font-bold">
+                    <input type="hidden" id="datoFechaInicioAsignacion" name="datoFechaAsignacion" value="<?php echo $model['FECHA_INI'] ?>" >
+                    <input type="hidden" id="datoFechaFinAsignacion" name="datoFechaFinAsignacion" value="<?php echo $model['FECHA_FIN'] ?>" >
+                      <?= Html::hiddenInput('keyAsignacion',$_GET['id']) ?>
+                      <?= Html::hiddenInput('horas_cliente','',['id' => 'horas_cliente']) ?>
+                      <input type='hidden' value='<?php echo $sql['HORAS_ASIGNACION'] ?>' id='horas_asignacion' name='horas_asignacion'>
+                      <?= Html::input('hidden', 'idAsig', $_GET['id'], ['id' => 'idAsig']) ?>
+                      <?= Html::label('Inicio','fechaInicio',['class'=>'campos-label ']) ?>
+                      <?php echo DatePicker::widget([
+                          'name'=>'fechaInicio',
+                          'class'=>'campos-label',
+                          'dateFormat' => 'dd/mm/yyyy',
+                          'clientOptions' => [
+                              'yearRange' => '-115:+0',
+                              'changeYear' => true,
+                              'changeMonth' => true],
+                          'options' => [
+                              'class' => 'form-control datepicker fecha_ini datepicker-upa',
+                              'pattern'=>'\d{2}/\d{2}/\d{4}',
+                              'placeholder' => 'DD/MM/YYYY'
+                          ],
+                      ]); ?>
+                      <div class="help-block"></div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="form-group font-bold">
+
+                    <?= Html::label('Fin','fechaFin',['class'=>'campos-label ']) ?>
+                    <?php echo DatePicker::widget([
+                      'name'=>'fechaFin',
+                      'class'=>'campos-label',
+                      'dateFormat' => 'dd/mm/yyyy',
+                      'clientOptions' => [
+                        'yearRange' => '-115:+0',
+                        'changeYear' => true,
+                        'changeMonth' => true],
+                      'options' => [
+                        'class' => 'form-control datepicker fecha_fin datepicker-upa',
+                        'pattern'=>'\d{2}/\d{2}/\d{4}',
+                        'placeholder' => 'DD/MM/YYYY'
+                      ],
+                    ]); ?>
+                    <div class="help-block"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                  <div class="form-group font-bold">
+                    <?= Html::label('Horas estimadas','search',['class'=>'campos-label']) ?>
+                    <?= Html::input('text','id_hora_estimada','',['id'=>'id_hora_estimada','class'=>'search form-control', 'readonly'=>'readonly']) ?>
+                    <div class="help-block"></div>
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                  <div class="form-group font-bold">
+                    <?= Html::hiddenInput('tarifa','',['id'=>'id_tarifa_value','class'=>'search form-control']) ?>
+                    <?= Html::label('Tarifa','search',['class'=>'campos-label']) ?>
+                    <?= Html::input('text','id_tarifa_mascara','',['id'=>'id_tarifa_mascara','class'=>'search form-control', 'readonly'=>'readonly']) ?>
+                    <div class="help-block"></div>
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                  <div class="form-group font-bold">
+                    <?= Html::hiddenInput('monto','',['id'=>'id_monto_total_value','class'=>'search form-control']) ?>
+                    <?= Html::label('Monto','search',['class'=>'campos-label']) ?>
+                    <?= Html::input('text','id_monto_total_mascara','',['id'=>'id_monto_total_mascara','class'=>'search form-control', 'readonly'=>'readonly']) ?>
+                    <div class="help-block"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="contador-item"></div>
+              <div class="clear"></div>
+            </div> <!-- row -->
+          </div> <!-- form-group -->
+          <div class="row text-center" >
+            <button type="button" class="btn btn-cancel" onclick="cerrar()" data-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-success guardarPeriodo">Guardar</button>
+            <div class="form-group">
+              <div class="help-block" id="res-modal"></div>
+            </div>
+          </div>
+        </form>
+      </div> <!-- modal body -->
+    </div>
+  </div>
+</div>
+
+<!--Modal editar periodo -->
+<div class="modal fade" id="modalEditarPeriodo" tabindex="-1" role="dialog" aria-labelledby="modalEditarPeriodoLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style='border-radius: 0px;'>
+      <div class="modal-body" style="padding: 0px; position: relative;">
+        <img src="<?php echo get_home_url() ?>/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+        <div class="clear"></div>
+        <h3 class="modal-title">Editar Periodo</h3>
+        <form method="post" action="" id="EditarPeriodo" style="padding: 25px; ">
+          <div class="form-group" style="padding: 15px;border:1px solid #dddddd;">
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                <a href="/erteisei_devcap_DES/web/periodos/update?id=4" title="Editar" class="item-update icon-24x24"></a>
+              </div>
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                <div class="form-group font-bold">
+                  <p class="razon_social" id="nom"></p>
+                </div>
+              </div>
+              <div class="col-lg-10 col-md-6 col-sm-4 col-xs-12">
+                <div class="form-group font-bold">
+                  <p class="razon_social">
+                    <label for="" class="control-label nombre-emp"></label>
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="form-group font-bold">
+
+                    <?= Html::hiddenInput('keyAsignacion',$_GET['id']) ?>
+                    <?= Html::hiddenInput('horas_cliente','', ['id' => 'horas_cliente_edit']) ?>
+                    <?= Html::hiddenInput('pkPeriodo','', ['id' => 'pkPeriodo']) ?>
+                    <?= Html::label('Inicio','fechaInicio',['class'=>'campos-label ']) ?>
+                    <?php echo DatePicker::widget([
+                          'name'=>'fechaInicio',
+                          'class'=>'campos-label',
+                          'dateFormat' => 'dd/mm/yyyy',
+                          'clientOptions' => [
+                              'yearRange' => '-115:+0',
+                              'changeYear' => true,
+                              'changeMonth' => true],
+                          'options' => [
+                              'class' => 'form-control datepicker fecha_ini datepicker-upa',
+                              'pattern'=>'\d{2}/\d{2}/\d{4}',
+                              'placeholder' => 'DD/MM/YYYY'
+                          ],
+                      ]); ?>
+                      <div class="help-block"></div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <div class="form-group font-bold">
+                    <?= Html::label('Fin','fechaFin',['class'=>'campos-label ']) ?>
+                    <?php echo DatePicker::widget([
+                      'name'=>'fechaFin',
+                      'class'=>'campos-label',
+                      'dateFormat' => 'dd/mm/yyyy',
+                      'clientOptions' => [
+                        'yearRange' => '-115:+0',
+                        'changeYear' => true,
+                        'changeMonth' => true],
+                      'options' => [
+                        'class' => 'form-control datepicker fecha_fin datepicker-upa',
+                        'pattern'=>'\d{2}/\d{2}/\d{4}',
+                        'placeholder' => 'DD/MM/YYYY'
+                      ],
+                    ]); ?>
+                    <div class="help-block"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                  <?= Html::hiddenInput('tarifa','',['id'=>'id_tarifa_value_edit','class'=>'search form-control']) ?>
+                  <?= Html::label('Tarifa','search',['class'=>'campos-label']) ?>
+                  <?= Html::input('text','id_tarifa_mascara','',['id'=>'id_tarifa_mascara_edit','class'=>'search form-control', 'readonly'=>'readonly']) ?>
+                  <div class="help-block"></div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                  <?= Html::label('Horas estimadas','search',['class'=>'campos-label']) ?>
+                  <?= Html::input('text','id_hora_estimada','',['id'=>'id_hora_estimada_edit','class'=>'search form-control', 'readonly'=>'readonly']) ?>
+                  <div class="help-block"></div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                  <?= Html::hiddenInput('monto','',['id'=>'id_monto_total_value_edit','class'=>'search form-control']) ?>
+                  <?= Html::label('Monto estimado','search',['class'=>'campos-label']) ?>
+                  <?= Html::input('text','id_monto_total_mascara','',['id'=>'id_monto_total_mascara_edit','class'=>'search form-control', 'readonly'=>'readonly']) ?>
+                  <div class="help-block"></div>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2 col-sm-offset-2 col-xs-12 col-xs-offset-12"></div>
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                  <div class="form-group font-bold">
+                    <?= Html::label('Horas reales', 'horasDevengar',['class' => 'campos-label'])?>
+                    <?= Html::input('text','HORAS_DEVENGAR','',['id'=>'HORAS_DEVENGAR','class'=>'search form-control']) ?>
+                    <input type="hidden" id="numero_periodo" name="numero_periodo">
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                  <div class="form-group font-bold">
+                    <?= Html::hiddenInput('montoEdit','',['id'=>'id_monto_total_value_edit','class'=>'search form-control']) ?>
+                    <?= Html::hiddenInput('MONTO_REAL','',['id'=>'MONTO_REAL','class'=>'search form-control']) ?>
+                    <?= Html::label('Monto real','search',['class'=>'campos-label']) ?>
+                    <?= Html::input('text','id_monto_real_mascara','',['id'=>'id_monto_real_mascara_edit','class'=>'search form-control', 'readonly'=>'readonly']) ?>
+                  </div>
+                </div>
+              </div>
+              <div class="clear"></div>
+            </div> <!-- row -->
+          </div> <!-- form-group -->
+        </form>
+      </div> <!-- modal body -->
+      <div class="row text-center">
+        <button type="button" class="btn btn-cancel" onclick="cerrar()" data-dismiss="modal">CANCELAR</button>
+        <button type="button" class="btn btn-success editarPeriodo">Guardar</button>
+        <div class="form-group">
+          <div class="help-block" id="res-modal"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Modal muestra errores de lapsos de fechas -->
+<div class="modal fade in" id="modalErrorFechas2" role="dialog" aria-labelledby="modalPeriodoNuevoLabel">
+  <div class="modal-dialog">
+    <div class="modal-content" style='border-radius: 0px;'>
+      <div class="modal-body" style="padding: 0px; position: relative;">
+        <img src="<?php echo get_home_url() ?>/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+        <div class="clear"></div>
+          <div class="form-group" style="padding: 15px;border:1px solid #dddddd;">
+            <div class="row">
+              <div class="form-group font-bold">
+                <p id = "msg-modalErrorFechas2" style="text-align: center;"></p>
+              </div>
+            </div> <!-- row -->
+          </div> <!-- form-group -->
+          <div class="row text-center" >
+            <button type="button" class="btn btn-cancel" onclick="cerrar2()">Aceptar</button>
+          </div>
+      </div> <!-- modal body -->
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="view-cancelar-asignacion" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content" style='border-radius: 0px;'>
+            <div class="modal-body" style="padding: 0px;">
+                <div>
+                    <img src="/erteisei_devcap_DES/web/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+                    <?php $form = ActiveForm::begin(['id'=>'form-cancelar-asignacion2', 'action' => Url::to(["asignaciones/cancelar"])  ]); ?>
+                    <div class="row" style="margin: 0px; padding: 0px;" id="form-cancelar-asignacion">
+                        <input type="hidden" id="idAsignacion" name="idAsignacion" value="<?= $model->PK_ASIGNACION?>"/>
+                        <input type="hidden" id="vista_origen" name="vista_origen" value="origen_view"/>
+                        <div class='col-xs-12 col-sm-6 col-md-6 col-lg-12'>
+                            <?= $form->field($modelComentariosAsignaciones, 'FECHA_FIN',
+                                [
+                                    'template' => ' <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12">{label}{input}{error}{hint}<div class="clear"></div></div>',
+                                ]
+                                )->widget(\yii\jui\DatePicker::classname(), [
+                                    'clientOptions' => [
+                                    ],
+                                    'options' => [
+                                        'class' => 'form-control datepicker datepicker-upa',
+                                        'placeholder'=>'DD/MM/AAAA',
+                                        'autocomplete'=>'off'
+                                        // 'readonly' => 'readonly',
+                                    ],
+                                ])
+                            ?>
+                        </div>
+                        <div class='col-xs-12 col-sm-6 col-md-6 col-lg-12'>
+                            <?= $form->field($modelComentariosAsignaciones, 'MOTIVO',
+                            [
+                                'template' => ' <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12">{label}{input}{error}{hint}<div class="clear"></div></div>',
+                            ]
+                            )->textInput(['maxlength' => true]) ?>
+                        </div>
+                        <div class='col-xs-12 col-sm-6 col-md-6 col-lg-12'>
+                            <?= $form->field($modelComentariosAsignaciones, 'COMENTARIOS',
+                            [
+                                'template' => ' <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12">{label}{input}{error}{hint}<div class="clear"></div></div>',
+                            ]
+                            )->textarea(['maxlength' => true, 'rows' => '3']) ?>
+                        </div>
+                    </div>
+                    <div class="row" style="margin: 0px; padding: 0px;">
+                        <?= Html::submitButton('ACEPTAR', ['class' => 'btn btn-success der', 'id'=>'botonEnviar']) ?>
+                        <button type="button" class="btn btn-success der" data-dismiss="modal">Cancelar</button>
+                        <!--<a href="javascript: void(0);" type="button" class="btn btn-success" data-dismiss="modal" data-target="#cancelar-asignacion">ACEPTAR</a>-->
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ODC" role="dialog">
+    <div class="modal-dialog modal-md">
+        <!-- Modal content-->
+        <div class="modal-content" style='border-radius: 0px;'>
+          <img src="/erteisei_devcap_DES/web/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+            <div class="modal-body" style="padding: 0px;">
+                <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data', 'id' => 'cargarODC']]); ?>
+                <?= $form->field($modeloDocumentos, 'PK_DOCUMENTO')->hiddenInput()->label(false); ?>
+                <div class="col-lg-12">
+
+                    <a href="javascript:void(0);" title="Editar" class="item-update iconview-24x24" id="editarFormDocs"></a>
+                    <label class="title">Orden de compra</label>
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-12">
+                                  <?= $form->field($modeloDocumentos, 'FK_TIPO_DOCUMENTO')->hiddenInput(['value' => 2])->label(false); ?>
+                                  <input type='hidden' value='<?php echo $sql['PK_CLIENTE'] ?>' name='FK_CLIENTE'>
+                                  <input type='hidden' value='0' id='consecutivo' name="consecutivo" >
+                                  <input type='hidden' value='0' id='habilitarForm'>
+                                  <input type='hidden' value='0' id='numeroODCAutogenerado'>
+                                  <input type="hidden" value="" id="es_bolsa" name="es_bolsa">
+                                  <input type="hidden" value="" id="pk_bolsa" name="pk_bolsa">
+
+                                  <!-- Inicia sección de captura de datos en Cargar orden de compra -->
+                                  <div class="row">
+
+                                      <div id="fileArc">
+                                      <?= $form->field($modelSubirDoc, '[5]file',
+                                          [
+                                              'template' => ' <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">{label}<label><font color="red">*</font></label>{input}<label id="labelArchivo" class="control-label"></label>{error}{hint}</div>',
+                                          ]
+                                          )->fileInput(['class'=>'es_bolsa']) ?>
+                                      </div>
+                                      <div id="fileHidden" style="display:none">
+                                        <?= $form->field($modeloDocumentos, 'NOMBRE_DOCUMENTO',
+                                          [
+                                            'template' => ' <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 numeric">{label}{input}{error}{hint}</div>',
+                                          ]
+                                          )->textInput(['maxlength' => true, 'onclick'=>"changeFile()", ]) ?>
+                                      </div>
+
+                                  </div>
+
+                                  <div class="row">
+
+                                      <?php if(!$cat_tarifas): ?>
+
+                                          <?= $form->field($modeloPeriodos, 'TARIFA',
+                                          [
+                                              'template' => ' <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 numeric">{label}{input}{error}{hint}<div class="clear"></div></div>',
+                                          ]
+                                          )->textInput(['maxlength' => true, 'name'=>'TblPeriodos[TARIFA]', 'class' => 'form-control calcularMonto_tarifa', 'readonly' => 'readonly']) ?>
+                                      <?php else: ?>
+                                          <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 numeric styled-select">
+                                              <label class="control-label" for="tblperiodos-tarifa" style="color: rgb(102, 102, 102);">Tarifa</label>
+                                              <input type="text" name="mask_tarifa_odc" id="mask_tarifa_odc" value="" class="form-control calcularMonto_tarifa" disabled="disabled" readonly="readonly">
+                                              <select name="TblPeriodos[TARIFA]" id="tblperiodo-tarifa" class="form-control calcularMonto_tarifa" disabled="disabled" style="display:none">
+                                                  <?php
+                                                  foreach($cat_tarifas as $tarifa){
+                                                      if($sql['RFC'] == 'STE9607266C7'){ ?>
+                                                          <option value="<?php echo $tarifa['TARIFA']?>" data-pk_cat_tarifa="<?php echo $tarifa['PK_CAT_TARIFA']?>"><?php echo (number_format((float)$tarifa['TARIFA'],3,'.','')).' | '.$tarifa['DESC_TARIFA']?></option>
+                                                      <?php  }else{ ?>
+                                                          <option value="<?php echo $tarifa['TARIFA']?>" data-pk_cat_tarifa="<?php echo $tarifa['PK_CAT_TARIFA']?>"><?php echo (number_format((float)$tarifa['TARIFA'],2,'.','')).' | '.$tarifa['DESC_TARIFA']?></option>
+                                                      <?php
+                                                      }
+                                                  }
+                                                   ?>
+                                              </select>
+                                              <input type="hidden" class="pk_cat_tarifa" name="pk_cat_tarifa_select" value="<?php echo $sql['PK_CAT_TARIFA'] ?>" id="pk_cat_tarifa_select" disabled="disabled">
+                                              <!-- <input type="text" id="tbldocumentos-tarifa" class="form-control calcularMonto_tarifa" name="TblDocumentos[TARIFA]" readonly="readonly"> -->
+                                              <div class="help-block"></div>
+                                              <div class="clear"></div>
+                                          </div>
+                                          <?php /*echo $form->field($modeloDocumentos, 'TARIFA')->dropDownList($datosEmpresas,
+                                            ['PK_RAZON_SOCIAL'=>'EMPRESA', 'prompt'=>'--Elige una opcion--','class'=>'form-control es_bolsa']
+                                            );*/ ?>
+                                      <?php endif; ?>
+                                      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 es_bolsa_tarifa">
+                                          <label class="control-label" style="font-size:12px">Ingresar Nueva Tarifa</label> <br>
+                                          Si <input type="checkbox" name="cambio" id="cambio" class="es_bolsa">
+                                      </div>
+
+                                      <?php
+                                       // $cliente_sql= strtolower($sql['NOMBRE_CLIENTE']);
+
+                                      if($sql['RFC']=='BMN930209927'||$sql['RFC']=='ITA081127UZ1'||$sql['RFC']=='IMC9701024T5'){
+                                         $opdoc= ['maxlength' => true,  'class'=>'form-control es_bolsa'];
+                                      }else{
+                                         $opdoc= ['maxlength' => true, 'readonly'=>'readonly', 'class'=>'form-control es_bolsa'];
+                                          // "SELECT COUNT(DISTINCT NUM_DOCUMENTO) FROM tbl_documentos where FK_ASIGNACION=29 AND FK_TIPO_DOCUMENTO=2 ";
+                                      }
+                                       ?>
+
+                                </div>
+
+                                <div class="row">
+
+                                  <?= $form->field($modeloDocumentos, 'FECHA_DOCUMENTO',
+                                  [
+                                      'template' => ' <div class="col-xs-6 col-sm-12 col-md-4 col-lg-4">{label}<label><font color="red">*</font></label>{input}{error}{hint}<div class="clear"></div></div>',
+                                  ]
+                                  )->widget(\yii\jui\DatePicker::classname(), [
+                                      //'language' => 'ru',
+                                          'dateFormat' => 'dd/mm/yyyy',
+                                          'options' => [
+                                              'class' => 'form-control datepicker es_bolsa datepicker-upa',
+                                              'readonly' => 'readonly',
+                                              'placeholder' => 'DD/MM/YYYY',
+                                              'autocomplete'=>'off'
+                                              ],
+                                          'clientOptions' => [
+                                              'yearRange' => '-115:+0',
+                                              'changeYear' => true,
+                                              'changeMonth' => true],
+                                      ]) ?>
+
+
+                                    <?= $form->field($modeloDocumentos, 'NUM_SP',
+                                      [
+                                          'template' => ' <div class="col-xs-6 col-sm-12 col-md-4 col-lg-4 numeric-integer">{label}{input}{error}{hint}<div class="clear"></div></div>',
+                                      ]
+                                      )->textInput(['maxlength' => true]) ?>
+
+                                  <?= $form->field($modeloDocumentos, 'FK_RAZON_SOCIAL',
+                                    [
+                                        'template' => ' <div class="col-xs-6 col-sm-12 col-md-4 col-lg-4">{label}<label><font color="red">*</font></label>{input}{error}{hint}<div class="clear"></div></div>',
+                                    ])->dropDownList($datosEmpresas,['PK_RAZON_SOCIAL'=>'EMPRESA', 'prompt'=>'Elige una opcion','class'=>'form-control es_bolsa']); ?>
+
+                                </div>
+
+                                <div class="row">
+
+                                  <?= $form->field($modeloDocumentos, 'NUM_DOCUMENTO',
+                                      [
+                                          'template' => ' <div class="col-xs-6 col-sm-12 col-md-4 col-lg-5">{label}{input}{error}{hint}<div class="clear"></div></div>',
+                                      ]
+                                      )->textInput($opdoc) ?>
+
+                                  <?= $form->field($modeloPeriodos, 'FACTURA_PROVISION',
+                                    [
+                                        'template' => ' <div class="col-xs-6 col-sm-12 col-md-4 col-lg-4">{label}{input}{error}{hint}<div class="clear"></div></div>',
+                                    ]
+                                    )->dropDownList([1 => 'SI', 2 => 'NO'], ['class'=>'form-control es_bolsa']); ?>
+
+                                  <div class="form-group">
+                                    <div class="col-xs-6 col-sm-12 col-md-4 col-lg-4">
+                                      <label class="control-label">Número de periodos</label>
+                                      <input type="text" class="form-control numeric-integer" id="NumPeriodos" name="numPeriodos" />
+                                      <div class="help-block"></div>
+                                      <div class="clear"></div>
+                                    </div>
+                                  </div>
+
+                                  <div class="form-group">
+                                    <div class="col-xs-6 col-sm-12 col-md-4 col-lg-5">
+                                      <label class="control-label">Monto total de orden de compra</label>
+                                      <input type="text" class="form-control" id="MontoTotal" name="montoTotalODC" readonly style="background-color: lightgray;"/>
+                                      <div class="help-block"></div>
+                                      <div class="clear"></div>
+                                    </div>
+                                  </div>
+
+                                </div>
+
+                              </div><!-- Termina sección de captura de datos en Cargar orden de compra -->
+
+                              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <h1 class="title">Otros Periodos</h1>
+                                <div class="row">
+                                  <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <label class="control-label" for="tblperiodos-tarifa">Periodos</label>
+                                    <div class="help-block"></div>
+                                    <div class="clear"></div>
+                                  </div>
+                                  <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <label class="control-label" for="tblperiodos-tarifa">Horas</label>
+                                    <div class="help-block"></div>
+                                      <div class="clear"></div>
+                                  </div>
+                                  <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <label class="control-label" for="tblperiodos-tarifa">Monto</label>
+                                    <div class="help-block"></div>
+                                      <div class="clear"></div>
+                                  </div>
+                                </div>
+
+                                  <?php
+                                  $i=0;
+                                  if(count($periodosAsignacion) > 0){
+                                      foreach ($periodosAsignacion as $array) {
+                                      $i++;
+                                  ?>
+                                      <div class="row periodo-<?= $array['PK_PERIODO'] ?> periodos-odc">
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                          <input type="checkbox" name="chkPeriodos[]" id="chk_<?= $array['PK_PERIODO'] ?>" value="<?= $array['PK_PERIODO'] ?>" class="chk_validar chk_odc">
+                                          <label class="control-label" for="tblperiodos-tarifa"><?= $i.' - '.transform_date($array['FECHA_INI'],'d/m/Y').' al '.transform_date($array['FECHA_FIN'],'d/m/Y') ?></label>
+                                          <div class="help-block"></div>
+                                          <div class="clear"></div>
+                                        </div>
+                                        <div class="form-group">
+                                          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                            <input type="text" class="form-control calcularMonto_txt" id="txtHoras_<?= $array['PK_PERIODO'] ?>" name="txtHoras_<?= $array['PK_PERIODO'] ?>" />
+                                            <div class="help-block"></div>
+                                            <div class="clear"></div>
+                                          </div>
+                                        </div>
+                                        <div class="form-group">
+                                          <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                            <input type="text" class="form-control" id="txtMonto_<?= $array['PK_PERIODO'] ?>" name="txtMonto_<?= $array['PK_PERIODO'] ?>" readonly/>
+                                            <div class="help-block"></div>
+                                            <div class="clear"></div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                  <?php
+                                      }
+                                  }
+                                ?>
+                              </div>
+
+                      </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+              <input type="hidden" id="postType" value=""/>
+              <?= Html::button('ELIMINAR DATOS',['class'=>'btn btn-delete', 'id'=>'eliminar_odc']) ?>
+              <?= Html::button('CANCELAR',['class'=>'btn btn-cancel', 'id'=>'botonCancelar', 'data-dismiss'=>'modal']) ?>
+              <?= Html::submitButton($modeloDocumentos->isNewRecord ? 'GUARDAR' : 'MODIFICAR', ['class' => $modeloDocumentos->isNewRecord ? 'btn btn-success botonGuardar' : 'btn btn-success botonGuardar', 'id'=>'botonGuardar']) ?>
+
+            </div>
+            <?php ActiveForm::end(); ?>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ADP" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content" style='border-radius: 0px;'>
+          <img src="/erteisei_devcap_DES/web/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+          <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data', 'id' => 'cargarADP']]); ?>
+              <input type="hidden" name="pk_periodo_adp" id="pk_periodo_adp">
+          <?= $form->field($modeloHde, 'FK_TIPO_DOCUMENTO')->hiddenInput(['value' => 3])->label(false); ?>
+
+            <div class="modal-body" style="padding: 0px;">
+              <input type='hidden' value='<?php echo $sql['PK_CLIENTE'] ?>' name='FK_CLIENTE'>
+              <input type='hidden' value='0' id='numeroADPAutogenerado'>
+              <input type='hidden' value='0' id='consecutivoHDE' name="consecutivo" >
+              <input type='hidden' value='0' id='habilitarFormHDE'>
+              <input type="hidden" value="" id="es_bolsaHDE" name="es_bolsaHDE">
+              <input type="hidden" value="" id="pk_bolsaHDE" name="pk_bolsaHDE">
+              <div class="col-lg-12">
+
+              <a href="javascript:void(0);" title="Editar" class="item-update iconview-24x24" id="editarFormDocsHDE"></a>
+              <label class="title">Autorización de pago - ADP</label>
+
+              <?= $form->field($modelSubirDocHde, '[6]file',
+                  [
+                      'template' => ' <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">{label}{input}{error}{hint}<label id="labelArchivoADP" class="control-label"><div class="clear"></div></div>',
+                  ]
+                  )->fileInput(['class'=>'es_bolsaHDE'])->label('Nombre Documento'); ?>
+
+              <?php
+              if($sql['RFC']=='BMN930209927'||$sql['RFC']=='ITA081127UZ1'||$sql['RFC']=='STE9607266C7'){
+                 $opdoc= ['maxlength' => true, ];
+              }else{
+                 $opdoc= ['maxlength' => true, 'readonly'=>'readonly'];
+                  // "SELECT COUNT(DISTINCT NUM_DOCUMENTO) FROM tbl_documentos where FK_ASIGNACION=29 AND FK_TIPO_DOCUMENTO=2 ";
+              }
+               ?>
+              <?= $form->field($modeloHde, 'NUM_DOCUMENTO',
+              [
+                  'template' => ' <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 numeric">{label}{input}{error}{hint}<div class="clear"></div></div>',
+              ]
+              )->textInput([$opdoc , 'class'=>'form-control numeric-integer es_bolsaHDE', 'maxlength'=>20])->label('Número de autorización de pago');  ?>
+
+              <?= $form->field($modeloHde, 'TARIFA')->hiddenInput(['id' => 'tblperiodos-tarifa', 'class' => 'form-control calcularMonto_tarifa_HDE es_bolsaHDE'])->label(false); ?>
+
+              <div class="form-group">
+                <div class="col-xs-6 col-sm-12 col-md-6 col-lg-6">
+                  <label class="control-label">Monto total</label>
+                  <input type="text" class="form-control" id="MontoTotalADP" name="montoTotalADP" readonly style="background-color: lightgray;"/>
+                  <div class="help-block"></div>
+                  <div class="clear"></div>
+                </div>
+              </div>
+
+              <div class="col-lg-12">
+                <table id="periodos" class="cell-border table table-striped row-border hover order-column">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th></th>
+                      <th>Recurso</th>
+                      <th>Periodos</th>
+                      <th>Cliente</th>
+                      <th>ODC</th>
+                      <th>Tarifa</th>
+                      <th>Horas</th>
+                      <th>Monto</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                  </tbody>
+                </table>
+              </div>
+        </div>
+        </div>
+            <div class="modal-footer">
+              <?= Html::button('ELIMINAR DATOS',['class'=>'btn btn-delete', 'id'=>'eliminar_adp']) ?>
+              <?= Html::button('CANCELAR',['class'=>'btn btn-cancel', 'id'=>'botonCancelar', 'data-dismiss'=>'modal']) ?>
+              <?= Html::submitButton($modeloDocumentos->isNewRecord ? 'GUARDAR' : 'MODIFICAR', ['class' => $modeloDocumentos->isNewRecord ? 'btn btn-success botonGuardar adp' : 'btn btn-success botonGuardar adp', 'id'=>'botonGuardar']) ?>
+
+            </div>
+            <?php ActiveForm::end(); ?>
+        </div>
+    </div>
+</div>
+<!-- FIN CARGA DE ARCHIVOS -->
+<div class="modal fade" id="vermascomentarios" role="dialog">
+     <div class="modal-dialog modal-sm scroll-y"  >
+        <!-- Modal content-->
+        <div class="modal-content" style='border-radius: 0px;'>
+            <div class="modal-body" style="padding: 0px;">
+                <div>
+                    <img src="/erteisei_devcap_DES/web/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+
+                    <div class="row" style="margin: 0px; padding: 0px;">
+                        <div id="v-mas" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+                        </div>
+                    </div>
+                    <div class="row text-center" >
+                        <button type="button" class="btn btn-cancel" data-dismiss="modal">Cerrar</button>
+                        <div class="form-group">
+                            <div class="help-block" id="res-modal"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal muestra errores de lapsos de fechas -->
+<div class="modal fade in" id="modalErrorFechas" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content" style='border-radius: 0px;'>
+      <div class="modal-body" style="padding: 0px; position: relative;">
+        <img src="<?php echo get_home_url() ?>/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+        <div class="clear"></div>
+          <div class="form-group" style="padding: 15px;border:1px solid #dddddd;">
+            <div class="row">
+              <div class="form-group font-bold">
+                <p id="msg-modalErrorFechas" style="text-align: center;"></p>
+              </div>
+            </div> <!-- row -->
+          </div> <!-- form-group -->
+          <div class="row text-center" >
+            <button type="button" class="btn btn-cancel" data-dismiss="modal" onclick="cerrar()">Aceptar</button>
+          </div>
+      </div> <!-- modal body -->
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="view-cancelar-asignacion" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content" style='border-radius: 0px;'>
+            <div class="modal-body" style="padding: 0px;">
+                <div>
+                    <img src="/erteisei_devcap_DES/web/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+                    <?php $form = ActiveForm::begin(['id'=>'form-cancelar-asignacion2', 'action' => Url::to(["asignaciones/cancelar"])  ]); ?>
+                    <div class="row" style="margin: 0px; padding: 0px;" id="form-cancelar-asignacion">
+                        <input type="hidden" id="idAsignacion" name="idAsignacion" value="<?= $model->PK_ASIGNACION?>"/>
+                        <input type="hidden" id="vista_origen" name="vista_origen" value="origen_view"/>
+                        <div class='col-xs-12 col-sm-6 col-md-6 col-lg-12'>
+                            <?= $form->field($modelComentariosAsignaciones, 'FECHA_FIN',
+                                [
+                                    'template' => ' <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12">{label}{input}{error}{hint}<div class="clear"></div></div>',
+                                ]
+                                )->widget(\yii\jui\DatePicker::classname(), [
+                                    'clientOptions' => [
+                                    ],
+                                    'options' => [
+                                        'class' => 'form-control datepicker datepicker-upa',
+                                        'placeholder'=>'DD/MM/AAAA',
+                                        'autocomplete'=>'off'
+                                        // 'readonly' => 'readonly',
+                                    ],
+                                ])
+                            ?>
+                        </div>
+                        <div class='col-xs-12 col-sm-6 col-md-6 col-lg-12'>
+                            <?= $form->field($modelComentariosAsignaciones, 'MOTIVO',
+                            [
+                                'template' => ' <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12">{label}{input}{error}{hint}<div class="clear"></div></div>',
+                            ]
+                            )->textInput(['maxlength' => true]) ?>
+                        </div>
+                        <div class='col-xs-12 col-sm-6 col-md-6 col-lg-12'>
+                            <?= $form->field($modelComentariosAsignaciones, 'COMENTARIOS',
+                            [
+                                'template' => ' <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12">{label}{input}{error}{hint}<div class="clear"></div></div>',
+                            ]
+                            )->textarea(['maxlength' => true, 'rows' => '3']) ?>
+                        </div>
+                    </div>
+                    <div class="row" style="margin: 0px; padding: 0px;">
+                        <?= Html::submitButton('ACEPTAR', ['class' => 'btn btn-success der', 'id'=>'botonEnviar']) ?>
+                        <button type="button" class="btn btn-success der" data-dismiss="modal">Cancelar</button>
+                        <!--<a href="javascript: void(0);" type="button" class="btn btn-success" data-dismiss="modal" data-target="#cancelar-asignacion">ACEPTAR</a>-->
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+function changeFile() {
+  $('#fileArc').show();
+  $('#fileHidden').hide();
+}
+    /* La funcion FECHA convierte la fecha a varios formatos que son utilizados en
+     * diversos casos, tambien se le puede sumar 1 o n dias al igual que restar 1 o n dias,
+     * Regresa un array con diferentes formatos para aplicar facilmente en varios casos los cuales son:
+     * array[0] fecha con el formato de la fechafin de las tarjetas 15-05-2016
+     * array[1] fecha con el formato de le fechafin2 de las tarjetas 15/05/2016
+     * array[2] fecha con el formato tiempo 234234
+     * array[3] fecha con formato Date  Mon 15 january 2016 15:04:09
+     * array[4] fecha en un array
+     * ejemplo de uso
+     * FECHA('2016-05-15',0,0) regresa la misma fecha
+     * FECHA('2016-05-15',1,0) se le suma un dia a la fecha
+     * FECHA('2016-05-15',0,1) se le resta un dia a la fecha
+     * */
+    function FECHA(fecha,mas,menos){
+        if(fecha != null){
+            _arr_fech = fecha.split('-');
+            _date_fech= new Date(_arr_fech[0],_arr_fech[1]-1,_arr_fech[2]);
+            _date_fech_finale = new Date(_arr_fech[0],_arr_fech[1]-1,_arr_fech[2])
+               if(mas>0 && menos <1){ _date_fech_finale.setDate(_date_fech.getDate()+mas) }
+               if(menos>0 && mas <1){ _date_fech_finale.setDate(_date_fech.getDate()-menos) }
+               if(mas==0 && menos==0){ _date_fech_finale.setDate(_date_fech.getDate()) }
+            var _dd = _date_fech_finale.getDate();var _mm= _date_fech_finale.getMonth()+1;var _yy=_date_fech_finale.getFullYear();
+               if(_dd <10){ _dd='0'+_dd}   if(_mm<10){_mm='0'+_mm}
+            var _fech_finale = _dd+'/'+_mm+'/'+_yy;
+            var arr_fech_finale=[];
+            arr_fech_finale[0]= _fech_finale.split('/').reverse().join('-');
+            arr_fech_finale[1] = _fech_finale;
+            arr_fech_finale[2] = _date_fech_finale.getTime()
+            arr_fech_finale[3] = _date_fech_finale
+            arr_fech_finale[4] = _arr_fech
+
+            return arr_fech_finale;
+        }
+    }
+    /*La funcion FINDEMES regresa el ultima dia de la fecha indicada en diferentes formatos como la funcion FECHA()*/
+    function FINDEMES(fecha){
+            _arr_fech = fecha.split('-');
+            _date_fech= new Date(_arr_fech[0],_arr_fech[1],0);
+            _date_fech_finale = new Date(_arr_fech[0],_arr_fech[1],0)
+            _date_fech_finale.setDate(_date_fech.getDate())
+            var _dd = _date_fech_finale.getDate();var _mm= _date_fech_finale.getMonth()+1;var _yy=_date_fech_finale.getFullYear();
+                if(_dd <10){ _dd='0'+_dd}   if(_mm<10){_mm='0'+_mm}
+            var _fech_finale = _dd+'/'+_mm+'/'+_yy;
+            var arr_fech_finale=[];
+            arr_fech_finale[0]= _fech_finale.split('/').reverse().join('-');
+            arr_fech_finale[1] = _fech_finale;
+            arr_fech_finale[2] = _date_fech_finale.getTime()
+            arr_fech_finale[3] = _date_fech_finale
+             arr_fech_finale[4] = _arr_fech
+                    return arr_fech_finale;
+    }
+     function INIDEMES(fecha){
+            _arr_fech = fecha.split('-');
+            _date_fech= new Date(_arr_fech[0],_arr_fech[1],1);
+            _date_fech_finale = new Date(_arr_fech[0],_arr_fech[1],1)
+            _date_fech_finale.setDate(_date_fech.getDate())
+            var _dd = _date_fech_finale.getDate();var _mm= _date_fech_finale.getMonth();var _yy=_date_fech_finale.getFullYear();
+                if(_dd <10){ _dd='0'+_dd}   if(_mm<10){_mm='0'+_mm}
+            var _fech_finale = _dd+'/'+_mm+'/'+_yy;
+            var arr_fech_finale=[];
+            arr_fech_finale[0]= _fech_finale.split('/').reverse().join('-');
+            arr_fech_finale[1] = _fech_finale;
+            arr_fech_finale[2] = _date_fech_finale.getTime()
+            arr_fech_finale[3] = _date_fech_finale
+             arr_fech_finale[4] = _arr_fech
+                    return arr_fech_finale;
+    }
+    /*Clona objetos con todas sus propiedades y los vuleve independientes, cualquier modificacion que se le haga no afectara al originar*/
+    function clone( obj ) {
+        if ( obj === null || typeof obj  !== 'object' ) {
+            return obj;
+        }
+        var temp = obj.constructor();
+        for ( var key in obj ) {
+            temp[ key ] = clone( obj[ key ] );
+        }
+        return temp;
+    }
+
+    var busqueda='contactos';
+
+    $(function() {
+        setTimeout(function(){
+        $('.datepicker').datepicker('remove');
+
+        $('.datepicker-upa').datepicker({
+                    format: 'dd/mm/yyyy',
+                    autoclose: true,
+                    todayBtn: true,
+                    todayHighlight: true
+                })
+       }, 500);
+        $('.modal_detenida').click(function(event) {
+            $('#detener-asignacion').modal('show')
+        });
+    });
+
+    $('#editarFormDocs').on('click',function(){
+        if($('#habilitarForm').val() == 0){
+            $('#cargarODC input[type=text], #cargarODC input[type=file], #cargarODC input[type=hidden], #cargarODC select, #cargarODC #cambio').prop('disabled',false);
+            $('.botonGuardar').prop('disabled',false);
+            $('#habilitarForm').val(1);
+            $(".chk_odc").each(function(index){
+                var PK_PERIODO = $(this).val();
+                if($(this).prop('checked')==1){
+                    $("#txtHoras_"+PK_PERIODO).prop('disabled',false);
+                } else {
+                    $("#txtHoras_"+PK_PERIODO).prop('disabled',true);
+                }
+            });
+        }
+
+        if($('#es_bolsa').val()=='1'){
+            $('.es_bolsa').prop('disabled',true);
+        }
+    });
+
+    $('#NumPeriodos').on('change, blur, keyup', function(){
+      if($(this).val() != '') {
+        $('#cargarODC input[type=checkbox]').prop('disabled',false);
+
+      } else {
+      $('#cargarODC input[type=checkbox]').prop('disabled',true);
+      }
+    });
+
+    $('#editarFormDocsHDE').on('click',function(){
+
+        //COMENTADO PARA SUBIR DOCUMENTOS RESTAURACION
+        if($('#habilitarFormHDE').val() == 0){
+            $('#cargarADP input, #cargarADP select').prop('disabled',false);
+            $('.botonGuardar').prop('disabled',false);
+            $('#habilitarFormHDE').val(1);
+        }
+
+        if($('#es_bolsaHDE').val()==1){
+            $('.es_bolsaHDE').prop('disabled',true);
+        }
+    });
+
+    $("input[type=checkbox]").on('click',function(){
+        var id = $(this).val()
+        if($(this).prop('checked')==true){
+            $('#txtHoras_'+id).attr('disabled',false);
+        } else {
+            if ($(this).data('validar') != 1) {
+                $('#txtHoras_'+id).attr('disabled',true);
+                $('#txtMonto_'+id).attr('disabled',true);
+            }
+        }
+    });
+
+    $('#eliminar_odc').on('click',function(){
+        var pks_periodos='';
+        $('input[name="chkPeriodos[]"]').each(function(index, el) {
+            if($(this).is(':checked')){
+                pks_periodos += $(el).attr('value')+','
+            }
+        });
+        $.ajax({
+            url: ajaxEliminarODC,
+            type: 'POST',
+            dataType: 'JSON',
+            data: {
+               pks_periodos : pks_periodos,
+               _csrf  : _csrfToken
+            },
+            success: function (data) {
+              window.location.reload();
+            }
+        })
+
+    });
+
+    $('#eliminar_adp').click(function(event) {
+        var pks_periodos=$('#pk_periodo_adp').val();
+        if (pks_periodos != null) {
+        $.ajax({
+            url: ajaxEliminarHDE,
+            type: 'POST',
+            dataType: 'JSON',
+            data: {
+               pks_periodos : pks_periodos,
+               _csrf  : _csrfToken
+            },
+            success: function (data) {
+              window.location.reload();
+            }
+        })
+      }
+
+    });
+
+      $("#cargarODC .chk_validar").on('click', function(){
+        var id = $(this).val();
+        var tarifa = $('#tblperiodos-tarifa').val();
+        var chk = $("#chk_"+id);
+        if($(this).prop('checked')==false){
+          if(datos_bolsa!=null&&$(this).data('validar')!=1){
+              var horas = $('#cargarODC #txtHoras_'+id).val();
+              datos_bolsa.HORAS_DISPONIBLES = parseFloat(datos_bolsa.HORAS_DISPONIBLES) + parseFloat(horas);
+              if($('#es_bolsa').val()==1){
+                  if($('#eliminar_periodo_bolsa_'+id+'').length==0){
+                      $('.periodo-'+id).append('<input type="hidden" id="eliminar_periodo_bolsa_'+id+'" name="eliminar_periodo_bolsa[]" value="'+id+'">')
+                  }
+              }
+          }
+          $("#cargarODC #txtHoras_"+id).parent().parent().removeClass('has-error').find('.help-block').html('');
+          $("#cargarODC #txtMonto_"+id).parent().parent().removeClass('has-error').find('.help-block').html('');
+        } else {
+
+            var horas = $('#cargarODC #txtHoras_'+id).val();
+            //var horas = parseInt('<?= $sql["HORAS_ASIGNACION"] ?>');
+
+            if(horas>datos_bolsa.HORAS_DISPONIBLES&&datos_bolsa.HORAS_DISPONIBLES>0){
+                horas = datos_bolsa.HORAS_DISPONIBLES;
+            }else if(datos_bolsa.HORAS_DISPONIBLES==0){
+                $(this).removeAttr('checked')
+            }
+
+            if(datos_bolsa!=null&&datos_bolsa.HORAS_DISPONIBLES>0){
+                datos_bolsa.HORAS_DISPONIBLES=parseFloat(datos_bolsa.HORAS_DISPONIBLES)-horas;
+            }
+
+            if(tarifa != null){
+                if(tarifa.toString().length > 0 && parseFloat(tarifa) > 0 && horas.toString().length > 0 && parseFloat(horas) > 0){
+                    $("#txtMonto_"+id).val((tarifa*horas).toFixed(2));
+                    $("#txtHoras_"+id).parent().parent().removeClass('has-error').find('.help-block').html('');
+                    $("#txtMonto_"+id).parent().parent().removeClass('has-error').find('.help-block').html('');
+                } else {
+                    $("#txtMonto_"+id).val('');
+
+                    if(chk.prop('checked')==true){
+                        $("#txtHoras_"+id).parent().parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+                        $("#txtMonto_"+id).parent().parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+                    }
+                }
+            }else{
+                var tarifaMascara = parseFloat($("#mask_tarifa_odc").val());
+
+                if(!isNaN(tarifaMascara) && tarifaMascara.toString().length > 0 && tarifaMascara > 0 && horas.toString().length > 0 && parseFloat(horas) > 0){
+                    $("#txtMonto_"+id).val((tarifaMascara*horas).toFixed(2));
+                    $("#txtHoras_"+id).parent().parent().removeClass('has-error').find('.help-block').html('');
+                    $("#txtMonto_"+id).parent().parent().removeClass('has-error').find('.help-block').html('');
+                } else {
+                    $("#txtMonto_"+id).val('');
+
+                    if(chk.prop('checked')==true){
+                        $("#txtHoras_"+id).parent().parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+                        $("#txtMonto_"+id).parent().parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+                    }
+                }
+            }
+
+            $("#cargarODC #txtHoras_"+id).val(horas).data('horas',horas);
+            if($('#eliminar_periodo_bolsa_'+id+'').length>0){
+               $('#eliminar_periodo_bolsa_'+id+'').remove();
+            }
+        }
+        var SumaMontoTotal = 0;
+        $('input[name="chkPeriodos[]"]').each(function(){
+            if ($(this).is(':checked')) {
+                var selected = $(this).val();
+                SumaMontoTotal += parseFloat($("#cargarODC #txtMonto_"+selected).val());
+            }
+        });
+          SumaMontoTotal = number_format(SumaMontoTotal,2);
+          $("#cargarODC #MontoTotal").val(SumaMontoTotal);
+      });
+
+      /* Carga documentos */
+        $('#cambio').click(function(e){
+           if($(this).is(':checked')) {
+            <?php if($cat_tarifas): ?>
+                $('#cargarODC #tblperiodos-tarifa').show();
+                $('#cargarODC #mask_tarifa_odc').hide();
+                $('#tblperiodo-tarifa').show();
+                $('#cargarODC #pk_cat_tarifa_select').prop('disabled', false);
+                $('#pk_cat_tarifa_select').val($('#tblperiodos-tarifa').find('option:selected').data('pk_cat_tarifa'));
+            <?php else: ?>
+                $('#cargarODC #tblperiodos-tarifa').attr('readonly', false);
+            <?php endif; ?>
+           } else {
+            <?php if($cat_tarifas): ?>
+                $('#cargarODC #tblperiodos-tarifa').hide();
+                $('#cargarODC #mask_tarifa_odc').show();
+                $('#tblperiodo-tarifa').hide();
+                $('#cargarODC #pk_cat_tarifa_select').prop('disabled', true);
+                $('#pk_cat_tarifa_select').val($('#tblperiodos-tarifa').find('option:selected').data('pk_cat_tarifa'));
+            <?php else: ?>
+                $('#cargarODC #tblperiodos-tarifa').attr('readonly', true);
+            <?php endif; ?>
+           }
+
+        });
+
+        $("#detallePeriodo").on('click','.faltaODC', function(e){
+          $('#modalErrorFechas').show();
+          $('#msg-modalErrorFechas').text('No es posible cargar una ADP, ya que no hay registro de Orden de Compra');
+        });
+
+    /* Fin carga ODC */
+
+      $(".calcularMonto_txt").on('keyup , blur , change',function(e){
+          //datos_bolsa
+          var horas_originales = parseFloat($(this).data('horas'))
+
+          var tarifa = $("#tblperiodos-tarifa").val();
+          var horas = parseFloat($(this).val());
+          if($.trim($(this).val())==''){
+              horas= 0.00;
+          }
+          var id = $(this).attr('name').substring(9);
+          var chk = $("#chk_"+id);
+
+          if($('#es_bolsa').val()==1){
+              var horas_disponibles = horas_originales + parseFloat(datos_bolsa.HORAS_DISPONIBLES);
+              if(horas>horas_disponibles){
+                  horas = horas_disponibles;
+                  $(this).val(horas);
+
+                  $('#botonGuardar').prop('disabled',true);
+              }
+              if(e.type=='blur'){
+                  $(this).data('horas',horas);
+                  datos_bolsa.HORAS_DISPONIBLES=horas_disponibles- horas  ;
+              }
+
+          }
+
+          if(tarifa != null){
+              if(tarifa.toString().length > 0 && parseFloat(tarifa) > 0 && horas.toString().length > 0 && parseFloat(horas) > 0){
+                  $("#txtMonto_"+id).val((tarifa*horas).toFixed(2));
+                  $("#txtHoras_"+id).parent().parent().removeClass('has-error').find('.help-block').html('');
+                  $("#txtMonto_"+id).parent().parent().removeClass('has-error').find('.help-block').html('');
+              } else {
+                  $("#txtMonto_"+id).val('');
+
+                  if(chk.prop('checked')==true){
+                      $("#txtHoras_"+id).parent().parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+                      $("#txtMonto_"+id).parent().parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+                  }
+              }
+          }else{
+              var tarifaMascara = parseFloat($("#mask_tarifa_odc").val());
+
+              if(!isNaN(tarifaMascara) && tarifaMascara.toString().length > 0 && tarifaMascara > 0 && horas.toString().length > 0 && parseFloat(horas) > 0){
+                  $("#txtMonto_"+id).val((tarifaMascara*horas).toFixed(2));
+                  $("#txtHoras_"+id).parent().parent().removeClass('has-error').find('.help-block').html('');
+                  $("#txtMonto_"+id).parent().parent().removeClass('has-error').find('.help-block').html('');
+              } else {
+                  $("#txtMonto_"+id).val('');
+
+                  if(chk.prop('checked')==true){
+                      $("#txtHoras_"+id).parent().parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+                      $("#txtMonto_"+id).parent().parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+                  }
+              }
+          }
+
+      });
+
+      $(".calcularMonto_tarifa").on('keyup , blur, change',function(){
+
+        var tarifa = $("#tblperiodos-tarifa").val();
+
+        if( tarifa.toString().length > 0 && parseFloat(tarifa) > 0){
+          $('input[name="chkPeriodos[]"]').each(function() {
+            //$(this).val() es el valor del checkbox correspondiente
+            var id = $(this).val();
+            var horas = $("#txtHoras_"+id).val();
+
+            if(horas.toString().length > 0 && parseFloat(horas) > 0 ){
+              $("#txtMonto_"+id).val((tarifa*horas).toFixed(2));
+              if($(this).prop('checked')==true){
+                $("#txtMonto_"+id).parent().parent().removeClass('has-error').find('.help-block').html('');
+              }
+            } else {
+              $("#txtMonto_"+id).val('');
+            }
+          });
+        } else {
+          $('input[name="chkPeriodos[]"]').each(function() {
+            var id = $(this).val();
+            $("#txtMonto_"+id).val('');
+            if($(this).prop('checked')==true){
+              $("#txtMonto_"+id).parent().parent().addClass('has-error').find('.help-block').html('Este campo no puede estar vacio');
+            }
+          });
+        }
+
+      });
+
+      <?php if($cat_tarifas): ?>
+          $('#tblperiodos-tarifa').on('change , blur',function(){
+              console.log($(this).find('option:selected').data('pk_cat_tarifa'))
+              $('#pk_cat_tarifa_select').val($(this).find('option:selected').data('pk_cat_tarifa'))
+          })
+      <?php endif; ?>
+
+      /*Años*/
+      $('.añoPeriodo').on('click', function() {
+        var año = $(this).html();
+        $('#buscaAño').val(año);
+        $('#form-ajax-2').submit();
+      });
+/* Fin carga ODC */
+  $(function() {
+    $('#form-ajax-2').submit(function(event) {
+        event.preventDefault();
+        var data= $(this).serialize();
+        console.log(data);
+        $.ajax({
+            url: ajaxUrl,
+            type: 'POST',
+            dataType: 'JSON',
+            data: {data:data,_csrf  : _csrfToken},
+        })
+        .done(function(data) {
+
+            $('#detallePeriodo').DataTable().clear();
+
+            app.btnGenerarPeriodos(data.data);
+            console.log(data)
+
+            var old_periodo;
+            var old_i;
+
+
+         /**funcion FECHA(fecha,mas 1 o n dias,menos 1 o n dias)
+          * regresa arreglo de fechas [0] = fecha con formato para fecha INI o FIN
+          *                           [1] = fecha con formato para fecha INI2 o FIN2
+          *                           [2] = getTime() de la Fecha
+          *                           [3]= fecha en tipo Date()
+          * */
+        for (var i = 0; i < data.data.length; i++) {
+            var _fecha_inicio_periodo = FECHA(data.data[i].FECHA_INI,0,0);
+              /**
+                 *  Validar si data es periodo
+                 * */;
+            if(data.data[i].ES_PERIODO=='ES_PERIODO'){
+                // Valor periodo pasa a guardarse a una variable
+                var old_periodo=data.data[i];
+                old_i= i;
+            }
+            /**
+             * Si hay periodo anterior y periodo actual es ´'ES_DETENIDA' y tiene valor su FECHA_FIN
+             * */
+            if(old_periodo&&data.data[i].ES_PERIODO=='ES_DETENIDA'&&data.data[i].FECHA_FIN){
+                /**
+                 *  los valores del periodo actual seran los del periodo anterior
+                 * */
+                data.data[i].NOMBRE_EMP          =old_periodo.NOMBRE_EMP
+                data.data[i].APELLIDO_PAT_EMP    =old_periodo.APELLIDO_PAT_EMP
+                data.data[i].APELLIDO_MAT_EMP    =old_periodo.APELLIDO_MAT_EMP
+                data.data[i].TARIFA              =old_periodo.TARIFA
+                data.data[i].MONTO               =old_periodo.MONTO
+                data.data[i].ODC                 =old_periodo.ODC
+                data.data[i].HDE                 =old_periodo.HDE
+                data.data[i].FACTURA             =old_periodo.FACTURA
+                data.data[i].FECHA_INGRESO_BANCO =old_periodo.FECHA_INGRESO_BANCO
+                data.data[i].PK_PERIODO          =old_periodo.PK_PERIODO
+             /**
+               * Si existe periodo anterior
+               * */
+              // if(i < data.data.length-1){
+                    if(old_periodo){
+                        var fechafinold = FECHA(old_periodo.FECHA_FIN,0,0)
+                        var fechainiold = FECHA(old_periodo.FECHA_INI,0,0)
+                        var fechainiper = FECHA(data.data[i].FECHA_INI,0,0)
+                        var fecha_inicio_periodo_menos_uno = FECHA(data.data[i].FECHA_INI,0,1)
+                        if(fechafinold[3] > fechainiper[3] ){
+                            if(fechainiper[1] !=fechainiold[1] ){
+                                data.data[old_i].FECHA_FIN = fecha_inicio_periodo_menos_uno[0];
+                                data.data[old_i].FECHA_FIN2 = fecha_inicio_periodo_menos_uno[1];
+                            }
+                        }
+                        old_periodo= data.data[i];
+                        old_i= i;
+                     }
+            }
+        }
+
+        for(var i = 0; i < data.data.length; i++){
+            //console.log(i)
+            if(data.data[i].ES_PERIODO=="ES_DETENIDA"){
+                //console.log('detenida en '+i)
+                var fechafinold = FECHA(data.data[i-1].FECHA_FIN,0,0)
+                var fechainiold = FECHA(data.data[i-1].FECHA_INI,0,0)
+                var fechainiper = FECHA(data.data[i].FECHA_INI,0,0)
+                    if( fechainiper[2]==fechainiold[2] ){
+                        var fechafin = FECHA(data.data[i].FECHA_FIN,0,0)
+                        var nw_fechafin = FECHA(data.data[i].FECHA_FIN,0,1)
+                        if(fechafinold[2] > fechafin[2]){
+                            var n_old= data.data[i-1];
+                            n_old.FECHA_INI = fechafin[0]
+                            n_old.FECHA_INI2 = fechafin[1]
+                            data.data[i].FECHA_FIN = nw_fechafin[0]
+                            data.data[i].FECHA_FIN2 = nw_fechafin[1]
+                            data.data.splice(i+1,0,n_old);//console.log('agregado en '+i);console.log(n_old);console.log(data.data[i-1])
+                            data.data.splice(i-1,1);//console.log('eliminado en '+i)
+
+                        }
+                    }
+            }
+        }
+
+        for(var i = 0; i < data.data.length; i++){
+            if(data.data[i].ES_PERIODO=="ES_DETENIDA"){
+                var fechafinold = FECHA(data.data[i-1].FECHA_FIN,0,0);//console.log(fechafinold)
+                var fechainiold = FECHA(data.data[i-1].FECHA_INI,0,0);//console.log(fechainiold)
+                var fechainiper = FECHA(data.data[i].FECHA_INI,0,0); console.log(fechainiper)
+                var fechafinper = FECHA(data.data[i].FECHA_FIN,0,0); console.log(fechafinper)
+                if(fechafinold[2] > fechainiper[2] ){
+                    if(fechafinper[2] < fechafinold[2]){
+                        var nw_fechafin = FECHA(data.data[i].FECHA_FIN,0,1)
+                        var nw_fechaini= FECHA(data.data[i].FECHA_INI,0,1)
+                        var nn_old =clone(data.data[i])
+                        nn_old.ES_PERIODO="ES_PERIODO"
+                       var findemes =FINDEMES(data.data[i].FECHA_FIN)
+                        nn_old.FECHA_INI = fechafinper[0]
+                        nn_old.FECHA_INI2 = fechafinper[1]
+                        nn_old.FECHA_FIN= findemes[0]
+                        nn_old.FECHA_FIN2 = findemes[1]
+                        data.data[i].FECHA_FIN = nw_fechafin[0]
+                        data.data[i].FECHA_FIN = nw_fechafin[1]
+                        data.data[i-1].FECHA_FIN =nw_fechaini[0]
+                        data.data[i-1].FECHA_FIN2 = nw_fechaini[1]
+                        data.data.splice(i+1,0,nn_old)
+                    }
+
+                }
+            }
+        }
+
+        for(var i = 0; i < data.data.length; i++){
+            if(data.data[i].ES_PERIODO=="ES_DETENIDA"){
+                var findemes = FINDEMES(data.data[i].FECHA_FIN)
+                if(data.data[i+1]){
+                    var fechaini = FECHA(data.data[i+1].FECHA_INI,0,0)
+                    var fechamonper = FECHA(data.data[i].FECHA_FIN,0,0)
+                    var fechafin = FECHA(data.data[i].FECHA_FIN,0,0)
+                    if(fechaini[4][1] > fechamonper[4][1] ){
+                        var n_data = clone(data.data[i])
+                        var fechafin = FECHA(data.data[i].FECHA_FIN,0,0)
+                        var nw_fechafin =FECHA(data.data[i].FECHA_FIN,0,1)
+                        n_data.ES_PERIODO="ES_PERIODO"
+                        n_data.FECHA_INI =fechafin[0]
+                        n_data.FECHA_INI2 = fechafin[1]
+                        n_data.FECHA_FIN = findemes[0]
+                        n_data.FECHA_FIN2 = findemes[1]
+                        data.data.splice(i+1,0,n_data)
+                        data.data[i].FECHA_FIN = nw_fechafin[0]
+                        data.data[i].FECHA_FIN2 = nw_fechafin[1]
+                    }else if(fechamonper[2] > fechaini[2] && fechaini[4][1] == fechamonper[4][1]){
+                        var ini = FECHA(data.data[i].FECHA_FIN,0,0)
+                        var fin = FECHA(data.data[i].FECHA_FIN,0,1)
+                        data.data[i+1].FECHA_INI = ini[0]
+                        data.data[i+1].FECHA_INI2 = ini[1]
+                        data.data[i].FECHA_FIN = fin[0]
+                        data.data[i].FECHA_FIN2 = fin[1]
+                    }
+                }
+                else{
+                    var n_data = clone(data.data[i])
+                    var finmes = FINDEMES(data.data[i].FECHA_FIN)
+                    var nw_ini = FECHA(data.data[i].FECHA_FIN,0,0)
+                    var nw_fin = FECHA(data.data[i].FECHA_FIN,0,1)
+                    n_data.ES_PERIODO="ES_PERIODO"
+                    n_data.FECHA_INI = nw_ini[0]
+                    n_data.FECHA_INI2 = nw_ini[1]
+                    n_data.FECHA_FIN = finmes[0]
+                    n_data.FECHA_FIN2 =finmes[1]
+                    data.data.splice(i+1,0,n_data);
+                    data.data[i].FECHA_FIN = nw_fin[0]
+                    data.data[i].FECHA_FIN2 = nw_fin[2]
+                }
+            }
+        }
+
+        for(var i = 0; i < data.data.length; i++){
+            if(data.data[i].ES_PERIODO=="ES_DETENIDA"){
+                if(data.data[i].FECHA_INI == data.data[i+1].FECHA_INI){
+                        if(data.data[i].FECHA_FIN > data.data[i+1].FECHA_INI){
+                                var mesI = FECHA(data.data[i].FECHA_INI,0,0)
+                                var mesf= FECHA(data.data[i].FECHA_FIN,0,0)
+                                var meses = mesf[4][1] -mesI[4][1]
+                                console.log(meses)
+                                for(var x=1;x<=meses;x++){
+                                    data.data.splice(i+1,1)
+                                }
+                            var nw_fechafin = FECHA(data.data[i].FECHA_FIN,0,1)
+                            var nw_fechaini = FECHA(data.data[i].FECHA_FIN,0,0)
+                            var nw_fechfin = FINDEMES(data.data[i].FECHA_FIN)
+                            data.data[i+1].FECHA_INI= nw_fechaini[0]
+                            data.data[i+1].FECHA_INI2 =nw_fechaini[1]
+                            data.data[i+1].FECHA_FIN= nw_fechfin[0]
+                            data.data[i+1].FECHA_FIN2=nw_fechfin[1]
+                            data.data[i].FECHA_FIN = nw_fechafin[0]
+                            data.data[i].FECHA_FIN2 = nw_fechafin[1]
+                        }
+
+                }
+            }
+        }
+
+        for(var i = 0; i < data.data.length; i++){
+            if(data.data[i].ES_PERIODO=="ES_DETENIDA"){
+                if(data.data[i+1]){
+                    var finper = FECHA(data.data[i].FECHA_FIN,0,0)
+                    var inifutper = FECHA(data.data[i+1].FECHA_INI,0,0)
+                    if(finper[2] == inifutper[2]){
+                        var nw_fin = FECHA(data.data[i].FECHA_FIN,0,1)
+                        var ini = FECHA(data.data[i].FECHA_INI,0,0)
+                        if(nw_fin[2] > ini[2]){
+                            data.data[i].FECHA_FIN = nw_fin[0]
+                            data.data[i].FECHA_FIN2 = nw_fin[1]
+                        }else{
+                            var findemes = FINDEMES(data.data[i].FECHA_FIN)
+                            data.data[i].FECHA_FIN = findemes[0]
+                            data.data[i].FECHA_FIN2 =findemes[1]
+                        }
+
+                    }
+                }
+            }
+        }
+
+////////////////////////////////////////////////////////
+
+       for(var i = 0; i < data.data.length; i++){
+
+           if(data.data[i].ES_PERIODO=="ES_PERIODO"){
+               $('.resultados .contenedor').append(crear_elemento(data.data[i]))
+           }
+           if(data.data[i].ES_PERIODO=="ES_DETENIDA"){
+               $('.resultados .contenedor').append(crear_elemento_detener(data.data[i]))
+           }
+       }
+
+        })
+        .fail(function() {
+            console.log("error");
+        })
+        .always(function() {
+            console.log("complete");
+        });
+    });
+
+    $('#form-ajax-2').submit();
+
+    });
+
+    var cont_peridos= 0;
+    function crear_elemento(data){
+        mensaje = 'No existen documentos';
+
+        var valEdicion, valEliminar;
+        var valODC, textODC;
+        var valHDE, textHDE;
+        var valFactura, textFactura;
+        var valMontoFactura, valMontoFacturable, valFacturaEstatus;
+        var valIVA = $('#iva').val();
+        var unidadNegocio = $('#unidadNegocio').val();
+
+        /*Editar, Eliminar*/
+        valEdicion = $('<a>').attr({
+                              'href'                  : 'javascript:void(0);',
+                              'data-nombre'           : data.NOMBRE_EMP+' '+data.APELLIDO_PAT_EMP,
+                              'data-fecha_ini'        : ((data.FECHA_INI).split('-').reverse().join('/')),
+                              'data-fecha_fin'        : ((data.FECHA_FIN).split('-').reverse().join('/')),
+                              'data-tarifa'           : data.TARIFA,
+                              'data-monto'            : data.MONTO,
+                              'data-id_periodo'       : data.PK_PERIODO,
+                              'data-fk_cat_tarifa'    : data.PK_CAT_TARIFA,
+                              'data-contador_periodo' : '',
+                              'data-horas_devengar'   : data.HORAS_DEVENGAR,
+                              'data-toggle'           : 'modal',
+                              'data-target'           : '#modalEditarPeriodo',
+                              'id'                    : 'edit',
+                              'title'                 : 'Editar',
+                              'style'                 : 'display: block'
+                            }).addClass('item-update icon-24x24').show();
+
+        valEliminar = $('<a>').attr({
+                              'href'                  : 'javascript:void(0);',
+                              'data-id_periodo'       : data.PK_PERIODO,
+                              'title'                 : 'Eliminar',
+                              'style'                 : 'display: block'
+                            }).addClass('item-delete icon-24x24').show();
+
+        /*Validaciones ODC, HDE, Factura*/
+        if(!data.ODC){
+          textODC = (data.ESTATUS)?'texto-rojo':'';
+          valODC = $('<a>').attr({
+                            'href': '#',
+                            'data-periodo' : data.PK_PERIODO,
+                            'data-toggle': 'modal',
+                            'data-target':'#ODC'
+                          }).addClass(textODC + ' cargarODC').html('Cargar ODC');
+        }
+        else{
+          textODC = 'texto-azul';
+          valODC = $('<a>').attr({
+                          'href': '#',
+                          'data-periodo' : data.PK_PERIODO,
+                          'data-toggle': 'modal',
+                          'data-target':'#ODC'
+                        }).addClass(textODC + ' cargarODC').html(data.ODC);
+        }
+
+        if(!data.HDE){
+          textHDE = (data.ESTATUS)?'texto-rojo':'';
+          if (!data.ODC) {
+            valHDE = $('<a>').attr({
+                            'href': '#',
+                            'data-toggle': 'modal',
+                            'data-target':'#modalErrorFechas'
+                          }).addClass(textHDE + ' faltaODC').html('Cargar ADP');
+          } else{
+            valHDE = $('<a>').attr({
+                            'href': '#',
+                            'data-periodo' : data.PK_PERIODO,
+                            'data-toggle': 'modal',
+                            'data-target':'#ADP'
+                          }).addClass(textHDE + ' cargarADP').html('Cargar ADP');
+          }
+
+        }else{
+          textHDE = 'texto-azul';
+          valHDE = $('<a>').attr({
+                            'href': '#',
+                            'data-periodo' : data.PK_PERIODO,
+                            'data-toggle': 'modal',
+                            'data-target':'#ADP'
+                          }).addClass(textHDE + ' cargarADP').html(data.HDE);
+        }
+
+        if(!data.FACTURA){
+          textFactura = (data.ESTATUS) ? 'texto-rojo':'';
+          valFactura  = $('<a>').attr('href', 'javascript:void(0)').addClass(textFactura).html('Cargar Factura');
+        }else{
+          textFactura = 'texto-azul';
+          if(data.FECHA_INGRESO_BANCO == null || data.FECHA_INGRESO_BANCO == ''){
+            valFactura = $('<a>').attr({
+                                'href': 'javascript:void(0)',
+                                'onclick': 'cargarFACTURA('+data.PK_PERIODO+');'
+                              }).addClass(textFactura).html(data.FACTURA);
+          }else{
+            valFactura = $('<a>').attr({
+                                'href': 'javascript:void(0)',
+                                'onclick': 'cargarFACTURA('+data.PK_PERIODO+');'
+                              }).addClass(textFactura).html('(P) ' + data.FACTURA);
+          }
+        }
+
+        valMontoFactura     = ((data.MONTO_FACTURA!=null)?data.MONTO_FACTURA:((data.FK_DOCUMENTO_ODC && data.FACTURA_PROVISION == 1) ? data.MONTO : data.MONTO_HDE));
+        valMontoFacturable  = (((data.MONTO_FACTURA!=null)?data.MONTO_FACTURA:((data.FK_DOCUMENTO_ODC && data.FACTURA_PROVISION == 1) ? data.MONTO :data.MONTO_HDE))*valIVA).toFixed(2);
+        valFacturaEstatus   = data.DESC_ESTATUS_FACTURA;
+
+        /*Agregando contenido a la tabla*/
+        $('#detallePeriodo').DataTable().row.add([
+          valEdicion[0].outerHTML,
+          data.NOMBRE_EMP+' '+data.APELLIDO_PAT_EMP,  //Nombre del Recurso
+          data.FECHA_INI2,                            //Fecha Ini
+          data.FECHA_FIN2,                            //Fecha Fin
+          data.TARIFA,                                //Tarifa
+          valODC[0].outerHTML,                        //ODC
+          data.HORAS_ESTIMADAS,                       //Horas estimadas
+          data.MONTO,                                 //Monto estimado
+          valHDE[0].outerHTML,                        //ADP - HDE cambió de nombre
+          data.HORAS_DEVENGAR,                        //Horas reales
+          data.MONTO_REAL,                            //Monto real
+          valFactura[0].outerHTML,                    //Factura
+          valMontoFacturable,                         //Monto Facturable
+          valMontoFactura,                            //Monto Factura
+          valFacturaEstatus,                          //Estatus Factura
+          valEliminar[0].outerHTML                    //Eliminar
+        ]).draw();
+
+
+        /*Se termina de agregar contenido a la tabla*/
+    }
+    function crear_elemento_extra(data,fecha_ini,fecha_fin){
+        mensaje = 'No existen documentos';
+        var div= jQuery('<div></div>');
+        var caja= jQuery('<div></div>');
+            caja.addClass('contenedor-item col-lg-4 col-md-6 col-sm-12 col-xs-12');
+
+        var row = jQuery('<div></div>');
+        var row2 = jQuery('<div></div>');
+            row.addClass('row');
+            row2.addClass('border-top');
+
+        var key= data.PK_CONTACTO;
+        var key2= data.FK_CLIENTE;
+        var col_2= jQuery('<div></div>');
+            col_2.addClass('col-lg-2 col-md-2 col-sm-2 col-xs-12');
+
+        // var a_view= '<a href="<?php echo Url::to(["periodos/index"]); ?>?id='+<?php echo $model->PK_ASIGNACION ?>+'" title="Ver" class="item-ver" data-id="'+data.id+'">';
+        var a_view= '<a href="javascript:void(0);" title="Ver" class="item-ver" data-id="'+data.id+'">';
+            a_view= a_view.replace("lorem", key);
+            a_view= a_view.replace("cliente_lorem", key2);
+
+
+        var col_10= jQuery('<div></div>');
+            col_10.addClass('col-lg-10 col-md-10 col-sm-10 col-xs-12');
+            var html=a_view+'<div class="form-group font-bold">'+
+                        '<p class="razon_social">'+data.NOMBRE_EMP+' '+data.APELLIDO_PAT_EMP+' </p>'+
+                        '<div class="row">'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+
+                                '<label class="campos-label">Inicio</label>'+
+                                '<p class="font-bold"> '+fecha_ini+' </p>'+
+                            '</div>'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+
+                                '<label class="campos-label">Tarifa'+((data.DESC_TARIFA)?' - <span style="color:#000;text-decoration:underline">'+data.DESC_TARIFA:'')+'</span></label>'+
+                                '<p class="font-bold"> '+data.TARIFA+' </p>'+
+                            '</div>'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+'</div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+
+                                '<label class="campos-label">Fin</label>'+
+                                '<p class="font-bold"> '+fecha_fin+' </p>'+
+                            '</div>'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+
+                                '<label class="campos-label">Monto</label>'+
+                                '<p class="font-bold"> '+data.MONTO+' </p>'+
+                            '</div>'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+'</div>'+
+                        '</div>'+
+                     '</div></a>';
+            col_10.append(html);
+        row.append(col_2);
+        row.append(col_10);
+        row.append('<div class="clear"></div>');
+
+        if(! data.ODC){
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones border-right text-center campos-label '+((data.ESTATUS)?'texto-rojo':''));
+            var html=''+
+                        '<a href="javascript:void(0)"  class="">CARGAR </br> ODC</a>'+
+                     '';
+            col_4.append(html);
+        row2.append(col_4);
+        }else{
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones border-right text-center campos-label');
+            var html=''+
+                        '<a href="javascript:void(0)"  class=" ">ODC</br><span style="color:blue" class="font-bold">'+data.ODC+'</span></a>'+
+                     '';
+            col_4.append(html);
+        row2.append(col_4);
+        }
+
+        if(! data.HDE){
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones border-right text-center campos-label '+((data.ESTATUS)?'texto-rojo':''));
+            var html=''+
+                        '<a href="javascript:void(0)"  style="position:relative" class="">CARGAR </br> HDE</a>'+
+                     '';
+            col_4.append(html);
+        row2.append(col_4);
+        }else{
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones border-right text-center campos-label');
+            var html=''+
+                        '<a href="javascript:void(0)"  class=" ">HDE</br><span style="color:blue" class="font-bold">'+data.HDE+'</span></a>'+
+                     '';
+            col_4.append(html);
+        row2.append(col_4);
+        }
+
+        if(! data.FACTURA){
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones text-center campos-label '+((data.ESTATUS)?'texto-rojo':''));
+            var html=''+
+                        '<a href="javascript:void(0)"  class=" ">CARGAR </br> FACTURA</a>'+
+                     '</div>';
+            col_4.append(html);
+        row2.append(col_4);
+        }else{
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones text-center campos-label');
+            if(data.FECHA_INGRESO_BANCO == null || data.FECHA_INGRESO_BANCO == ''){
+                var html=''+
+                        '<a href="javascript:void(0);"  class=" " onclick="cargarFACTURA('+data.PK_PERIODO+');" >FACTURA</br><span style="color:blue" class="font-bold">'+data.FACTURA+'</span></a>'+
+                     '';
+            }else{
+                var html=''+
+                        '<a href="javascript:void(0);"  class=" " onclick="cargarFACTURA('+data.PK_PERIODO+');" >FACTURA - (P)</br><span style="color:blue" class="font-bold">'+data.FACTURA+'</span></a>'+
+                     '';
+            }
+            col_4.append(html);
+        row2.append(col_4);
+        }
+
+        row2.append('<div class="clear"></div>');
+        row.append('<div class="contador-item '+((data.ESTATUS==1)?' fondoRojo':'')+'" >'+cont_peridos+'</div>')
+        row.append('<div class="clear"></div>');
+
+        row.append(row2);
+        row.append('<div class="clear"></div>');
+
+        caja.append(row);
+
+        return caja;
+    }
+    function crear_elemento_extra_cancelado(data,fecha_ini,fecha_fin){
+        mensaje = 'No existen documentos';
+        var div= jQuery('<div></div>');
+        var caja= jQuery('<div></div>');
+            caja.addClass('contenedor-item col-lg-4 col-md-6 col-sm-12 col-xs-12 item-detener');
+
+        var row = jQuery('<div></div>');
+        var row2 = jQuery('<div></div>');
+            row.addClass('row');
+            row2.addClass('border-top');
+
+        var key= data.PK_CONTACTO;
+        var key2= data.FK_CLIENTE;
+        var col_2= jQuery('<div></div>');
+            col_2.addClass('col-lg-2 col-md-2 col-sm-2 col-xs-12');
+
+        // var a_view= '<a href="<?php echo Url::to(["periodos/index"]); ?>?id='+<?php echo $model->PK_ASIGNACION ?>+'" title="Ver" class="item-ver" data-id="'+data.id+'">';
+        var a_view= '<a href="javascript:void(0);" title="Ver" class="item-ver" data-id="'+data.id+'">';
+            a_view= a_view.replace("lorem", key);
+            a_view= a_view.replace("cliente_lorem", key2);
+
+
+        var col_10= jQuery('<div></div>');
+            col_10.addClass('col-lg-10 col-md-10 col-sm-10 col-xs-12');
+            var html=a_view+'<div class="form-group font-bold">'+
+                        '<p class="razon_social">'+data.NOMBRE_EMP+' '+data.APELLIDO_PAT_EMP+' </p>'+
+                        '<div class="row">'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+
+                                '<label class="campos-label">Inicio</label>'+
+                                '<p class="font-bold"> '+data.FECHA_INI.split('-').reverse().join('/')+' </p>'+
+                            '</div>'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+
+                                '<label class="campos-label">Tarifa</label>'+
+                                '<p class="font-bold"> '+data.TARIFA+' </p>'+
+                            '</div>'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+'</div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+
+                                '<label class="campos-label">Fin</label>'+
+                                '<p class="font-bold"> '+data.FECHA_FIN.split('-').reverse().join('/')+' </p>'+
+                            '</div>'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+
+                                '<label class="campos-label">Monto</label>'+
+                                '<p class="font-bold"> '+data.MONTO+' </p>'+
+                            '</div>'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+'</div>'+
+                        '</div>'+
+                     '</div></a>';
+            col_10.append(html);
+        row.append(col_2);
+        row.append(col_10);
+        row.append('<div class="clear"></div>');
+
+        if(! data.ODC){
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones border-right text-center campos-label '+((data.ESTATUS)?'texto-rojo':''));
+            var html=''+
+                        // '<a href="javascript:void(0)"  class="">CARGAR </br> ODC</a>'+
+                     '';
+            col_4.append(html);
+        row2.append(col_4);
+        }else{
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones border-right text-center campos-label');
+            var html=''+
+                        // '<a href="javascript:void(0)"  class=" ">ODC</br><span style="color:blue" class="font-bold">'+data.ODC+'</span></a>'+
+                     '';
+            col_4.append(html);
+        row2.append(col_4);
+        }
+
+        if(! data.HDE){
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones border-right text-center campos-label '+((data.ESTATUS)?'texto-rojo':''));
+            var html=''+
+                        // '<a href="javascript:void(0)"  style="position:relative" class="">CARGAR </br> HDE</a>'+
+                     '';
+            col_4.append(html);
+        row2.append(col_4);
+        }else{
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones border-right text-center campos-label');
+            var html=''+
+                        // '<a href="javascript:void(0)"  class=" ">HDE</br><span style="color:blue" class="font-bold">'+data.HDE+'</span></a>'+
+                     '';
+            col_4.append(html);
+        row2.append(col_4);
+        }
+
+        if(! data.FACTURA){
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones text-center campos-label '+((data.ESTATUS)?'texto-rojo':''));
+            var html=''+
+                        // '<a href="javascript:void(0)"  class=" ">CARGAR </br> FACTURA</a>'+
+                     '</div>';
+            col_4.append(html);
+        row2.append(col_4);
+        }else{
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones text-center campos-label');
+            if(data.FECHA_INGRESO_BANCO == null || data.FECHA_INGRESO_BANCO == ''){
+                var html=''+
+                        // '<a href="javascript:void(0);"  class=" " onclick="cargarFACTURA('+data.PK_PERIODO+');" >FACTURA</br><span style="color:blue" class="font-bold">'+data.FACTURA+'</span></a>'+
+                     '';
+            }else{
+                var html=''+
+                        // '<a href="javascript:void(0);"  class=" " onclick="cargarFACTURA('+data.PK_PERIODO+');" >FACTURA - (P)</br><span style="color:blue" class="font-bold">'+data.FACTURA+'</span></a>'+
+                     '';
+            }
+            col_4.append(html);
+        row2.append(col_4);
+        }
+
+        row2.append('<div class="clear"></div>');
+        row.append('<div class="contador-item  fondoGris" ></div>')
+        row.append('<div class="clear"></div>');
+
+        row.append(row2);
+        row.append('<div class="clear"></div>');
+
+        caja.append(row);
+
+        return caja;
+    }
+    function crear_elemento_detener(data){
+        mensaje = 'No existen documentos';
+        var div= jQuery('<div></div>');
+        var caja= jQuery('<div></div>');
+            caja.addClass('contenedor-item col-lg-4 col-md-6 col-sm-12 col-xs-12 item-detener');
+
+        var row = jQuery('<div></div>');
+        var row2 = jQuery('<div></div>');
+            row.addClass('row');
+            row2.addClass('border-top');
+
+        var key= data.PK_CONTACTO;
+        var key2= data.FK_CLIENTE;
+        var col_2= jQuery('<div></div>');
+            col_2.addClass('col-lg-2 col-md-2 col-sm-2 col-xs-12');
+
+        // var a_view= '<a href="<?php echo Url::to(["periodos/index"]); ?>?id='+<?php echo $model->PK_ASIGNACION ?>+'" title="Ver" class="item-ver" data-id="'+data.id+'">';
+        var a_view= '<a href="javascript:void(0);" title="Ver" class="item-ver" data-id="'+data.id+'">';
+            a_view= a_view.replace("lorem", key);
+            a_view= a_view.replace("cliente_lorem", key2);
+
+
+        var col_10= jQuery('<div></div>');
+            col_10.addClass('col-lg-10 col-md-10 col-sm-10 col-xs-12');
+            var html=a_view+'<div class="form-group font-bold">'+
+                        '<p class="razon_social">'+data.NOMBRE_EMP+' '+data.APELLIDO_PAT_EMP+' </p>'+
+                        '<div class="row">'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+
+                                '<label class="campos-label">Inicio</label>'+
+                                '<p class="font-bold"> '+data.FECHA_INI.split('-').reverse().join('/')+' </p>'+
+                            '</div>'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+
+                                '<label class="campos-label">Tarifa</label>'+
+                                '<p class="font-bold"> '+data.TARIFA+' </p>'+
+                            '</div>'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+'</div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+
+                                '<label class="campos-label">Fin</label>'+
+                                '<p class="font-bold"> '+data.FECHA_FIN.split('-').reverse().join('/')+' </p>'+
+                            '</div>'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+
+                                '<label class="campos-label">Monto</label>'+
+                                '<p class="font-bold"> '+data.MONTO+' </p>'+
+                            '</div>'+
+                            '<div class="col-lg-6 col-md-6 col-sm-6">'+'</div>'+
+                        '</div>'+
+                     '</div></a>';
+            col_10.append(html);
+        row.append(col_2);
+        row.append(col_10);
+        row.append('<div class="clear"></div>');
+
+        if(! data.ODC){
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones border-right text-center campos-label '+((data.ESTATUS)?'texto-rojo':''));
+            var html=''+
+                        // '<a href="javascript:void(0)"  class="">CARGAR </br> ODC</a>'+
+                     '';
+            col_4.append(html);
+        row2.append(col_4);
+        }else{
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones border-right text-center campos-label');
+            var html=''+
+                        // '<a href="javascript:void(0)"  class=" ">ODC</br><span style="color:blue" class="font-bold">'+data.ODC+'</span></a>'+
+                     '';
+            col_4.append(html);
+        row2.append(col_4);
+        }
+
+        if(! data.HDE){
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones border-right text-center campos-label '+((data.ESTATUS)?'texto-rojo':''));
+            var html=''+
+                        // '<a href="javascript:void(0)"  style="position:relative" class="">CARGAR </br> HDE</a>'+
+                     '';
+            col_4.append(html);
+        row2.append(col_4);
+        }else{
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones border-right text-center campos-label');
+            var html=''+
+                        // '<a href="javascript:void(0)"  class=" ">HDE</br><span style="color:blue" class="font-bold">'+data.HDE+'</span></a>'+
+                     '';
+            col_4.append(html);
+        row2.append(col_4);
+        }
+
+        if(! data.FACTURA){
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones text-center campos-label '+((data.ESTATUS)?'texto-rojo':''));
+            var html=''+
+                        // '<a href="javascript:void(0)"  class=" ">CARGAR </br> FACTURA</a>'+
+                     '</div>';
+            col_4.append(html);
+        row2.append(col_4);
+        }else{
+        var col_4= jQuery('<div></div>');
+            col_4.addClass('col-lg-4 col-md-4 col-sm-4 col-xs-12 view-doc_asignaciones text-center campos-label');
+            if(data.FECHA_INGRESO_BANCO == null || data.FECHA_INGRESO_BANCO == ''){
+                var html=''+
+                        // '<a href="javascript:void(0);"  class=" " onclick="cargarFACTURA('+data.PK_PERIODO+');" >FACTURA</br><span style="color:blue" class="font-bold">'+data.FACTURA+'</span></a>'+
+                     '';
+            }else{
+                var html=''+
+                        // '<a href="javascript:void(0);"  class=" " onclick="cargarFACTURA('+data.PK_PERIODO+');" >FACTURA - (P)</br><span style="color:blue" class="font-bold">'+data.FACTURA+'</span></a>'+
+                     '';
+            }
+            col_4.append(html);
+        row2.append(col_4);
+        }
+
+        row2.append('<div class="clear"></div>');
+        row.append('<div class="contador-item  fondoGris" ></div>')
+        row.append('<div class="clear"></div>');
+
+        row.append(row2);
+        row.append('<div class="clear"></div>');
+
+        caja.append(row);
+
+        return caja;
+    }
+</script>
+<script>
+    <?php if($modelComentariosAsignaciones2): ?>
+        var fechas_detenidas={
+            <?php foreach ($modelComentariosAsignaciones2 as $key => $value) {
+                ?>
+                <?php echo $key ?>:{
+                    'FECHA_FIN':'<?php echo $value['FECHA_FIN']?>',
+                    'FECHA_RETOMADA':'<?php echo $value['FECHA_RETOMADA']?>',
+                    'MOSTRADO':0,
+                },
+                <?php
+            } ?>
+        }
+    <?php endif; ?>
+    var existe_detenida= false;
+    var fecha_fin_detenida= '';
+    function validar_fechas_detenidas(data){
+
+    }
+</script>
+<style>
+    .datepicker {/*posicionar al elemento hasta adelante en el eje z*/
+        z-index: 999999 !important;
+    }
+    .fondoRojo{
+        background-color: red;
+    }
+    .fondoGris{
+        background-color: #ccc;
+    }
+    .texto-rojo,
+    .texto-rojo a{
+        color:red!important;
+        font-weight: bold;
+    }
+    .ver_mas_detenida_e{
+        position: absolute;
+        top: 0;
+        padding: 5px;
+        left: calc(100% - 160px );
+    }
+    .item-comentario{
+            right: 0;
+    width: 100%;
+    /* bottom: 0 !important; */
+    top: 173px;
+    background: #a4a4a4;
+    }
+</style>
+<div class="modal fade" id="modal-cancelada" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <!-- Modal content-->
+        <div class="modal-content" style='border-radius: 0px;'>
+            <div class="modal-body" style="padding: 0px; position: relative;">
+                <img src="/erteisei_devcap_DES/web/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+                <div class="clear"></div>
+            </div>
+
+            <div class="row" style="margin: 0px; padding: 0px;" id="form-cancelar-asignacion">
+                <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
+                    <div class="well" style="height: 150px; overflow: auto;">
+
+                        <table class="table table-hover" style="font-size:12px; border:1px solid #eaeaea">
+                            <thead>
+                                <th style="width: 10%" class="text-center">#</th>
+                                <!-- <th class="text-center">Fecha registro</th> -->
+                                <th style="width: 35%" class="text-center">Fecha Cancelada</th>
+                                <th style="width: 55%" class="text-center">Comentarios</th>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    $cont=0;
+                                    foreach ($modelComentariosAsignaciones3 as $key => $value) {
+                                        $cont++;
+                                ?>
+                                        <tr>
+                                            <td class="text-center"><?php echo $cont ?></td>
+                                            <td class="text-center"><?php echo transform_date($value['FECHA_FIN'],'d/m/Y') ?></td>
+                                            <td class="text-center"><?php echo $value['COMENTARIOS']?></td>
+                                        </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row text-center" style="margin: 0px; padding: 0px;">
+                <button type="button" class="btn btn-success " data-dismiss="modal">Cerrar</button>
+                <!--<a href="javascript: void(0);" type="button" class="btn btn-success" data-dismiss="modal" data-target="#cancelar-asignacion">ACEPTAR</a>-->
+            </div>
+        </div>
+    </div>
+</div>
+<?php if($modelComentariosAsignaciones2){ ?>
+<div class="modal fade" id="detener-asignacion" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <!-- Modal content-->
+        <div class="modal-content" style='border-radius: 0px;'>
+            <div class="modal-body" style="padding: 0px; position: relative;">
+                <img src="/erteisei_devcap_DES/web/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+                <div class="clear"></div>
+            </div>
+
+            <div class="row" style="margin: 0px; padding: 0px;" id="form-cancelar-asignacion">
+                <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
+                    <div class="well" style="height: 150px; overflow: auto;">
+
+                        <table class="table table-hover" style="font-size:12px; border:1px solid #eaeaea">
+                            <thead>
+                                <th style="width: 10%" class="text-center">#</th>
+                                <!-- <th class="text-center">Fecha registro</th> -->
+                                <th style="width: 15%" class="text-center">Fecha Detención</th>
+                                <th style="width: 30%" class="text-center">Motivo</th>
+                                <th style="width: 55%" class="text-center">Comentarios</th>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    $cont=0;
+                                    foreach ($modelComentariosAsignaciones2 as $key => $value) {
+                                        $cont++;
+                                ?>
+                                        <tr>
+                                            <td class="text-center"><?php echo $cont ?></td>
+                                            <td class="text-center"><?php echo transform_date($value['FECHA_FIN'],'d/m/Y') ?></td>
+                                            <td class="text-center"><?php echo $value['MOTIVO']?></td>
+                                            <td class="text-center"><?php echo $value['COMENTARIOS']?></td>
+                                        </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row text-center" style="margin: 0px; padding: 0px;">
+                <button type="button" class="btn btn-success " data-dismiss="modal">Cerrar</button>
+                <!--<a href="javascript: void(0);" type="button" class="btn btn-success" data-dismiss="modal" data-target="#cancelar-asignacion">ACEPTAR</a>-->
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>
+
+<div class="modal fade" id="modal_mensajes" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content" style='border-radius: 1px;'>
+            <div class="modal-body" style="padding: 1px;">
+                <div>
+                  <img src="<?php echo get_home_url() ?>/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+                  <div id="mensaje_modal"></div>
+                    <div class="row" style="margin: 10px; padding: 10px; text-align: center;">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="delete-periodo" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content" style='border-radius: 0px;'>
+            <div class="modal-body" style="padding: 0px;">
+                <div>
+                    <img src="<?php echo get_home_url() ?>/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+                    <input type="hidden" id="id_periodo_delete">
+                    <p style="text-align: center; font-weight: bold;padding: 25px;">
+                    ¿Esta seguro que desea eliminar el registro?
+                    </p>
+                    <div class="row" style="margin: 0px; padding: 0px; text-align: center;">
+                    <button type="button" class="btn btn-cancel" data-dismiss="modal">CANCELAR</button>
+                    <button type="button" class="btn btn-success delete-periodo">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="cambioHorasADP" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <img src="<?php echo get_home_url() ?>/iconos/linea - modal - cancelacion.png" width="100%" height="8px" />
+            <div class="modal-header">
+              <h4>Cambiar Horas trabajadas</h4>
+            </div>
+            <div class="modal-body">
+              <form method="post" action="" id="EditarPeriodoADP">
+                <input type="hidden" id="periodoActual">
+                <input type="hidden" id="periodoEditar" name="id_periodo">
+                <label>Ingrese las horas trabajadas</label>
+                <input type="text" name="HORAS_DEVENGAR" id="txtHoras" class="form-control calcularMonto_txt_HDE">
+                <input type="hidden" class="form-control" id="txtMonto" name="monto">
+                <input type="hidden" name="tarifa" class="tarifaPeriodo">
+
+              </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel der" data-dismiss="modal">CANCELAR</button>
+                <button type="button" class="btn btn-success der cambiarHoras" data-dismiss="modal">ACEPTAR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="../../web/js/detalleAsignacion.js"></script>

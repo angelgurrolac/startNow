@@ -19,10 +19,10 @@
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', 'HomeController@index')->name('home');
 
 Route::resource('info','prueba');
-Route::post('/logon', 'LogController@store');
+Route::resource('logon', 'LogController');
 
 Route::resource('/equipo','equipo');
 
@@ -30,13 +30,14 @@ Route::resource('/competencia','competencia');
 
 Route::resource('usuario','UsuarioController');
 
-Route::get('/logout','LogController@logout');
+Route::get('logout','LogController@logout');
 
 Route::resource('proyectos','ProyectoController');
 
 Route::get('admin','FrontController@admin');
 
 Route::resource('todos','TodosController');
+Route::get('todos/{cat}', 'TodosController@show');
 
 #Route::resource('usuario','StateController');
 Route::get('/usuario/towns/{id}','UsuarioController@getTowns');

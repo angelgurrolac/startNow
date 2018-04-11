@@ -15,6 +15,8 @@ class LogController extends Controller
     public function index()
     {
         //
+        $response = "";
+        return view('auth.login', compact('response'));
     }
     /**
      * Show the form for creating a new resource.
@@ -34,19 +36,16 @@ class LogController extends Controller
     public function store(LoginRequest $request)
     {
         $userdata = array(
-        'email'     => $request['email'],
-        'password'  => $request['password']
-    );
-           
-        if(Auth::attempt($userdata)){
-           return Redirect::to('home');}
-           else {        
-
-        // validation not successful, send back to form 
-        return Redirect::to('login');
-
-    }
-
+            'email'     => $request['email'],
+            'password'  => $request['password']
+        );
+        if(Auth::attempt($userdata)) {
+            $response = "true";
+        }
+        else {
+            $response = "false";
+        }
+        return view('auth.login', compact('response'));
 
         //Session::flash('message-error','Datos son incorrectos');
         //return Redirect::to('/');
@@ -54,7 +53,7 @@ class LogController extends Controller
 
     public function logout(){
        session::flush();
-        return Redirect::to('/login');
+        return Redirect::to('/');
     }
     /**
      * Display the specified resource.
